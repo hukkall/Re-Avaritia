@@ -91,12 +91,14 @@ public class SoulFarmLandBlock extends BaseBlock {
                 return;
             }
 
-            if (aboveBlock instanceof SugarCaneBlock caneBlock
-
+            if (aboveBlock instanceof SugarCaneBlock || level.getBlockState(pos.above(2)).getBlock() instanceof SugarCaneBlock
                     && level.random.nextFloat() <= ModConfig.growthSoulFarmland.get()
             ){
+                if (aboveState.getValue(SugarCaneBlock.AGE) < 11) {
                     level.setBlock(abovePos, aboveState.setValue(SugarCaneBlock.AGE, aboveState.getValue(SugarCaneBlock.AGE) + 5), 4);
+                }
             }
+
 
             if (aboveBlock instanceof BonemealableBlock growable
                     && level.random.nextFloat() <= ModConfig.growthSoulFarmland.get()
