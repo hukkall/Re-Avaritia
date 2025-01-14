@@ -9,6 +9,7 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.BonemealableBlock;
+import net.minecraft.world.level.block.BushBlock;
 import net.minecraft.world.level.block.NetherWartBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
@@ -28,7 +29,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
  * @date 2024/11/2 20:37
  */
 @Mixin(NetherWartBlock.class)
-public abstract class NetherWartBlockMixin implements BonemealableBlock {
+public abstract class NetherWartBlockMixin extends BushBlock implements BonemealableBlock {
+
+    public NetherWartBlockMixin(Properties pProperties) {
+        super(pProperties);
+    }
 
     @Inject(
             method = "mayPlaceOn",
@@ -51,8 +56,7 @@ public abstract class NetherWartBlockMixin implements BonemealableBlock {
 
     @Override
     public void performBonemeal(@NotNull ServerLevel pLevel, @NotNull RandomSource pRandom, @NotNull BlockPos pPos, @NotNull BlockState pState) {
-        if (pLevel.getBlockState(pPos.below(1)).is(ModBlocks.soul_farmland.get()))
-            this.avaritia$growCrops(pLevel, pPos, pState);
+        this.avaritia$growCrops(pLevel, pPos, pState);
     }
 
     @Unique

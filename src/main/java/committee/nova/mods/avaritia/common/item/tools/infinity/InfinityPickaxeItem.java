@@ -8,10 +8,7 @@ import committee.nova.mods.avaritia.api.utils.lang.Localizable;
 import committee.nova.mods.avaritia.common.capability.ItemFiltersProvider;
 import committee.nova.mods.avaritia.common.entity.ImmortalItemEntity;
 import committee.nova.mods.avaritia.init.config.ModConfig;
-import committee.nova.mods.avaritia.init.registry.ModEntities;
-import committee.nova.mods.avaritia.init.registry.ModRarities;
-import committee.nova.mods.avaritia.init.registry.ModToolTiers;
-import committee.nova.mods.avaritia.init.registry.ModTooltips;
+import committee.nova.mods.avaritia.init.registry.*;
 import committee.nova.mods.avaritia.util.ToolUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -34,6 +31,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import org.jetbrains.annotations.NotNull;
@@ -86,9 +84,9 @@ public class InfinityPickaxeItem extends PickaxeItem implements InitEnchantItem,
     @Override
     public float getDestroySpeed(ItemStack stack, @NotNull BlockState state) {
         if (stack.getOrCreateTag().getBoolean("hammer")) {
-            return 5.0F;
+            return 8888.0F;
         }
-        return Math.max(super.getDestroySpeed(stack, state), 6.0F);
+        return Math.max(super.getDestroySpeed(stack, state), 9999.0F);
     }
 
     @Override
@@ -120,11 +118,14 @@ public class InfinityPickaxeItem extends PickaxeItem implements InitEnchantItem,
 
     @Override
     public boolean onBlockStartBreak(ItemStack stack, BlockPos pos, Player player) {
+        var world = player.level();
+        var state = world.getBlockState(pos);
         if (stack.getOrCreateTag().getBoolean("hammer")) {
-            ToolUtils.breakRangeBlocks(player, stack, pos, ModConfig.pickAxeBreakRange.get(), ToolUtils.materialsPick, false);
+            ToolUtils.breakRangeBlocks(player, stack, pos, ModConfig.pickAxeBreakRange.get(), ToolUtils.materialsPick, true);
         }
         return false;
     }
+
 
     @Override
     public int getInitEnchantLevel(ItemStack stack, Enchantment enchantment) {

@@ -49,16 +49,14 @@ public class CompressorRecipe implements ISpecialRecipe, ICompressorRecipe {
         return true;
     }
 
-
     @Override
-    public @NotNull ItemStack getResultItem(@NotNull RegistryAccess p_267052_) {
+    public @NotNull ItemStack getResultItem(@NotNull RegistryAccess pRegistryAccess) {
         return this.output;
     }
 
     public @NotNull ItemStack getResultItem() {
         return this.output;
     }
-
 
     @Override
     public @NotNull NonNullList<Ingredient> getIngredients() {
@@ -138,8 +136,6 @@ public class CompressorRecipe implements ISpecialRecipe, ICompressorRecipe {
             buffer.writeItem(recipe.output);
             buffer.writeInt(recipe.inputCount);
             buffer.writeInt(recipe.timeRequire);
-
-
         }
     }
 }

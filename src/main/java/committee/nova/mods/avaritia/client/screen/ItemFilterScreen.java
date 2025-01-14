@@ -50,7 +50,7 @@ public class ItemFilterScreen extends Screen {
     /**
      * 储存的物品
      */
-    private final List<ItemStack> itemList = new ArrayList<>();
+    private List<ItemStack> itemList = new ArrayList<>();
     /**
      * 显示的标签
      */
@@ -119,21 +119,21 @@ public class ItemFilterScreen extends Screen {
 
     public ItemFilterScreen() {
         super(Component.literal("ItemFilterScreen"));
+        this.updateItems();
     }
 
     @Override
     protected void init() {
         this.updateVisibleTags();
-        this.updateItems();
+        //this.updateItems();
         this.updateLayout();
         // 创建添加按钮
         this.addRenderableWidget(GuiUtils.newButton((int) (this.bgX + 90 + this.margin), (int) (this.bgY + (20 + (GuiUtils.ITEM_ICON_SIZE + 3) * 5 + margin))
                 , (int) (90 - this.margin * 2), 20
                 , GuiUtils.textToComponent(Text.i18n("添加")), button -> {
                     Minecraft.getInstance().setScreen(new ItemSelectScreen(this, input -> {
-                        this.currentItem = input;
-                        NetworkHandler.CHANNEL.sendToServer(new C2SItemFilterPacket(0, this.currentItem));
-                        this.itemList.add(this.currentItem);
+                        NetworkHandler.CHANNEL.sendToServer(new C2SItemFilterPacket(0, input));
+                        this.itemList.add(input);
                     }, Blocks.DIRT.asItem().getDefaultInstance()));
                 }));
         // 创建删除按钮
@@ -141,8 +141,9 @@ public class ItemFilterScreen extends Screen {
                 , (int) (90 - this.margin * 2), 20
                 , GuiUtils.textToComponent(Text.i18n("删除"))
                 , button -> {
-                    if (this.currentItem != null) NetworkHandler.CHANNEL.sendToServer(new C2SItemFilterPacket(1, this.currentItem));
                     this.itemList.remove(this.currentItem);
+                    if (this.currentItem != null) NetworkHandler.CHANNEL.sendToServer(new C2SItemFilterPacket(1, this.currentItem));
+                    Minecraft.getInstance().setScreen(null);
                 }));
     }
 

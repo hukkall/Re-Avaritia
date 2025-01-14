@@ -46,20 +46,29 @@ public class C2SItemFilterPacket {
             ServerPlayer player = ctx.get().getSender();
             if (player == null) return;
             if (player.getMainHandItem().getItem() instanceof IFilterItem) {
-                    switch(msg.action) {
+                var tag = player.getMainHandItem().getOrCreateTag();
+                switch(msg.action) {
                         case 0 -> {
-                            CompoundTag filters = new CompoundTag();
-                            filters.put(ForgeRegistries.ITEMS.getKey(msg.stack.getItem()).toString(), msg.stack.serializeNBT());
-                            player.getMainHandItem().getOrCreateTag().put("filters", filters);
+                            if (tag.contains("filters")){
+                                if (!tag.getCompound("filters").contains(ForgeRegistries.ITEMS.getKey(msg.stack.getItem()).toString())){
+                                    tag.getCompound("filters")
+                                            .put(ForgeRegistries.ITEMS.getKey(msg.stack.getItem()).toString(), msg.stack.serializeNBT());
+                                }
+                            } else {
+                                CompoundTag filters = new CompoundTag();
+                                filters.put(ForgeRegistries.ITEMS.getKey(msg.stack.getItem()).toString(), msg.stack.serializeNBT());
+                                tag.put("filters", filters);
+                            }
+
                         }
                         case 1 -> {
-                            CompoundTag filters = player.getMainHandItem().getOrCreateTag().getCompound("filters");
+                            CompoundTag filters = tag.getCompound("filters");
                             if (filters.contains(ForgeRegistries.ITEMS.getKey(msg.stack.getItem()).toString())){
                                 filters.remove(ForgeRegistries.ITEMS.getKey(msg.stack.getItem()).toString());
                             }
                         }
                         case 2 -> {
-                            CompoundTag filters = player.getMainHandItem().getOrCreateTag().getCompound("filters");
+                            CompoundTag filters = tag.getCompound("filters");
                             filters.getAllKeys().forEach(filters::remove);
                         }
                     }

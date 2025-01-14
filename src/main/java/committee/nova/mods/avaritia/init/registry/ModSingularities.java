@@ -36,6 +36,8 @@ public class ModSingularities {
     public static final Singularity ELECTRUM = new Singularity(new ResourceLocation(Static.MOD_ID, "electrum"), "singularity.avaritia.electrum", new int[]{0xF5F18E, 0x9E8D3E}, "forge:ingots/electrum");
     public static final Singularity INVAR = new Singularity(new ResourceLocation(Static.MOD_ID, "invar"), "singularity.avaritia.invar", new int[]{0xBCC5BB, 0x5D7877}, "forge:ingots/invar");
     public static final Singularity PLATINUM = new Singularity(new ResourceLocation(Static.MOD_ID, "platinum"), "singularity.avaritia.platinum", new int[]{0x6FEAEF, 0x57B8BC}, "forge:ingots/platinum");
+    public static final Singularity URANIUM = new Singularity(new ResourceLocation(Static.MOD_ID, "uranium"), "singularity.avaritia.uranium", new int[]{0x6FEAEF, 0x57B8BC}, "forge:ingots/uranium");
+    public static final Singularity OSMIUM = new Singularity(new ResourceLocation(Static.MOD_ID, "osmium"), "singularity.avaritia.osmium", new int[]{0x6FEAEF, 0x57B8BC}, "forge:ingots/osmium");
 
     public static List<Singularity> getDefaults() {
         return List.of(
@@ -59,7 +61,9 @@ public class ModSingularities {
                 NICKEL,
                 ELECTRUM,
                 INVAR,
-                PLATINUM
+                PLATINUM,
+                URANIUM,
+                OSMIUM
         );
     }
 }

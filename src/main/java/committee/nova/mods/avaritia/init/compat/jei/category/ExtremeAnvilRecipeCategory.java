@@ -95,6 +95,7 @@ public class ExtremeAnvilRecipeCategory implements IRecipeCategory<IJeiAnvilReci
         } else if (rightInputs.size() == outputs.size() && leftInputs.size() == 1) {
             builder.createFocusLink(rightInputSlot, outputSlot);
         }
+        builder.moveRecipeTransferButton(160, 68);
     }
 
 }

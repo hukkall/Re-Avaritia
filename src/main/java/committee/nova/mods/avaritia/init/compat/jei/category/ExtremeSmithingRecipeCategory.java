@@ -3,7 +3,6 @@ package committee.nova.mods.avaritia.init.compat.jei.category;
 import committee.nova.mods.avaritia.Static;
 import committee.nova.mods.avaritia.common.crafting.recipe.ExtremeSmithingRecipe;
 import committee.nova.mods.avaritia.init.registry.ModBlocks;
-import committee.nova.mods.avaritia.util.RecipeUtils;
 import committee.nova.mods.avaritia.api.utils.lang.Localizable;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
@@ -12,10 +11,14 @@ import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.Recipe;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -73,9 +76,20 @@ public class ExtremeSmithingRecipeCategory implements IRecipeCategory<ExtremeSmi
 
 
         builder.addSlot(RecipeIngredientRole.OUTPUT, 117, 23)
-                .addItemStack(RecipeUtils.getResultItem(recipe));
+                .addItemStack(getResultItem(recipe));
         builder.moveRecipeTransferButton(160, 68);
     }
+
+    public static ItemStack getResultItem(Recipe<?> recipe) {
+        Minecraft minecraft = Minecraft.getInstance();
+        ClientLevel level = minecraft.level;
+        if (level == null) {
+            throw new NullPointerException("level must not be null.");
+        }
+        RegistryAccess registryAccess = level.registryAccess();
+        return recipe.getResultItem(registryAccess);
+    }
+
 
     @Override
     public boolean isHandled(@NotNull ExtremeSmithingRecipe recipe) {

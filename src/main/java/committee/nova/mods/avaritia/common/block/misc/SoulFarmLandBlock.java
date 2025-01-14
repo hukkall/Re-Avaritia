@@ -10,16 +10,14 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.BonemealableBlock;
-import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.block.TallFlowerBlock;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.PlantType;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
 import org.jetbrains.annotations.NotNull;
@@ -73,8 +71,10 @@ public class SoulFarmLandBlock extends BaseBlock {
 
     @Override
     public boolean canSustainPlant(@NotNull BlockState state, @NotNull BlockGetter world, @NotNull BlockPos pos, @NotNull Direction facing, net.minecraftforge.common.@NotNull IPlantable plantable) {
-        return true;
+        PlantType type = plantable.getPlantType(world, pos);
+        return type == PlantType.CROP || type == PlantType.NETHER || type == PlantType.BEACH || type == PlantType.DESERT || type == PlantType.PLAINS;
     }
+
 
     @Override
     public void randomTick(@NotNull BlockState state, ServerLevel level, @NotNull BlockPos pos, @NotNull RandomSource rand) {
@@ -89,6 +89,13 @@ public class SoulFarmLandBlock extends BaseBlock {
 
             if (ModConfig.growthSoulFarmland.get() == 0.0) {
                 return;
+            }
+
+            if (aboveBlock instanceof SugarCaneBlock caneBlock
+
+                    && level.random.nextFloat() <= ModConfig.growthSoulFarmland.get()
+            ){
+                    level.setBlock(abovePos, aboveState.setValue(SugarCaneBlock.AGE, aboveState.getValue(SugarCaneBlock.AGE) + 5), 4);
             }
 
             if (aboveBlock instanceof BonemealableBlock growable

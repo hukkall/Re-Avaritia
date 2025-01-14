@@ -6,8 +6,7 @@
   "mixins": [
     "EnchantmentHelperMixin",
     "FrostWalkerEnchantmentMixin",
-    "NetherWartBlockMixin",
-    "SugarCaneBlockMixin"
+    "NetherWartBlockMixin"
   ],
   "client": [
     "ItemRendererMixin"

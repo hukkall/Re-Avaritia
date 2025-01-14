@@ -195,13 +195,13 @@ public class ModRecipes extends RecipeProvider implements IConditionBuilder {
                 .unlockedBy("has_item", has(ModItems.neutron_pile.get())).save(consumer);
 
         ModShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.record_fragment.get(), 3)
-                .pattern("         ")
-                .pattern("    a    ")
-                .pattern("   aaa   ")
-                .pattern("  aabaa  ")
-                .pattern("   aaa   ")
-                .pattern("    a    ")
-                .pattern("         ")
+                .pattern("       ")
+                .pattern("   a   ")
+                .pattern("  aaa  ")
+                .pattern(" aabaa ")
+                .pattern("  aaa  ")
+                .pattern("   a   ")
+                .pattern("       ")
                 .define('b', ItemTags.MUSIC_DISCS)
                 .define('a', ModItems.neutron_pile.get())
                 .unlockedBy("has_item", has(ItemTags.MUSIC_DISCS)).save(consumer);

@@ -63,10 +63,10 @@ public class ClustersUtils {
         }
     }
 
-    public static Set<ItemStack> removeTrash(Set<ItemStack> drops) {
+    public static Set<ItemStack> removeTrash(Set<ItemStack> drops, Set<String> defaultTrashOres) {
         Set<ItemStack> trashItems = new HashSet<>();
         for (ItemStack drop : drops) {
-            if (isTrash(drop)) {
+            if (isTrash(drop, defaultTrashOres)) {
                 trashItems.add(drop);
             }
         }
@@ -74,10 +74,10 @@ public class ClustersUtils {
         return drops;
     }
 
-    private static boolean isTrash(ItemStack suspect) {
+    private static boolean isTrash(ItemStack suspect, Set<String> defaultTrashOres) {
         boolean isTrash = false;
         for (String ore : defaultTrashOres) {
-            if (suspect.is(ForgeRegistries.ITEMS.getValue(new ResourceLocation(ore)))) {
+            if (suspect.is(ForgeRegistries.ITEMS.getValue(ResourceLocation.tryParse(ore)))) {
                 return true;
             }
         }

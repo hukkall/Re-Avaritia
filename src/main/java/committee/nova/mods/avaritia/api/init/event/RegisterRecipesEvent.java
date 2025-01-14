@@ -1,4 +1,4 @@
-package committee.nova.mods.avaritia.init.event;
+package committee.nova.mods.avaritia.api.init.event;
 
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.resources.ResourceLocation;
@@ -29,14 +29,14 @@ public class RegisterRecipesEvent extends Event {
     }
 
     public RecipeManager getRecipeManager() {
-        //if (recipeManager.recipes instanceof ImmutableMap) {
+        if (recipeManager.recipes instanceof ImmutableMap) {
             recipeManager.recipes = new HashMap<>(oldRecipes);
             recipeManager.recipes.replaceAll((t, v) -> new HashMap<>(oldRecipes.get(t)));
-        //}
+        }
 
-        //if (recipeManager.byName instanceof ImmutableMap) {
+        if (recipeManager.byName instanceof ImmutableMap) {
             recipeManager.byName = new HashMap<>(oldByName);
-        //}
+        }
 
         return recipeManager;
     }

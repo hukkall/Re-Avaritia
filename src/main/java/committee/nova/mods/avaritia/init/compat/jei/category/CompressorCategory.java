@@ -85,6 +85,4 @@ public class CompressorCategory implements IRecipeCategory<ICompressorRecipe> {
         }
         return List.of();
     }
-
-
 }

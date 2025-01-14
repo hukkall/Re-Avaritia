@@ -19,6 +19,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -65,6 +66,8 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import static committee.nova.mods.avaritia.util.ClustersUtils.defaultTrashOres;
 
 /**
  * Description:
@@ -200,7 +203,12 @@ public class ToolUtils {
 
         ItemCaptureHandler.enableItemCapture(false);//关闭凋落物收集
 
-        ClustersUtils.spawnClusters(world, player, filterTrash ? ClustersUtils.removeTrash(ItemCaptureHandler.getCapturedDrops()) : ItemCaptureHandler.getCapturedDrops());
+        ClustersUtils.spawnClusters(world, player,
+                filterTrash ? ClustersUtils.removeTrash(ItemCaptureHandler.getCapturedDrops(),
+                        stack.getOrCreateTag().contains("filters")
+                                ? stack.getOrCreateTag().getCompound("filters").getAllKeys()
+                                : defaultTrashOres)
+                : ItemCaptureHandler.getCapturedDrops());
 
     }
 

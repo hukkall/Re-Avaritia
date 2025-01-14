@@ -1,23 +1,17 @@
 package committee.nova.mods.avaritia.init.handler;
 
 import committee.nova.mods.avaritia.Static;
+import committee.nova.mods.avaritia.api.init.event.RegisterRecipesEvent;
 import committee.nova.mods.avaritia.common.crafting.recipe.CompressorRecipe;
 import committee.nova.mods.avaritia.common.crafting.recipe.InfinityCatalystCraftRecipe;
-import committee.nova.mods.avaritia.common.crafting.recipe.ShapelessTableCraftingRecipe;
 import committee.nova.mods.avaritia.common.item.singularity.Singularity;
 import committee.nova.mods.avaritia.init.config.ModConfig;
-import committee.nova.mods.avaritia.init.event.RegisterRecipesEvent;
 import committee.nova.mods.avaritia.util.SingularityUtils;
-import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.ForgeRegistries;
-import org.jetbrains.annotations.ApiStatus;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -37,7 +31,7 @@ public class InternalRecipeHandler {
         if (ModConfig.internalInfinityCatalystCraft.get() && infinity_catalyst.getGroup().equals("default")) {
             allSingularities.stream()
                     .filter(singularity -> singularity.getIngredient() != Ingredient.EMPTY)
-                    .limit(81)
+                    //.limit(81)
                     .map(SingularityUtils::getItemForSingularity)
                     .map(Ingredient::of)
                     .forEach(infinity_catalyst.inputs::add);
@@ -45,7 +39,7 @@ public class InternalRecipeHandler {
             event.addRecipe(new InfinityCatalystCraftRecipe(Static.rl("infinity_catalyst"), "default", infinity_catalyst.inputs));
         }
 
-        for (var singularity : SingularityRegistryHandler.getInstance().getSingularities()) {
+        for (var singularity : allSingularities) {
             if (singularity.isRecipeDisabled()) {
                 continue;
             }
@@ -72,27 +66,6 @@ public class InternalRecipeHandler {
         return new CompressorRecipe(recipeId, ingredient, output, ingredientCount, timeRequired);
     }
 
-    @ApiStatus.Experimental
-    public static ShapelessTableCraftingRecipe addExtremeShapelessRecipe(ItemStack result, List<ItemStack> ingredients) {
-        List<ItemStack> arraylist = new ArrayList<>();
 
-        for (ItemStack stack : ingredients) {
-            if (stack != null) {
-                arraylist.add(stack.copy());
-            } else {
-                throw new RuntimeException("Invalid shapeless recipes!");
-            }
-        }
-
-        return new ShapelessTableCraftingRecipe(ForgeRegistries.ITEMS.getKey(result.getItem()), getList(arraylist), result);
-    }
-
-    private static NonNullList<Ingredient> getList(List<ItemStack> arrayList) {
-        NonNullList<Ingredient> ingredients = NonNullList.create();
-        for (ItemStack stack : arrayList) {
-            ingredients.add(Ingredient.of(stack));
-        }
-        return ingredients;
-    }
 
 }

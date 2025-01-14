@@ -10,13 +10,13 @@
     }
   },
   "pattern": [
-    "         ",
-    "    a    ",
-    "   aaa   ",
-    "  aabaa  ",
-    "   aaa   ",
-    "    a    ",
-    "         "
+    "       ",
+    "   a   ",
+    "  aaa  ",
+    " aabaa ",
+    "  aaa  ",
+    "   a   ",
+    "       "
   ],
   "result": {
     "item": "avaritia:record_fragment"
