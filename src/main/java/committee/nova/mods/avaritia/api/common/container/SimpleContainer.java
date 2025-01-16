@@ -9,14 +9,11 @@ import net.minecraft.world.item.ItemStack;
 import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.Objects;
-
 /**
- * SimpleContainer
- *
- * @author cnlimiter
- * @version 1.0
- * @description
- * @date 2024/6/11 下午11:46
+ * @Project: Avaritia
+ * @Author: cnlimiter
+ * @CreateTime: 2024/6/11 下午11:46
+ * @Description:
  */
 public class SimpleContainer implements Container {
 

@@ -84,15 +84,15 @@ public class MatterClusterItem extends Item {
         return clusters;
     }
 
-    public static boolean mergeClusters(ItemStack donor, ItemStack recipient) {
-        SimpleContainer receivingInv = readClusterInventory(recipient);
+    public static boolean mergeClusters(ItemStack spawnCluster, ItemStack slotCluster) {
+        SimpleContainer receivingInv = readClusterInventory(slotCluster);
         int recipientCount = Arrays.stream(receivingInv.items).mapToInt(ItemStack::getCount).sum();
         if (recipientCount >= CAPACITY) {
             return false;
         } else {
             boolean mergedAny = false;
-            SimpleContainer donorInv = readClusterInventory(donor);
-            for (ItemStack stack : donorInv.items) {
+            SimpleContainer spawnClusterInv = readClusterInventory(spawnCluster);
+            for (ItemStack stack : spawnClusterInv.items) {
                 if (stack.isEmpty()) {
                     break;
                 }
@@ -109,13 +109,13 @@ public class MatterClusterItem extends Item {
                 }
             }
 
-            writeClusterInventory(recipient, receivingInv);
-            int donorRemaining = Arrays.stream(donorInv.items).mapToInt(ItemStack::getCount).sum();
-            if (donorRemaining == 0) {
-                donor.setTag(null);
-                donor.setCount(0);
+            writeClusterInventory(slotCluster, receivingInv);
+            int spawnClusterRemaining = Arrays.stream(spawnClusterInv.items).mapToInt(ItemStack::getCount).sum();
+            if (spawnClusterRemaining == 0) {
+                spawnCluster.setTag(null);
+                spawnCluster.setCount(0);
             } else {
-                writeClusterInventory(donor, donorInv);
+                writeClusterInventory(spawnCluster, spawnClusterInv);
             }
 
             return mergedAny;
@@ -129,7 +129,7 @@ public class MatterClusterItem extends Item {
     }
 
     private static SimpleContainer readClusterInventory(ItemStack cluster) {
-        SimpleContainer clusterInventory = new SimpleContainer(512);
+        SimpleContainer clusterInventory = new SimpleContainer(CAPACITY);
         if (cluster.hasTag()) {
             readItemStacksFromTag(clusterInventory.items, cluster.getOrCreateTag().getList("items", Tag.TAG_COMPOUND));
         }

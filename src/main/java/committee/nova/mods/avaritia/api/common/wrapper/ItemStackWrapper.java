@@ -1,11 +1,5 @@
 package committee.nova.mods.avaritia.api.common.wrapper;
 
-/**
- * Description:
- * Author: cnlimiter
- * Date: 2022/4/2 10:59
- * Version: 1.0
- */
 
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.Container;
@@ -19,7 +13,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiFunction;
-
+/**
+ * @Project: Avaritia
+ * @Author: cnlimiter
+ * @CreateTime: 2022/4/2 10:59
+ * @Description:
+ */
 public class ItemStackWrapper extends ItemStackHandler {
     private final Runnable onContentsChanged;
     private final Map<Integer, Integer> slotSizeMap;
@@ -36,18 +35,26 @@ public class ItemStackWrapper extends ItemStackHandler {
     }
 
     public ItemStackWrapper(int size, Runnable onContentsChanged) {
+        this(size, 64, onContentsChanged);
+    }
+
+    public ItemStackWrapper(int size, int maxStackSize, Runnable onContentsChanged) {
         super(size);
         this.slotValidator = null;
-        this.maxStackSize = 64;
+        this.maxStackSize = maxStackSize;
         this.outputSlots = null;
         this.onContentsChanged = onContentsChanged;
         this.slotSizeMap = new HashMap<>();
     }
 
     public ItemStackWrapper(NonNullList<ItemStack> stacks, Runnable onContentsChanged) {
+        this(stacks, 64, onContentsChanged);
+    }
+
+    public ItemStackWrapper(NonNullList<ItemStack> stacks, int maxStackSize, Runnable onContentsChanged) {
         super(stacks);
         this.slotValidator = null;
-        this.maxStackSize = 64;
+        this.maxStackSize = maxStackSize;
         this.outputSlots = null;
         this.onContentsChanged = onContentsChanged;
         this.slotSizeMap = new HashMap<>();

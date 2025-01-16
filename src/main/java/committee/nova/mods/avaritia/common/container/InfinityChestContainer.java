@@ -1,13 +1,6 @@
 package committee.nova.mods.avaritia.common.container;
 
-import committee.nova.mods.avaritia.Static;
-import committee.nova.mods.avaritia.common.wrappers.InfinityChestWrapper;
-import committee.nova.mods.avaritia.common.wrappers.InfinityChestWrapper.*;
 import net.minecraft.world.SimpleContainer;
-import net.minecraft.world.item.ItemStack;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @Project: Avaritia

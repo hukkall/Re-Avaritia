@@ -27,7 +27,7 @@ import java.util.*;
  * @Description:
  */
 public class ClustersUtils {
-    public static Set<String> defaultTrashOres = Sets.newHashSet("minecraft:dirt");//todo, set trash block in gui
+    public static Set<String> defaultTrashOres = Sets.newHashSet("minecraft:dirt");
 
 
     public static void spawnClusters(Level world, Player player, Set<ItemStack> drops) {

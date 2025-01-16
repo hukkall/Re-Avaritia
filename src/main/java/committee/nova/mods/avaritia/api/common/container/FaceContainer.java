@@ -15,13 +15,13 @@ import javax.annotation.Nonnull;
  * @description
  * @date 2024/6/11 下午11:58
  */
-public class RangeContainer {
+public class FaceContainer {
     public Container inv;
     public Direction face;
     public WorldlyContainer sidedInv;
     public int[] slots;
 
-    public RangeContainer(Container inv, Direction side) {
+    public FaceContainer(Container inv, Direction side) {
         this.inv = inv;
         this.face = side;
         if (inv instanceof WorldlyContainer) {
@@ -35,19 +35,19 @@ public class RangeContainer {
         }
     }
 
-    public RangeContainer(Container inv) {
+    public FaceContainer(Container inv) {
         this(inv, Direction.DOWN);
     }
 
-    public RangeContainer(Container inv, int fslot, int lslot) {
+    public FaceContainer(Container inv, int firstSlot, int lastSlot) {
         this.inv = inv;
-        slots = new int[lslot - fslot];
+        slots = new int[lastSlot - firstSlot];
         for (int i = 0; i < slots.length; i++) {
-            slots[i] = fslot + i;
+            slots[i] = firstSlot + i;
         }
     }
 
-    public RangeContainer(Container inv, RangeContainer access) {
+    public FaceContainer(Container inv, FaceContainer access) {
         this.inv = inv;
         this.slots = access.slots;
         this.face = access.face;

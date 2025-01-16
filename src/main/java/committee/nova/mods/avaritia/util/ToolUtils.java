@@ -70,10 +70,10 @@ import java.util.stream.Collectors;
 import static committee.nova.mods.avaritia.util.ClustersUtils.defaultTrashOres;
 
 /**
- * Description:
- * Author: cnlimiter
- * Date: 2022/3/31 10:50
- * Version: 1.0
+ * @Project: Avaritia
+ * @Author: cnlimiter
+ * @CreateTime: 2022/3/31 10:50
+ * @Description:
  */
 public class ToolUtils {
     public static final Set<TagKey<Block>> materialsPick = Sets.newHashSet(
