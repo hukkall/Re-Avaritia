@@ -69,6 +69,53 @@ public class ModRecipes extends RecipeProvider implements IConditionBuilder {
         nineBlockStorageRecipesRecipesWithCustomUnpacking(consumer, RecipeCategory.MISC, Blocks.CRAFTING_TABLE, RecipeCategory.BUILDING_BLOCKS, ModBlocks.compressed_crafting_table.get(),
                 "crafting_table_from_compressed_crafting_table", "crafting_table");
 
+        ModShapedRecipeBuilder.shaped(RecipeCategory.MISC, Blocks.REINFORCED_DEEPSLATE, 1)
+                .pattern("ada")
+                .pattern("cbc")
+                .pattern("aba")
+                .define('a', Blocks.OBSIDIAN)
+                .define('b', Blocks.DEEPSLATE)
+                .define('c', Blocks.DRIPSTONE_BLOCK)
+                .define('d', Blocks.SCULK_CATALYST)
+                .unlockedBy("", lul).save(consumer);
+
+        ModShapedRecipeBuilder.shaped(RecipeCategory.MISC, Blocks.CRYING_OBSIDIAN, 1)
+                .pattern(" a ")
+                .pattern("a a")
+                .pattern(" a ")
+                .define('a', Blocks.AMETHYST_BLOCK)
+                .unlockedBy("", lul).save(consumer);
+
+//        ModShapedRecipeBuilder.shaped(RecipeCategory.MISC, Blocks.CRYING_OBSIDIAN, 1)
+//                .pattern("cac")
+//                .pattern("aba")
+//                .pattern("cac")
+//                .define('a', Blocks.SOUL_SOIL)
+//                .define('b', Blocks.AMETHYST_BLOCK)
+//                .define('c', Items.AMETHYST_CLUSTER)
+//                .unlockedBy("", lul).save(consumer);
+
+        ModShapedRecipeBuilder.shaped(RecipeCategory.MISC, Blocks.COBWEB, 1)
+                .pattern("a a")
+                .pattern(" a ")
+                .pattern("a a")
+                .define('a', Items.STRING)
+                .unlockedBy("", lul).save(consumer);
+
+        ModShapedRecipeBuilder.shaped(RecipeCategory.MISC, Blocks.ANCIENT_DEBRIS, 1)
+                .pattern(" a ")
+                .pattern("aba")
+                .pattern(" a ")
+                .define('a', Items.NETHERITE_SCRAP)
+                .define('b', Blocks.CRYING_OBSIDIAN)
+                .unlockedBy("", lul).save(consumer);
+
+        ModShapedRecipeBuilder.shaped(RecipeCategory.MISC, Items.DRAGON_BREATH, 1)
+                .pattern(" a ")
+                .pattern("a a")
+                .pattern(" a ")
+                .define('a', Items.END_CRYSTAL)
+                .unlockedBy("", lul).save(consumer);
 
         ModShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.diamond_lattice.get(), 1)
                 .pattern("x x")

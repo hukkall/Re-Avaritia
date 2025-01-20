@@ -1,6 +1,7 @@
 package committee.nova.mods.avaritia.common.item;
 
 import committee.nova.mods.avaritia.api.common.container.SimpleContainer;
+import committee.nova.mods.avaritia.api.utils.NBTUtils;
 import committee.nova.mods.avaritia.common.entity.ImmortalItemEntity;
 import committee.nova.mods.avaritia.init.registry.ModEntities;
 import committee.nova.mods.avaritia.init.registry.ModItems;
@@ -125,44 +126,26 @@ public class MatterClusterItem extends Item {
 
     private static void writeClusterInventory(ItemStack cluster, SimpleContainer clusterContents) {
         CompoundTag nbt = cluster.getOrCreateTag();
-        nbt.put("items", writeItemStacksToTag(clusterContents.items));
+        nbt.put("items", NBTUtils.writeToTag(clusterContents.items));
     }
 
     private static SimpleContainer readClusterInventory(ItemStack cluster) {
         SimpleContainer clusterInventory = new SimpleContainer(CAPACITY);
         if (cluster.hasTag()) {
-            readItemStacksFromTag(clusterInventory.items, cluster.getOrCreateTag().getList("items", Tag.TAG_COMPOUND));
+            NBTUtils.readFromTag(clusterInventory.items, cluster.getOrCreateTag().getList("items", Tag.TAG_COMPOUND));
         }
         return clusterInventory;
-    }
-
-
-    private static ListTag writeItemStacksToTag(ItemStack[] items) {
-        ListTag tagList = new ListTag();
-        for (ItemStack item : items) {
-            if (!item.isEmpty()) {
-                tagList.add(item.save(new CompoundTag()));
-            }
-        }
-        return tagList;
-    }
-
-    private static void readItemStacksFromTag(ItemStack[] items, ListTag tagList) {
-        for (int i = 0; i < tagList.size(); ++i) {
-            items[i] = ItemStack.of(tagList.getCompound(i));
-        }
     }
 
     @Override
     public void appendHoverText(ItemStack stack, Level worldIn, @NotNull List<Component> tooltip, @NotNull TooltipFlag flagIn) {
         if (stack.hasTag() || !stack.getOrCreateTag().contains("items", Tag.TAG_LIST)) {
-            SimpleContainer inventory = readClusterInventory(stack);
-            int total = Arrays.stream(inventory.items).mapToInt(ItemStack::getCount).sum();
+            int total = getClusterSize(stack);
             tooltip.add(Component.translatable("tooltip.matter_cluster.counter", total, Math.max(total, CAPACITY)));
             tooltip.add(Component.literal(""));
             if (Screen.hasShiftDown()) {
                 Object2IntMap<Item> itemCounts = new Object2IntOpenHashMap<>();
-                for (ItemStack item : inventory.items) {
+                for (ItemStack item : readClusterInventory(stack).items) {
                     if (item.isEmpty()) {
                         break;
                     }

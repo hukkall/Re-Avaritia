@@ -1,6 +1,7 @@
 package committee.nova.mods.avaritia.api.utils;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
 
@@ -30,4 +31,21 @@ public class NBTUtils {
     public static Tag getTag(ItemStack stack, String key) {
         return stack.hasTag() ? getTagCompound(stack).get(key) : null;
     }
+
+    public static ListTag writeToTag(ItemStack[] items) {
+        ListTag tagList = new ListTag();
+        for (ItemStack item : items) {
+            if (!item.isEmpty()) {
+                tagList.add(item.save(new CompoundTag()));
+            }
+        }
+        return tagList;
+    }
+
+    public static void readFromTag(ItemStack[] items, ListTag tagList) {
+        for (int i = 0; i < tagList.size(); ++i) {
+            items[i] = ItemStack.of(tagList.getCompound(i));
+        }
+    }
+
 }

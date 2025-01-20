@@ -48,29 +48,30 @@ public class InfinitySwordItem extends SwordItem implements IMultiFunction, Init
         var level = player.level();
         var endlessDamage = ModConfig.isSwordAttackEndless.get();
         if (!level.isClientSide && level instanceof ServerLevel serverLevel) {
+            var damageSource = player.damageSources().source(ModDamageTypes.INFINITY, victim, player);
             ToolUtils.sweepAttack(serverLevel, player, victim);//横扫
             if (victim instanceof EnderDragon dragon ) {
                 victim.setInvulnerable(false);//取消无敌
-                dragon.hurt(dragon.head, player.damageSources().source(ModDamageTypes.INFINITY, player, victim), endlessDamage ? Float.MAX_VALUE : ModToolTiers.INFINITY_SWORD.getAttackDamageBonus());
+                dragon.hurt(dragon.head, damageSource, endlessDamage ? Float.MAX_VALUE : ModToolTiers.INFINITY_SWORD.getAttackDamageBonus());
             } else if (victim instanceof Player pvp) {
                 if (ToolUtils.isInfinite(pvp)) {
                     // 玩家身着无尽甲则只造成爆炸伤害
-                    serverLevel.explode(player, pvp.getBlockX(), pvp.getBlockY(), pvp.getBlockZ(), 25.0f, Level.ExplosionInteraction.MOB);
+                    serverLevel.explode(player, pvp.getBlockX(), pvp.getBlockY(), pvp.getBlockZ(), 25.0F, Level.ExplosionInteraction.MOB);
                     return true;//直接返回
                 } else {
                     victim.setInvulnerable(false);
-                    victim.hurt(player.damageSources().source(ModDamageTypes.INFINITY, player, victim), endlessDamage ? Float.MAX_VALUE : ModToolTiers.INFINITY_SWORD.getAttackDamageBonus());
+                    victim.hurt(damageSource, endlessDamage ? Float.MAX_VALUE : ModToolTiers.INFINITY_SWORD.getAttackDamageBonus());
                 }
 
             } else {
                 victim.setInvulnerable(false);
-                victim.hurt(player.damageSources().source(ModDamageTypes.INFINITY, player, victim), endlessDamage ? Float.MAX_VALUE : ModToolTiers.INFINITY_SWORD.getAttackDamageBonus());
+                victim.hurt(damageSource, endlessDamage ? Float.MAX_VALUE : ModToolTiers.INFINITY_SWORD.getAttackDamageBonus());
             }
 
             if (endlessDamage) {
                 if (victim.isAlive() && victim instanceof LivingEntity livingEntity) {
                     livingEntity.kill();//修正死亡
-                    livingEntity.dropAllDeathLoot(livingEntity.damageSources().source(ModDamageTypes.INFINITY, victim, player));
+                    livingEntity.dropAllDeathLoot(damageSource);
                     player.killedEntity(serverLevel, livingEntity);
                     serverLevel.broadcastEntityEvent(livingEntity, (byte)3);
                 }
@@ -85,35 +86,36 @@ public class InfinitySwordItem extends SwordItem implements IMultiFunction, Init
         var level = livingEntity.level();
         var endlessDamage = ModConfig.isSwordAttackEndless.get();
         if (!level.isClientSide && livingEntity instanceof Player player && level instanceof ServerLevel serverLevel) {
+            var damageSource = player.damageSources().source(ModDamageTypes.INFINITY, livingEntity, victim);
             ToolUtils.sweepAttack(level, livingEntity, victim);//横扫
             if (victim instanceof EnderDragon dragon ) {
                 victim.setInvulnerable(false);//取消无敌
-                dragon.hurt(dragon.head, player.damageSources().source(ModDamageTypes.INFINITY, player, victim), endlessDamage ? Float.MAX_VALUE : ModToolTiers.INFINITY_SWORD.getAttackDamageBonus());
+                dragon.hurt(dragon.head, damageSource, endlessDamage ? Float.MAX_VALUE : ModToolTiers.INFINITY_SWORD.getAttackDamageBonus());
             } else if (victim instanceof Player pvp) {
                 if (ToolUtils.isInfinite(pvp)) {
                     // 玩家身着无尽甲则只造成爆炸伤害
-                    pvp.level().explode(livingEntity, pvp.getBlockX(), pvp.getBlockY(), pvp.getBlockZ(), 25.0f, Level.ExplosionInteraction.MOB);
+                    pvp.level().explode(livingEntity, pvp.getBlockX(), pvp.getBlockY(), pvp.getBlockZ(), 25.0F, Level.ExplosionInteraction.MOB);
                     return true;//直接返回
                 } else {
                     victim.setInvulnerable(false);
-                    victim.hurt(livingEntity.damageSources().source(ModDamageTypes.INFINITY, livingEntity, victim), endlessDamage ? Float.MAX_VALUE : ModToolTiers.INFINITY_SWORD.getAttackDamageBonus());
+                    victim.hurt(damageSource, endlessDamage ? Float.MAX_VALUE : ModToolTiers.INFINITY_SWORD.getAttackDamageBonus());
                 }
 
             } else {
                 victim.setInvulnerable(false);
-                victim.hurt(livingEntity.damageSources().source(ModDamageTypes.INFINITY, livingEntity, victim), endlessDamage ? Float.MAX_VALUE : ModToolTiers.INFINITY_SWORD.getAttackDamageBonus());
+                victim.hurt(damageSource, endlessDamage ? Float.MAX_VALUE : ModToolTiers.INFINITY_SWORD.getAttackDamageBonus());
             }
 
             victim.lastHurtByPlayerTime = 60;
-            victim.getCombatTracker().recordDamage(livingEntity.damageSources().source(ModDamageTypes.INFINITY, livingEntity, victim), victim.getHealth());
+            victim.getCombatTracker().recordDamage(damageSource, victim.getHealth());
 
 
             if (endlessDamage) {
                 victim.setHealth(0);//设置血量为零
-                victim.die(livingEntity.damageSources().source(ModDamageTypes.INFINITY, livingEntity, victim));//设置死亡
+                victim.die(damageSource);//设置死亡
                 if (victim.isAlive()) {
                     livingEntity.kill();//修正死亡
-                    livingEntity.dropAllDeathLoot(livingEntity.damageSources().source(ModDamageTypes.INFINITY, livingEntity, victim));
+                    livingEntity.dropAllDeathLoot(damageSource);
                     player.killedEntity(serverLevel, victim);
                     serverLevel.broadcastEntityEvent(victim, (byte)3);
                 }
