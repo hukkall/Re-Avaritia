@@ -4,6 +4,7 @@ import dev.latvian.mods.kubejs.item.InputItem;
 import dev.latvian.mods.kubejs.recipe.RecipeJS;
 import dev.latvian.mods.kubejs.recipe.RecipeKey;
 import dev.latvian.mods.kubejs.recipe.component.ItemComponents;
+import dev.latvian.mods.kubejs.recipe.component.StringComponent;
 import dev.latvian.mods.kubejs.recipe.schema.RecipeSchema;
 
 /**
@@ -14,6 +15,7 @@ import dev.latvian.mods.kubejs.recipe.schema.RecipeSchema;
  */
 
 public interface InfinityCatalystRecipeSchema {
+    RecipeKey<String> GROUP = StringComponent.NON_EMPTY.key("group").optional("default");
     RecipeKey<InputItem[]> INGREDIENTS = ItemComponents.INPUT_ARRAY.key("ingredients");
-    RecipeSchema SCHEMA = new RecipeSchema(RecipeJS.class, RecipeJS::new, INGREDIENTS);
+    RecipeSchema SCHEMA = new RecipeSchema(RecipeJS.class, RecipeJS::new, GROUP, INGREDIENTS);
 }

@@ -1,5 +1,6 @@
-package committee.nova.mods.avaritia.init.event;
+package committee.nova.mods.avaritia.api.init.event;
 
+import committee.nova.mods.avaritia.api.Lib;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.crafting.Recipe;
@@ -26,14 +27,14 @@ public class RegisterRecipesEvent extends Event {
                 );
                 recipeManager.recipes = newRecipes;
             } catch (Exception e) {
-                System.err.println("Failed to convert recipes: " + e.getMessage());
+                Lib.LOGGER.error("Failed to convert recipes: {}", e.getMessage());
             }
         }
         if (!(recipeManager.byName instanceof HashMap)) {
             try {
                 recipeManager.byName = new HashMap<>(recipeManager.byName);
             } catch (Exception e) {
-                System.err.println("Failed to convert byName: " + e.getMessage());
+                Lib.LOGGER.error("Failed to convert byName: {}", e.getMessage());
             }
         }
         return recipeManager;
@@ -53,7 +54,7 @@ public class RegisterRecipesEvent extends Event {
             manager.recipes = newRecipes;
             manager.byName = newByName;
         } catch (Exception e) {
-            System.err.println("Failed to add recipe: " + e.getMessage());
+            Lib.LOGGER.error("Failed to add recipe: {}", e.getMessage());
         }
     }
 

@@ -157,25 +157,25 @@ public class InfinityCatalystCraftRecipe implements BaseTableCraftingRecipe {
     public static class Serializer implements RecipeSerializer<InfinityCatalystCraftRecipe> {
         @Override
         public @NotNull InfinityCatalystCraftRecipe fromJson(@NotNull ResourceLocation recipeId, @NotNull JsonObject json) {
-            String s = GsonHelper.getAsString(json, "group", "");
+            String group1 = GsonHelper.getAsString(json, "group", "");
             NonNullList<Ingredient> inputs = NonNullList.create();
             var ingredients = GsonHelper.getAsJsonArray(json, "ingredients");
             for (int i = 0; i < ingredients.size(); i++) {
                 inputs.add(Ingredient.fromJson(ingredients.get(i)));
             }
-            return new InfinityCatalystCraftRecipe(recipeId, s, inputs);
+            return new InfinityCatalystCraftRecipe(recipeId, group1, inputs);
         }
 
         @Override
         public InfinityCatalystCraftRecipe fromNetwork(@NotNull ResourceLocation recipeId, @NotNull FriendlyByteBuf buffer) {
-            String s = buffer.readUtf();
+            String group = buffer.readUtf();
             int size = buffer.readVarInt();
             var inputs = NonNullList.withSize(size, Ingredient.EMPTY);
 
             for (int i = 0; i < size; ++i) {
                 inputs.set(i, Ingredient.fromNetwork(buffer));
             }
-            return new InfinityCatalystCraftRecipe(recipeId, s, inputs);
+            return new InfinityCatalystCraftRecipe(recipeId, group, inputs);
         }
 
         @Override
