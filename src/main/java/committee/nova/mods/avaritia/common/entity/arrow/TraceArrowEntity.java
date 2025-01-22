@@ -1,5 +1,6 @@
 package committee.nova.mods.avaritia.common.entity.arrow;
 
+import committee.nova.mods.avaritia.api.utils.NBTUtils;
 import committee.nova.mods.avaritia.init.registry.ModEntities;
 import committee.nova.mods.avaritia.util.ToolUtils;
 import net.minecraft.core.BlockPos;
@@ -263,9 +264,6 @@ public class TraceArrowEntity extends Arrow {
     }
 
 
-
-
-
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
@@ -276,7 +274,6 @@ public class TraceArrowEntity extends Arrow {
         if (this.getJumpCount() > 0) {
             compound.putInt("jump_count", this.entityData.get(JUMP_COUNT));
         }
-
     }
 
     @Override
@@ -285,11 +282,9 @@ public class TraceArrowEntity extends Arrow {
         if (compound.contains("spectral_time")) {
             this.setSpectral(compound.getInt("spectral_time"));
         }
-
         if (compound.contains("jump_count")) {
             this.setJumpCount(compound.getInt("jump_count"));
         }
-
     }
 
     @Override

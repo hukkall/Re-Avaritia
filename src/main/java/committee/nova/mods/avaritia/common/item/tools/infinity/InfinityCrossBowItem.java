@@ -27,8 +27,6 @@ import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.FireworkRocketEntity;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.*;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
@@ -51,9 +49,8 @@ public class InfinityCrossBowItem extends CrossbowItem implements ITooltip {
     public static final Predicate<ItemStack> ARROWS = (stack) ->
             stack.is(ItemTags.ARROWS) || stack.getItem() == Items.FIREWORK_ROCKET;
 
-    private boolean isLoadingStart = false;
-
-    private boolean isLoadingMiddle = false;
+    private boolean startSoundPlayed = false;
+    private boolean midLoadSoundPlayed = false;
 
     public InfinityCrossBowItem() {
         super(new Properties()
@@ -80,8 +77,7 @@ public class InfinityCrossBowItem extends CrossbowItem implements ITooltip {
             else {
                 for (NonNullList<ItemStack> e : player.getInventory().compartments) {
                     for (ItemStack stack1 : e) {
-                        if (stack1.is(Items.ARROW)) return stack1;
-                        if (stack1.getItem() == Items.FIREWORK_ROCKET) return stack1;
+                        if (stack1.is(Items.ARROW) || stack1.is(Items.FIREWORK_ROCKET)) return stack1;
                     }
                 }
                 return player.isCreative() ? new ItemStack(Items.ARROW) : ItemStack.EMPTY;
@@ -108,7 +104,7 @@ public class InfinityCrossBowItem extends CrossbowItem implements ITooltip {
         return stack.getItem() == Items.CROSSBOW && containsChargedProjectile(stack, Items.FIREWORK_ROCKET) ? 1.6F : 3.15F;
     }
 
-    public static void fireProjectiles(Level worldIn, LivingEntity shooter, ItemStack stack, float velocityIn, float inaccuracyIn) {
+    public static void performShooting(Level worldIn, LivingEntity shooter, ItemStack stack, float velocityIn, float inaccuracyIn) {
         List<ItemStack> list = getChargedProjectiles(stack);
         float[] afloat = getRandomSoundPitches(shooter.random); //声音大小
 
@@ -371,24 +367,45 @@ public class InfinityCrossBowItem extends CrossbowItem implements ITooltip {
     public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand hand) {
         ItemStack itemstack = player.getItemInHand(hand);
         if (isCharged(itemstack)) { //弹药以装填
-            fireProjectiles(level, player, itemstack, getSpeed(itemstack), 1.0F);
+            performShooting(level, player, itemstack, getSpeed(itemstack), 1.0F);
             setCharged(itemstack, false);
             return InteractionResultHolder.consume(itemstack);
-        } else if (!findArrow(player).isEmpty()) { //玩家有弹药
-            if (!isCharged(itemstack)) {
-                this.isLoadingStart = false;
-                this.isLoadingMiddle = false;
+        } else if (!findArrow(player).isEmpty() && !isCharged(itemstack)) { //玩家有弹药
+                this.startSoundPlayed = false;
+                this.midLoadSoundPlayed = false;
                 player.startUsingItem(hand);
-            }
             return InteractionResultHolder.consume(itemstack);
         } else if (findArrow(player).isEmpty() && !isCharged(itemstack)) { //无弹药依然触发装填
-            this.isLoadingStart = false;
-            this.isLoadingMiddle = false;
+            this.startSoundPlayed = false;
+            this.midLoadSoundPlayed = false;
             player.startUsingItem(hand);
             return InteractionResultHolder.consume(itemstack);
         } else {
             return InteractionResultHolder.fail(itemstack);
         }
+    }
+
+    @Override
+    public void onUseTick(Level pLevel, @NotNull LivingEntity pLivingEntity, @NotNull ItemStack pStack, int pCount) {
+        if (!pLevel.isClientSide) {
+            SoundEvent soundevent1 = SoundEvents.CROSSBOW_LOADING_MIDDLE;
+            float f = (float)(pStack.getUseDuration() - pCount) / getChargeTime();
+            if (f < 0.2F) {
+                this.startSoundPlayed = false;
+                this.midLoadSoundPlayed = false;
+            }
+
+            if (f >= 0.2F && !this.startSoundPlayed) {
+                this.startSoundPlayed = true;
+                pLevel.playSound(null, pLivingEntity.getX(), pLivingEntity.getY(), pLivingEntity.getZ(), soundevent1, SoundSource.PLAYERS, 0.5F, 1.0F);
+            }
+
+            if (f >= 0.5F && !this.midLoadSoundPlayed) {
+                this.midLoadSoundPlayed = true;
+                pLevel.playSound(null, pLivingEntity.getX(), pLivingEntity.getY(), pLivingEntity.getZ(), soundevent1, SoundSource.PLAYERS, 0.5F, 1.0F);
+            }
+        }
+
     }
 
     @Override
