@@ -42,7 +42,7 @@ public class BlazeSwordItem extends SwordItem implements ITooltip, ISwitchable, 
     private final String name;
 
     public BlazeSwordItem(String name) {
-        super(ModToolTiers.BLAZE_SWORD, 0, 0f,
+        super(ModToolTiers.BLAZE, 0, 0f,
                 new Properties()
                         .rarity(ModRarities.EPIC)
                         .stacksTo(1)

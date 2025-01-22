@@ -57,7 +57,6 @@ public class CraftingTable implements IRecipeManager<BaseTableCraftingRecipe> {
                 var ing = iing.asVanillaIngredient();
                 int i = a * width + b;
                 ingredients.set(i, ing);
-
             }
         }
 

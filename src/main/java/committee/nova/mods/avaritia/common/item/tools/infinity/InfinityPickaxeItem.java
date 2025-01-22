@@ -13,9 +13,11 @@ import committee.nova.mods.avaritia.util.ToolUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -28,9 +30,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.PickaxeItem;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -48,7 +52,7 @@ import java.util.List;
 public class InfinityPickaxeItem extends PickaxeItem implements InitEnchantItem, IFilterItem {
 
     public InfinityPickaxeItem() {
-        super(ModToolTiers.INFINITY_PICKAXE, 0, 0F, (new Properties())
+        super(ModToolTiers.INFINITY, -50, 0F, (new Properties())
                 .rarity(ModRarities.COSMIC)
                 .stacksTo(1)
                 .fireResistant());
@@ -115,7 +119,6 @@ public class InfinityPickaxeItem extends PickaxeItem implements InitEnchantItem,
         return true;
     }
 
-
     @Override
     public boolean onBlockStartBreak(ItemStack stack, BlockPos pos, Player player) {
         var world = player.level();
@@ -125,6 +128,7 @@ public class InfinityPickaxeItem extends PickaxeItem implements InitEnchantItem,
         }
         return false;
     }
+
 
 
     @Override

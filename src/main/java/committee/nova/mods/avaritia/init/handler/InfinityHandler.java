@@ -7,15 +7,16 @@ import committee.nova.mods.avaritia.common.item.MatterClusterItem;
 import committee.nova.mods.avaritia.common.item.tools.infinity.*;
 import committee.nova.mods.avaritia.common.net.S2CTotemPacket;
 import committee.nova.mods.avaritia.init.config.ModConfig;
+import committee.nova.mods.avaritia.init.registry.ModBlocks;
 import committee.nova.mods.avaritia.init.registry.ModDamageTypes;
 import committee.nova.mods.avaritia.init.registry.ModItems;
-import committee.nova.mods.avaritia.init.registry.ModToolTiers;
 import committee.nova.mods.avaritia.util.ToolUtils;
 import committee.nova.mods.avaritia.api.utils.lang.TextUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -31,6 +32,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraftforge.api.distmarker.Dist;
@@ -75,21 +77,56 @@ public class InfinityHandler {
 
     @SubscribeEvent
     public static void onPlayerMine(PlayerInteractEvent.LeftClickBlock event) {
+        ItemStack item = event.getItemStack();
+        Level level = event.getLevel();
+        BlockPos pos = event.getPos();
+        BlockState state = level.getBlockState(pos);
         if (event.getFace() == null || event.getLevel().isClientSide || event.getItemStack().isEmpty() || event.getEntity().isCreative()) {
             return;
         }
-        Level world = event.getLevel();
-        BlockPos pos = event.getPos();
-        BlockState state = world.getBlockState(pos);
-        if (event.getItemStack().getItem() == ModItems.infinity_pickaxe.get()) {
-            if (state.getDestroySpeed(world, event.getPos()) <= -1 || state.getMapColor(world, pos) == MapColor.STONE || state.getMapColor(world, pos) == MapColor.METAL) {
-                if (event.getItemStack().getOrCreateTag().getBoolean("hammer")) {
-                    ModItems.infinity_pickaxe.get().onBlockStartBreak(event.getEntity().getMainHandItem(), event.getPos(), event.getEntity());
-                }
-            }
 
+        if (item.is(ModItems.crystal_pickaxe.get()) || item.is(ModItems.infinity_pickaxe.get())){
+            if (state.is(Blocks.BEDROCK)) {
+                level.setBlock(pos, ModBlocks.fake_bedrock.get().defaultBlockState(), 2);
+            } else if (state.is(Blocks.END_PORTAL_FRAME)) {
+                level.setBlock(pos, ModBlocks.fake_end_portal_frame.get().defaultBlockState(), 2);
+            } else if (state.is(Blocks.REINFORCED_DEEPSLATE)) {
+                level.setBlock(pos, ModBlocks.fake_reinforced_deepslate.get().defaultBlockState(), 2);
+            }
         }
 
+        if (!(item.is(ModItems.crystal_pickaxe.get()) || item.is(ModItems.infinity_pickaxe.get()))){
+            if (state.is(ModBlocks.fake_bedrock.get())) {
+                level.setBlock(pos, Blocks.BEDROCK.defaultBlockState(), 2);
+            } else if (state.is(ModBlocks.fake_end_portal_frame.get())) {
+                level.setBlock(pos, Blocks.END_PORTAL_FRAME.defaultBlockState(), 2);
+            } else if (state.is(ModBlocks.fake_reinforced_deepslate.get())) {
+                level.setBlock(pos, Blocks.REINFORCED_DEEPSLATE.defaultBlockState(), 2);
+            }
+        }
+
+        if (event.getItemStack().getItem() == ModItems.infinity_pickaxe.get()) {
+            if (state.getDestroySpeed(level, event.getPos()) <= -1 || state.getMapColor(level, pos) == MapColor.STONE || state.getMapColor(level, pos) == MapColor.METAL) {
+                if (event.getItemStack().getOrCreateTag().getBoolean("hammer")) {
+                    ModItems.infinity_pickaxe.get().onBlockStartBreak(item, event.getPos(), event.getEntity());
+                }
+            }
+        }
+
+    }
+    @SubscribeEvent
+    public static void onPlayerMine(BlockEvent.BreakEvent event) {
+        if (event.getLevel().isClientSide()) return;
+        var level = (ServerLevel) event.getLevel();
+        BlockPos pos = event.getPos();
+        BlockState state = event.getState();
+        if (state.is(ModBlocks.fake_bedrock.get())) {
+            Block.popResource(level, pos, Blocks.BEDROCK.asItem().getDefaultInstance());
+        } else if (state.is(ModBlocks.fake_end_portal_frame.get())) {
+            Block.popResource(level, pos, Blocks.END_PORTAL_FRAME.asItem().getDefaultInstance());
+        } else if (state.is(ModBlocks.fake_reinforced_deepslate.get())) {
+            Block.popResource(level, pos, Blocks.REINFORCED_DEEPSLATE.asItem().getDefaultInstance());
+        }
     }
 
     @SubscribeEvent
@@ -156,11 +193,11 @@ public class InfinityHandler {
     @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
     public static void onTooltip(ItemTooltipEvent event) {
-        if (ModConfig.isSwordAttackEndless.get() && event.getItemStack().getItem() instanceof InfinitySwordItem) {
+        if (ModConfig.isSwordAttackEndless.get() && event.getItemStack().getItem() instanceof InfinitySwordItem swordItem) {
             for (int x = 0; x < event.getToolTip().size(); x++) {
                 if (event.getToolTip().get(x).getString().contains(I18n.get("attribute.name.generic.attack_damage"))) {
                     var endlessDamage = ModConfig.isSwordAttackEndless.get();
-                    event.getToolTip().set(x, Component.literal(endlessDamage ? TextUtils.makeFabulous(I18n.get("tooltip.infinity")) : String.valueOf(ModToolTiers.INFINITY_SWORD.getAttackDamageBonus())).append(" ").append(Component.translatable("tooltip.infinity.desc").withStyle(ChatFormatting.DARK_GREEN)));
+                    event.getToolTip().set(x, Component.literal(endlessDamage ? TextUtils.makeFabulous(I18n.get("tooltip.infinity")) : String.valueOf(swordItem.getTier().getAttackDamageBonus())).append(" ").append(Component.translatable("tooltip.infinity.desc").withStyle(ChatFormatting.DARK_GREEN)));
                     return;
                 }
             }
@@ -300,5 +337,4 @@ public class InfinityHandler {
         entity.setDefaultPickUpDelay();
         event.getDrops().add(entity);
     }
-
 }

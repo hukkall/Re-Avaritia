@@ -37,7 +37,7 @@ import java.util.List;
  */
 public class InfinitySwordItem extends SwordItem implements IMultiFunction, InitEnchantItem {
     public InfinitySwordItem() {
-        super(ModToolTiers.INFINITY_SWORD, 0, 0F, (new Properties())
+        super(ModToolTiers.INFINITY, 900, 0F, (new Properties())
                 .rarity(ModRarities.COSMIC)
                 .stacksTo(1)
                 .fireResistant());
@@ -52,7 +52,7 @@ public class InfinitySwordItem extends SwordItem implements IMultiFunction, Init
             ToolUtils.sweepAttack(serverLevel, player, victim);//横扫
             if (victim instanceof EnderDragon dragon ) {
                 victim.setInvulnerable(false);//取消无敌
-                dragon.hurt(dragon.head, damageSource, endlessDamage ? Float.MAX_VALUE : ModToolTiers.INFINITY_SWORD.getAttackDamageBonus());
+                dragon.hurt(dragon.head, damageSource, endlessDamage ? Float.MAX_VALUE : this.getTier().getAttackDamageBonus());
             } else if (victim instanceof Player pvp) {
                 if (ToolUtils.isInfinite(pvp)) {
                     // 玩家身着无尽甲则只造成爆炸伤害
@@ -60,12 +60,12 @@ public class InfinitySwordItem extends SwordItem implements IMultiFunction, Init
                     return true;//直接返回
                 } else {
                     victim.setInvulnerable(false);
-                    victim.hurt(damageSource, endlessDamage ? Float.MAX_VALUE : ModToolTiers.INFINITY_SWORD.getAttackDamageBonus());
+                    victim.hurt(damageSource, endlessDamage ? Float.MAX_VALUE : this.getTier().getAttackDamageBonus());
                 }
 
             } else {
                 victim.setInvulnerable(false);
-                victim.hurt(damageSource, endlessDamage ? Float.MAX_VALUE : ModToolTiers.INFINITY_SWORD.getAttackDamageBonus());
+                victim.hurt(damageSource, endlessDamage ? Float.MAX_VALUE : this.getTier().getAttackDamageBonus());
             }
 
             if (endlessDamage) {
@@ -90,7 +90,7 @@ public class InfinitySwordItem extends SwordItem implements IMultiFunction, Init
             ToolUtils.sweepAttack(level, livingEntity, victim);//横扫
             if (victim instanceof EnderDragon dragon ) {
                 victim.setInvulnerable(false);//取消无敌
-                dragon.hurt(dragon.head, damageSource, endlessDamage ? Float.MAX_VALUE : ModToolTiers.INFINITY_SWORD.getAttackDamageBonus());
+                dragon.hurt(dragon.head, damageSource, endlessDamage ? Float.MAX_VALUE : this.getTier().getAttackDamageBonus());
             } else if (victim instanceof Player pvp) {
                 if (ToolUtils.isInfinite(pvp)) {
                     // 玩家身着无尽甲则只造成爆炸伤害
@@ -98,12 +98,12 @@ public class InfinitySwordItem extends SwordItem implements IMultiFunction, Init
                     return true;//直接返回
                 } else {
                     victim.setInvulnerable(false);
-                    victim.hurt(damageSource, endlessDamage ? Float.MAX_VALUE : ModToolTiers.INFINITY_SWORD.getAttackDamageBonus());
+                    victim.hurt(damageSource, endlessDamage ? Float.MAX_VALUE : this.getTier().getAttackDamageBonus());
                 }
 
             } else {
                 victim.setInvulnerable(false);
-                victim.hurt(damageSource, endlessDamage ? Float.MAX_VALUE : ModToolTiers.INFINITY_SWORD.getAttackDamageBonus());
+                victim.hurt(damageSource, endlessDamage ? Float.MAX_VALUE : this.getTier().getAttackDamageBonus());
             }
 
             victim.lastHurtByPlayerTime = 60;

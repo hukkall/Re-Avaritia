@@ -38,7 +38,7 @@ public class BlazeAxeItem extends AxeItem implements ITooltip, ISwitchable, Init
     private final String name;
 
     public BlazeAxeItem(String name) {
-        super(ModToolTiers.BLAZE_AXE, 0, 0f,
+        super(ModToolTiers.BLAZE, 10, -10f,
                 new Properties()
                         .rarity(ModRarities.EPIC)
                         .stacksTo(1)

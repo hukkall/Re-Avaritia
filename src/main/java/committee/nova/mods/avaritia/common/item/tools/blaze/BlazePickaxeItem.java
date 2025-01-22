@@ -38,7 +38,7 @@ public class BlazePickaxeItem extends PickaxeItem implements ITooltip, ISwitchab
     private final String name;
 
     public BlazePickaxeItem(String name) {
-        super(ModToolTiers.BLAZE_PICKAXE, 0, 0f,
+        super(ModToolTiers.BLAZE, -10, 0f,
                 new Properties()
                         .rarity(ModRarities.EPIC)
                         .stacksTo(1)

@@ -44,7 +44,7 @@ import org.jetbrains.annotations.Nullable;
 public class InfinityHoeItem extends HoeItem {
 
     public InfinityHoeItem() {
-        super(ModToolTiers.INFINITY_HOE, 0, 0f, (new Properties())
+        super(ModToolTiers.INFINITY, -50, 0f, (new Properties())
                 .rarity(ModRarities.COSMIC)
                 .stacksTo(1)
                 .fireResistant());

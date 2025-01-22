@@ -115,7 +115,7 @@ public class ToolUtils {
      * @param pos      点击坐标
      * @param heldItem 手中工具
      */
-    private static void destroy(ServerLevel world, Player player, BlockPos pos, ItemStack heldItem) {
+    public static void destroy(ServerLevel world, Player player, BlockPos pos, ItemStack heldItem) {
         if (heldItem != null) {
             heldItem.getItem().mineBlock(heldItem, world, world.getBlockState(pos), pos, player);
             world.destroyBlock(pos, true);

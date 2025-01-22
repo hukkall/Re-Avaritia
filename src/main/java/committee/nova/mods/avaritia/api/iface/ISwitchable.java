@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
  * @Project: Avaritia
  * @Author: cnlimiter
  * @CreateTime: 2024/11/4 00:16
- * @Description:
+ * @Description: 切换状态
  */
 public interface ISwitchable {
     default boolean isActive(ItemStack stack) {

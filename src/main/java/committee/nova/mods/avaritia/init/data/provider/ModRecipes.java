@@ -80,20 +80,29 @@ public class ModRecipes extends RecipeProvider implements IConditionBuilder {
                 .unlockedBy("", lul).save(consumer);
 
         ModShapedRecipeBuilder.shaped(RecipeCategory.MISC, Blocks.CRYING_OBSIDIAN, 1)
-                .pattern(" a ")
-                .pattern("a a")
-                .pattern(" a ")
+                .pattern("bab")
+                .pattern("aba")
+                .pattern("bab")
                 .define('a', Blocks.AMETHYST_BLOCK)
+                .define('a', Blocks.OBSIDIAN)
                 .unlockedBy("", lul).save(consumer);
 
-//        ModShapedRecipeBuilder.shaped(RecipeCategory.MISC, Blocks.CRYING_OBSIDIAN, 1)
-//                .pattern("cac")
-//                .pattern("aba")
-//                .pattern("cac")
-//                .define('a', Blocks.SOUL_SOIL)
-//                .define('b', Blocks.AMETHYST_BLOCK)
-//                .define('c', Items.AMETHYST_CLUSTER)
-//                .unlockedBy("", lul).save(consumer);
+        ModShapedRecipeBuilder.shaped(RecipeCategory.MISC, Blocks.BUDDING_AMETHYST, 1)
+                .pattern("cac")
+                .pattern("aba")
+                .pattern("cac")
+                .define('a', Blocks.SOUL_SOIL)
+                .define('b', Blocks.AMETHYST_BLOCK)
+                .define('c', Items.AMETHYST_CLUSTER)
+                .unlockedBy("", lul).save(consumer);
+
+        ModShapedRecipeBuilder.shaped(RecipeCategory.MISC, Blocks.DEEPSLATE_GOLD_ORE, 1)
+                .pattern(" a ")
+                .pattern("aba")
+                .pattern(" a ")
+                .define('a', Items.GOLD_NUGGET)
+                .define('b', Blocks.BLACKSTONE)
+                .unlockedBy("", lul).save(consumer);
 
         ModShapedRecipeBuilder.shaped(RecipeCategory.MISC, Blocks.COBWEB, 1)
                 .pattern("a a")
@@ -115,6 +124,34 @@ public class ModRecipes extends RecipeProvider implements IConditionBuilder {
                 .pattern("a a")
                 .pattern(" a ")
                 .define('a', Items.END_CRYSTAL)
+                .unlockedBy("", lul).save(consumer);
+
+        ModShapedRecipeBuilder.shaped(RecipeCategory.MISC, Items.SPORE_BLOSSOM, 1)
+                .pattern("aba")
+                .pattern("bcb")
+                .pattern("aba")
+                .define('a', Items.BONE_MEAL)
+                .define('b', Items.PINK_PETALS)
+                .define('c', Items.TORCHFLOWER_SEEDS)
+                .unlockedBy("", lul).save(consumer);
+
+        ModShapedRecipeBuilder.shaped(RecipeCategory.MISC, Items.DRAGON_HEAD, 1)
+                .pattern(" a ")
+                .pattern("bcb")
+                .pattern(" b ")
+                .define('a', Items.WITHER_SKELETON_SKULL)
+                .define('b', Items.END_CRYSTAL)
+                .define('c', Items.DRAGON_EGG)
+                .unlockedBy("", lul).save(consumer);
+
+        ModShapedRecipeBuilder.shaped(RecipeCategory.MISC, Items.TRIDENT, 1)
+                .pattern(" ba")
+                .pattern(" cb")
+                .pattern("d  ")
+                .define('a', Items.NAUTILUS_SHELL)
+                .define('b', Items.PRISMARINE_CRYSTALS)
+                .define('c', Items.HEART_OF_THE_SEA)
+                .define('d', Items.PRISMARINE_SHARD)
                 .unlockedBy("", lul).save(consumer);
 
         ModShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.diamond_lattice.get(), 1)

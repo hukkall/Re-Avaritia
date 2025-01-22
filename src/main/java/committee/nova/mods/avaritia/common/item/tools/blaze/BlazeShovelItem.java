@@ -37,7 +37,7 @@ public class BlazeShovelItem extends ShovelItem implements ITooltip, ISwitchable
     private final String name;
 
     public BlazeShovelItem(String name) {
-        super(ModToolTiers.BLAZE_SHOVEL, 0, 0f,
+        super(ModToolTiers.BLAZE, -15, 15f,
                 new Properties()
                         .rarity(ModRarities.EPIC)
                         .stacksTo(1)

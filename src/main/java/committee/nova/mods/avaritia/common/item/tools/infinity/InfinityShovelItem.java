@@ -38,7 +38,7 @@ import org.jetbrains.annotations.Nullable;
 public class InfinityShovelItem extends ShovelItem {
 
     public InfinityShovelItem() {
-        super(ModToolTiers.INFINITY_SHOVEL, 0, 0f, (new Properties())
+        super(ModToolTiers.INFINITY, 0, -50f, (new Properties())
                 .rarity(ModRarities.COSMIC)
                 .stacksTo(1)
                 .fireResistant());

@@ -35,6 +35,7 @@ ServerEvents.recipes(
         // 更改无尽催化剂的配方
         // 由于自定义奇点的存在，无尽催化剂的配方是根据加载的奇点动态变化的，你可以自定义添加除奇点以外的物品，且此配方类型只能产出无尽催化剂，更改 result 无法更改產出物。
         avaritia.infinity_catalyst(
+            'default',
             [
                 "minecraft:emerald_block",
                 "avaritia:crystal_matrix_ingot",
@@ -42,7 +43,7 @@ ServerEvents.recipes(
                 "avaritia:cosmic_meatballs",
                 "avaritia:ultimate_stew",
                 "avaritia:endest_pearl",
-                "avaritia:record_fragment",
+                "avaritia:record_fragment"
             ]
         );
 
@@ -89,6 +90,7 @@ ServerEvents.recipes(
         })
         event.custom({
             type: 'avaritia:infinity_catalyst',
+            group: 'default',
             ingredients: [
                 "minecraft:emerald_block",
                 "avaritia:crystal_matrix_ingot",
