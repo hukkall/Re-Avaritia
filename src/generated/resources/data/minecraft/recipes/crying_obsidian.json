@@ -4,12 +4,15 @@
   "key": {
     "a": {
       "item": "minecraft:amethyst_block"
+    },
+    "b": {
+      "item": "minecraft:obsidian"
     }
   },
   "pattern": [
-    " a ",
-    "a a",
-    " a "
+    "bab",
+    "aba",
+    "bab"
   ],
   "result": {
     "item": "minecraft:crying_obsidian"

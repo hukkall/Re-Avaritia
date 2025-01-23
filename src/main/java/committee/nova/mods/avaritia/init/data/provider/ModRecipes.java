@@ -84,7 +84,7 @@ public class ModRecipes extends RecipeProvider implements IConditionBuilder {
                 .pattern("aba")
                 .pattern("bab")
                 .define('a', Blocks.AMETHYST_BLOCK)
-                .define('a', Blocks.OBSIDIAN)
+                .define('b', Blocks.OBSIDIAN)
                 .unlockedBy("", lul).save(consumer);
 
         ModShapedRecipeBuilder.shaped(RecipeCategory.MISC, Blocks.BUDDING_AMETHYST, 1)
@@ -343,6 +343,15 @@ public class ModRecipes extends RecipeProvider implements IConditionBuilder {
                 .unlockedBy("has_item", has(ModItems.upgrade_smithing_template.get()))
                 .save(consumer);
 
+        ModExtremeSmithingRecipeBuilder.smithing(
+                        Ingredient.of(ModItems.upgrade_smithing_template.get()),
+                        Ingredient.of(Items.ANVIL),
+                        CompoundIngredient.of(Ingredient.of(ModItems.matter_cluster.get()), Ingredient.of(ModBlocks.neutron.get()), Ingredient.of(ModItems.enhancement_core.get())),
+                        RecipeCategory.MISC,
+                        ModBlocks.extreme_anvil.get().asItem())
+                .unlockedBy("has_item", has(ModItems.upgrade_smithing_template.get()))
+                .save(consumer);
+
         ModShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS, ModItems.cosmic_meatballs.get())
                 .requires(Items.PORKCHOP)
                 .requires(Items.BEEF)
@@ -402,6 +411,31 @@ public class ModRecipes extends RecipeProvider implements IConditionBuilder {
 
         ModEternalRecipeBuilder.shapeless(RecipeCategory.MISC)
                 .unlockedBy("has_item", has(ModItems.singularity.get())).save(consumer);
+
+        ModShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModBlocks.extreme_smithing_table.get())
+                .pattern("aaaaaaaaa")
+                .pattern("bccfgfccb")
+                .pattern("bcdhhhdcb")
+                .pattern("lfhijihfl")
+                .pattern("eghjkjhge")
+                .pattern("lfhijihfl")
+                .pattern("bcdhhhdcb")
+                .pattern("bccfgfccb")
+                .pattern("bleeeeelb")
+                .define('a', ModBlocks.neutron.get())
+                .define('b', ModItems.neutron_ingot.get())
+                .define('c', ModItems.diamond_lattice.get())
+                .define('d', ModItems.blaze_cube.get())
+                .define('e', ModBlocks.crystal_matrix.get())
+                .define('f', ModItems.infinity_nugget.get())
+                .define('g', ModItems.infinity_ingot.get())
+                .define('h', ModItems.neutron_gear.get())
+                .define('i', ModItems.infinity_catalyst.get())
+                .define('j', Blocks.SMITHING_TABLE)
+                .define('k', ModBlocks.extreme_crafting_table.get())
+                .define('l', ModItems.crystal_matrix_ingot.get())
+                .showNotification(true)
+                .unlockedBy("has_item", has(ModItems.neutron_ingot.get())).save(consumer);
 
         ModShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.endest_pearl.get())
                 .pattern("   EEE   ")
