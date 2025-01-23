@@ -104,13 +104,12 @@ public class ModItems {
         return item(name, (e) -> new BaseItem());
     }
 
+    public static RegistryObject<Item> item(String name, Function<String, Item> item) {
+        return item(name, () -> item.apply(name));
+    }
+
     public static RegistryObject<Item> item(String name, Supplier<Item> item) {
         return ITEMS.register(name, item);
     }
-
-    public static RegistryObject<Item> item(String name, Function<String, Item> item) {
-        return ITEMS.register(name, () -> item.apply(name));
-    }
-
 
 }

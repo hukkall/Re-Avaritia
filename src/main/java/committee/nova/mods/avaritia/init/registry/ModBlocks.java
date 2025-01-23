@@ -1,7 +1,5 @@
 package committee.nova.mods.avaritia.init.registry;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import committee.nova.mods.avaritia.Static;
 import committee.nova.mods.avaritia.common.block.ResourceBlock;
 import committee.nova.mods.avaritia.common.block.cake.EndlessCakeBlock;
@@ -13,21 +11,20 @@ import committee.nova.mods.avaritia.common.block.craft.CompressedCraftTableBlock
 import committee.nova.mods.avaritia.common.block.craft.DoubleCompressedCraftTableBlock;
 import committee.nova.mods.avaritia.common.block.craft.TierCraftTableBlock;
 import committee.nova.mods.avaritia.common.block.extreme.ExtremeAnvilBlock;
-import committee.nova.mods.avaritia.common.block.misc.FakeBlock;
 import committee.nova.mods.avaritia.common.block.misc.SoulFarmLandBlock;
 import committee.nova.mods.avaritia.common.block.extreme.ExtremeSmithingTableBlock;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
+import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.material.PushReaction;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
 import java.util.function.Supplier;
 
 
@@ -71,10 +68,26 @@ public class ModBlocks {
     public static RegistryObject<Block> endless_cake = block("endless_cake", EndlessCakeBlock::new, ModRarities.UNCOMMON);
 
 
-    public static RegistryObject<Block> fake_bedrock = block("fake_bedrock", ()-> new FakeBlock(Blocks.BEDROCK));
-    public static RegistryObject<Block> fake_end_portal_frame = block("fake_end_portal_frame", ()-> new FakeBlock(Blocks.END_PORTAL_FRAME));
-    public static RegistryObject<Block> fake_reinforced_deepslate = block("fake_reinforced_deepslate", ()-> new FakeBlock(Blocks.REINFORCED_DEEPSLATE));
-
+    public static RegistryObject<Block> fake_bedrock = block("fake_bedrock", ()-> new Block(
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE)
+                    .instrument(NoteBlockInstrument.BASEDRUM)
+                    .strength(1000F, 3600000.0F)
+                    .isValidSpawn((state, level, pos, value) -> false)), false);
+    public static RegistryObject<Block> fake_end_portal_frame = block("fake_end_portal_frame", ()-> new EndPortalFrameBlock(
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_GREEN)
+                    .instrument(NoteBlockInstrument.BASEDRUM)
+                    .sound(SoundType.GLASS)
+                    .lightLevel((blockState) -> 1)
+                    .strength(400F, 3600000.0F)), false);
+    public static RegistryObject<Block> fake_end_portal = block("fake_end_portal", () -> new EndPortalBlock(
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_BLACK)
+                    .noCollission()
+                    .lightLevel((state) -> 15)
+                    .strength(400F, 3600000.0F)
+                    .pushReaction(PushReaction.BLOCK)), false);
 
 
     private static RegistryObject<Block> candleBlock(String name, Supplier<Block> block) {
@@ -82,10 +95,15 @@ public class ModBlocks {
     }
 
     public static RegistryObject<Block> block(String name, Supplier<Block> block) {
+        return block(name, block, true);
+    }
+
+    public static RegistryObject<Block> block(String name, Supplier<Block> block, boolean hasItem) {
         var reg = BLOCKS.register(name, block);
-        ModItems.item(name, () -> new BlockItem(reg.get(), new Item.Properties()));
+        if (hasItem) ModItems.item(name, () -> new BlockItem(reg.get(), new Item.Properties()));
         return reg;
     }
+
 
     public static RegistryObject<Block> block(String name, Supplier<Block> block, Rarity rarity) {
         var reg = BLOCKS.register(name, block);

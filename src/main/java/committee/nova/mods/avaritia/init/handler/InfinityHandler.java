@@ -90,8 +90,8 @@ public class InfinityHandler {
                 level.setBlock(pos, ModBlocks.fake_bedrock.get().defaultBlockState(), 2);
             } else if (state.is(Blocks.END_PORTAL_FRAME)) {
                 level.setBlock(pos, ModBlocks.fake_end_portal_frame.get().defaultBlockState(), 2);
-            } else if (state.is(Blocks.REINFORCED_DEEPSLATE)) {
-                level.setBlock(pos, ModBlocks.fake_reinforced_deepslate.get().defaultBlockState(), 2);
+            } else if (state.is(Blocks.END_PORTAL)) {
+                level.setBlock(pos, ModBlocks.fake_end_portal.get().defaultBlockState(), 2);
             }
         }
 
@@ -100,8 +100,8 @@ public class InfinityHandler {
                 level.setBlock(pos, Blocks.BEDROCK.defaultBlockState(), 2);
             } else if (state.is(ModBlocks.fake_end_portal_frame.get())) {
                 level.setBlock(pos, Blocks.END_PORTAL_FRAME.defaultBlockState(), 2);
-            } else if (state.is(ModBlocks.fake_reinforced_deepslate.get())) {
-                level.setBlock(pos, Blocks.REINFORCED_DEEPSLATE.defaultBlockState(), 2);
+            } else if (state.is(ModBlocks.fake_end_portal.get())) {
+                level.setBlock(pos, Blocks.END_PORTAL.defaultBlockState(), 2);
             }
         }
 
@@ -124,7 +124,9 @@ public class InfinityHandler {
             Block.popResource(level, pos, Blocks.BEDROCK.asItem().getDefaultInstance());
         } else if (state.is(ModBlocks.fake_end_portal_frame.get())) {
             Block.popResource(level, pos, Blocks.END_PORTAL_FRAME.asItem().getDefaultInstance());
-        } else if (state.is(ModBlocks.fake_reinforced_deepslate.get())) {
+        } else if (state.is(ModBlocks.fake_end_portal.get())) {
+            Block.popResource(level, pos, Blocks.END_PORTAL.asItem().getDefaultInstance());
+        } else if (state.is(Blocks.REINFORCED_DEEPSLATE)) {
             Block.popResource(level, pos, Blocks.REINFORCED_DEEPSLATE.asItem().getDefaultInstance());
         }
     }

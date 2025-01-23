@@ -10,6 +10,7 @@ import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,11 +21,9 @@ import java.util.List;
  */
 public class ModCreativeModeTabs {
     public static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, Static.MOD_ID);
-    private static final List<RegistryObject<Item>> DONT_INCLUDE = List.of();
-
     public static final RegistryObject<CreativeModeTab> CREATIVE_TAB = TABS.register("avaritia_group", () -> CreativeModeTab.builder()
             .title(Component.translatable("itemGroup.tab.Infinity"))
-            .icon(() -> ModItems.infinity_pickaxe.get().getDefaultInstance())
+            .icon(() -> ModItems.infinity_catalyst.get().getDefaultInstance())
             .displayItems((parameters, output) -> {
                 for (var singularity : SingularityRegistryHandler.getInstance().getSingularities()) {
                     if (singularity.isEnabled()) {
@@ -32,9 +31,7 @@ public class ModCreativeModeTabs {
                     }
                 }
                 ModItems.ITEMS.getEntries().forEach(itemRegistryObject -> {
-                    if (!DONT_INCLUDE.contains(itemRegistryObject)) {
-                        output.accept(itemRegistryObject.get());
-                    }
+                    output.accept(itemRegistryObject.get());
                 });
             })
             .build());
