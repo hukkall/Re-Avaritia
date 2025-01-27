@@ -120,14 +120,16 @@ public class InfinityHandler {
         var level = (ServerLevel) event.getLevel();
         BlockPos pos = event.getPos();
         BlockState state = event.getState();
-        if (state.is(ModBlocks.fake_bedrock.get())) {
-            Block.popResource(level, pos, Blocks.BEDROCK.asItem().getDefaultInstance());
-        } else if (state.is(ModBlocks.fake_end_portal_frame.get())) {
-            Block.popResource(level, pos, Blocks.END_PORTAL_FRAME.asItem().getDefaultInstance());
-        } else if (state.is(ModBlocks.fake_end_portal.get())) {
-            Block.popResource(level, pos, Blocks.END_PORTAL.asItem().getDefaultInstance());
-        } else if (state.is(Blocks.REINFORCED_DEEPSLATE)) {
-            Block.popResource(level, pos, Blocks.REINFORCED_DEEPSLATE.asItem().getDefaultInstance());
+        if (!event.getPlayer().isCreative()) {
+            if (state.is(ModBlocks.fake_bedrock.get())) {
+                Block.popResource(level, pos, Blocks.BEDROCK.asItem().getDefaultInstance());
+            } else if (state.is(ModBlocks.fake_end_portal_frame.get())) {
+                Block.popResource(level, pos, Blocks.END_PORTAL_FRAME.asItem().getDefaultInstance());
+            } else if (state.is(ModBlocks.fake_end_portal.get())) {
+                Block.popResource(level, pos, Blocks.END_PORTAL.asItem().getDefaultInstance());
+            } else if (state.is(Blocks.REINFORCED_DEEPSLATE)) {
+                Block.popResource(level, pos, Blocks.REINFORCED_DEEPSLATE.asItem().getDefaultInstance());
+            }
         }
     }
 

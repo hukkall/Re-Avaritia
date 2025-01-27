@@ -7,6 +7,7 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -27,9 +28,17 @@ public class HeavenSubArrowEntity extends Arrow {
         super(entityType, level);
     }
 
-    public static HeavenSubArrowEntity create(Level level, double x, double y, double z) {
+    public static HeavenSubArrowEntity create(Level level, Entity shooter) {
+        HeavenSubArrowEntity entity = new HeavenSubArrowEntity(ModEntities.HEAVEN_SUB_ARROW.get(), level);
+        entity.setPos(shooter.getX(), shooter.getY() + 1.2, shooter.getZ());
+        entity.setOwner(shooter);
+        return entity;
+    }
+
+    public static HeavenSubArrowEntity create(Level level, Entity shooter, double x, double y, double z) {
         HeavenSubArrowEntity entity = new HeavenSubArrowEntity(ModEntities.HEAVEN_SUB_ARROW.get(), level);
         entity.setPos(x, y, z);
+        entity.setOwner(shooter);
         return entity;
     }
 

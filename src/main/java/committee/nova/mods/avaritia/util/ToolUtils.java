@@ -269,7 +269,7 @@ public class ToolUtils {
             double dx = Math.sin(dangle) * dDist;
             double dz = Math.cos(dangle) * dDist;
 
-            HeavenSubArrowEntity subArrow = HeavenSubArrowEntity.create(level, x, y, z);
+            HeavenSubArrowEntity subArrow = HeavenSubArrowEntity.create(level, shooter, x, y, z);
             if (shooter != null) subArrow.setOwner(shooter);
             subArrow.piercedAndKilledEntities = piercedAndKilledEntities;
             subArrow.push(dx, -(randy.nextDouble() * 1.85 + 0.15), dz);
