@@ -1,6 +1,11 @@
 package committee.nova.mods.avaritia.util;
 
 import committee.nova.mods.avaritia.common.wrappers.InfinityChestWrapper.*;
+import committee.nova.mods.avaritia.common.wrappers.StorageItem;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -126,5 +131,41 @@ public class StorageUtils {
         public static final int RIGHT_DRAG = 7;
         public static final int CLONE = 8;
         public static final int DRAG_CLONE = 9;
+    }
+
+    public static Int2ObjectMap<StorageItem> newContainers() {
+        Int2ObjectOpenHashMap<StorageItem> containers = new Int2ObjectOpenHashMap<>();
+        containers.defaultReturnValue(StorageItem.EMPTY);
+        return containers;
+    }
+
+    public static void saveAllItems(CompoundTag nbt, Int2ObjectMap<StorageItem> containers) {
+        ListTag list = new ListTag();
+
+        for (Int2ObjectMap.Entry<StorageItem> StorageItemEntry : containers.int2ObjectEntrySet()) {
+            int index = StorageItemEntry.getIntKey();
+            StorageItem item = StorageItemEntry.getValue();
+            if (!item.isEmpty()) {
+                CompoundTag compound = item.serializeNBT();
+                compound.putInt("Index", index);
+                list.add(compound);
+            }
+        }
+
+        nbt.put("Items", list);
+    }
+
+    public static void loadAllItems(CompoundTag nbt, Int2ObjectMap<StorageItem> containers) {
+        ListTag list = nbt.getList("Items", 10);
+
+        for(int i = 0; i < list.size(); ++i) {
+            CompoundTag compound = list.getCompound(i);
+            int index = compound.getInt("Index");
+            StorageItem item = StorageItem.read(compound);
+            if (!item.isEmpty()) {
+                containers.put(index, item);
+            }
+        }
+
     }
 }

@@ -73,11 +73,6 @@ public class TraceArrowEntity extends Arrow {
         }
     }
 
-    public static int getCustomColor(ItemStack p_191508_0_) {
-        CompoundTag compoundnbt = p_191508_0_.getTag();
-        return compoundnbt != null && compoundnbt.contains("CustomPotionColor", 99) ? compoundnbt.getInt("CustomPotionColor") : -1;
-    }
-
     public void setSpectral(int spectralTime) {
         this.entityData.set(SPECTRAL_TIME, spectralTime);
     }

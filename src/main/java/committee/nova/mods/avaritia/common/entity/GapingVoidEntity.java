@@ -52,7 +52,7 @@ public class GapingVoidEntity extends Entity {
 
         return true;
     };
-    public static final Predicate<Entity> OMNOM_PREDICATE = input -> {
+    public static final Predicate<Entity> COMNOM_PREDICATE = input -> {
         if (!(input instanceof LivingEntity)) {
             return false;
         }
@@ -153,7 +153,7 @@ public class GapingVoidEntity extends Entity {
             level().explode(this, posX, posY, posZ, 6.0f, Level.ExplosionInteraction.BLOCK);
             int range = 4;
             AABB axisAlignedBB = new AABB(position.offset(-range, -range, -range), position.offset(range, range, range));
-            List<Entity> nommed = level().getEntitiesOfClass(Entity.class, axisAlignedBB, OMNOM_PREDICATE);
+            List<Entity> nommed = level().getEntitiesOfClass(Entity.class, axisAlignedBB, COMNOM_PREDICATE);
             nommed.stream()
                     .filter(entity -> entity != this)
                     .forEach(entity -> {
@@ -226,7 +226,7 @@ public class GapingVoidEntity extends Entity {
         // om nom nom
         int nomrange = (int) (radius * 0.95);
         AABB alignedBB = new AABB(position.offset(-nomrange, -nomrange, -nomrange), position.offset(nomrange, nomrange, nomrange));
-        List<Entity> nommed = level().getEntitiesOfClass(Entity.class, alignedBB, OMNOM_PREDICATE);
+        List<Entity> nommed = level().getEntitiesOfClass(Entity.class, alignedBB, COMNOM_PREDICATE);
 
         for (Entity nommee : nommed) {
             if (nommee != this) {

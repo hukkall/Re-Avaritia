@@ -1,17 +1,17 @@
 package committee.nova.mods.avaritia.common.wrappers;
 
+import committee.nova.mods.avaritia.init.config.ModConfig;
+import committee.nova.mods.avaritia.util.StorageUtils;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.IntIterator;
 import lombok.Getter;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.function.IntSupplier;
 
 /**
  * @Project: Avaritia
@@ -20,181 +20,187 @@ import java.util.*;
  * @Description:
  */
 @Getter
-public class InfinityChestWrapper implements IItemHandler, IItemHandlerModifiable, INBTSerializable<CompoundTag> {
-    public List<SlotInfo> stacks = new ArrayList<>();
-
-    public record SlotInfo(ItemStack stack, long count) {}
-
-    @Override
-    public void setStackInSlot(int slot, @NotNull ItemStack stack)
-    {
-        validateSlotIndex(slot);
-        this.stacks.add(slot, new SlotInfo(stack, stack.getCount()));
-        onContentsChanged(slot);
+public abstract class InfinityChestWrapper implements IItemHandler, IItemHandlerModifiable{
+    public static InfinityChestWrapper create(final Int2ObjectMap<StorageItem> containers, final IntSupplier offset, final IntSupplier length) {
+        return new InfinityChestWrapper() {
+            @Override
+            protected Int2ObjectMap<StorageItem> getContainers() {
+                return containers;
+            }
+            @Override
+            protected int getOffset() {
+                return offset.getAsInt();
+            }
+            @Override
+            public int getSlots() {
+                return length.getAsInt();
+            }
+        };
     }
 
+    public static InfinityChestWrapper create(final Int2ObjectMap<StorageItem> containers, final int offset, final int length) {
+        return new InfinityChestWrapper() {
+            @Override
+            protected Int2ObjectMap<StorageItem> getContainers() {
+                return containers;
+            }
+            @Override
+            protected int getOffset() {
+                return offset;
+            }
+            @Override
+            public int getSlots() {
+                return length;
+            }
+        };
+    }
+
+    public static InfinityChestWrapper create(Int2ObjectMap<StorageItem> containers) {
+        IntIterator it = containers.keySet().iterator();
+
+        int slots;
+        for(slots = -1; it.hasNext(); slots = Math.max(slots, it.nextInt())) {
+        }
+
+        return create(containers, 0, slots + 1);
+    }
+
+    public static InfinityChestWrapper dummy(final int length) {
+        final Int2ObjectMap<StorageItem> containers = StorageUtils.newContainers();
+        return new InfinityChestWrapper() {
+            @Override
+            protected Int2ObjectMap<StorageItem> getContainers() {
+                return containers;
+            }
+            @Override
+            protected int getOffset() {
+                return 0;
+            }
+            @Override
+            public int getSlots() {
+                return length;
+            }
+        };
+    }
+
+    protected abstract Int2ObjectMap<StorageItem> getContainers();
+
+    protected abstract int getOffset();
+
+    public abstract int getSlots();
+
+    public StorageItem getContainerInSlot(int slot) {
+        return this.getContainers().get(this.getOffset() + slot);
+    }
+
+    public void setContainerInSlot(int slot, StorageItem container) {
+        this.getContainers().put(this.getOffset() + slot, container);
+    }
+
+    public StorageItem removeContainerInSlot(int slot) {
+        return this.getContainers().remove(this.getOffset() + slot);
+    }
+
+    public long getSlotLimitLong(int slot) {
+        return ModConfig.slotStackLimit.get();
+    }
+
+    public long getSlotFreeSpace(int slot) {
+        return this.getSlotLimitLong(slot) - this.getContainerInSlot(slot).getCount();
+    }
     @Override
-    public int getSlots()
-    {
-        return stacks.size();
+    public void setStackInSlot(int slot, @NotNull ItemStack stack) {
+        if (stack.isEmpty()) {
+            this.removeContainerInSlot(slot);
+        } else {
+            int size = (int)Math.min(stack.getCount(), this.getSlotLimitLong(slot));
+            this.setContainerInSlot(slot, StorageItem.create(stack, size));
+        }
     }
 
     @Override
     @NotNull
     public ItemStack getStackInSlot(int slot)
     {
-        validateSlotIndex(slot);
-        return this.stacks.get(slot).stack();
+        StorageItem container = this.getContainerInSlot(slot);
+        ItemStack stack = container.getStack();
+        int size = (int)Math.min(container.getCount(), stack.getMaxStackSize());
+        return ItemHandlerHelper.copyStackWithSize(stack, size);
     }
 
     @Override
     @NotNull
-    public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate)
-    {
-        if (stack.isEmpty())
+    public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
+        if (stack.isEmpty()) {
             return ItemStack.EMPTY;
-
-        if (!isItemValid(slot, stack))
+        } else if (!this.isItemValid(slot, stack)) {
             return stack;
+        } else {
+            StorageItem container = this.getContainerInSlot(slot);
+            ItemStack stackInSlot = container.getStack();
+            long limit = this.getSlotLimitLong(slot);
+            if (!container.isEmpty()) {
+                if (!ItemHandlerHelper.canItemStacksStack(stack, stackInSlot)) {
+                    return stack;
+                }
 
-        validateSlotIndex(slot);
+                limit -= container.getCount();
+            }
 
-        ItemStack existing = this.stacks.get(slot).stack();
-
-        int limit = getStackLimit(slot, stack);
-
-        if (!existing.isEmpty())
-        {
-            if (!ItemHandlerHelper.canItemStacksStack(stack, existing))
+            if (limit <= 0L) {
                 return stack;
+            } else {
+                int toInsert = (int)Math.min(stack.getCount(), limit);
+                if (!simulate) {
+                    if (container.isEmpty()) {
+                        this.setContainerInSlot(slot, StorageItem.create(stack, toInsert));
+                    } else {
+                        container.growCount(toInsert);
+                    }
+                    onContentsChanged(slot);
+                }
 
-            limit -= existing.getCount();
-        }
-
-        if (limit <= 0)
-            return stack;
-
-        boolean reachedLimit = stack.getCount() > limit;
-
-        if (!simulate)
-        {
-            if (existing.isEmpty())
-            {
-                this.stacks.set(slot, new SlotInfo(reachedLimit ? ItemHandlerHelper.copyStackWithSize(stack, limit) : stack, stack.getCount()));
+                return ItemHandlerHelper.copyStackWithSize(stack, stack.getCount() - toInsert);
             }
-            else
-            {
-                existing.grow(reachedLimit ? limit : stack.getCount());
-            }
-            onContentsChanged(slot);
         }
-
-        return reachedLimit ? ItemHandlerHelper.copyStackWithSize(stack, stack.getCount()- limit) : ItemStack.EMPTY;
     }
 
     @Override
     @NotNull
     public ItemStack extractItem(int slot, int amount, boolean simulate)
     {
-        if (amount == 0)
+        if (amount == 0) {
             return ItemStack.EMPTY;
-
-        validateSlotIndex(slot);
-
-        ItemStack existing = this.stacks.get(slot).stack();
-
-        if (existing.isEmpty())
-            return ItemStack.EMPTY;
-
-        int toExtract = Math.min(amount, existing.getMaxStackSize());
-
-        if (existing.getCount() <= toExtract)
-        {
-            if (!simulate)
-            {
-                this.stacks.set(slot, new SlotInfo(ItemStack.EMPTY, 1));
-                onContentsChanged(slot);
-                return existing;
+        } else {
+            StorageItem container = this.getContainerInSlot(slot);
+            if (container.isEmpty()) {
+                return ItemStack.EMPTY;
+            } else {
+                ItemStack stackInSlot = container.getStack();
+                long stackCount = container.getCount();
+                int toExtract = (int)Math.min(Math.min(amount, stackCount), stackInSlot.getMaxStackSize());
+                if (!simulate) {
+                    if (stackCount > (long)toExtract) {
+                        container.shrinkCount(toExtract);
+                    } else {
+                        this.removeContainerInSlot(slot);
+                    }
+                    onContentsChanged(slot);
+                }
+                return ItemHandlerHelper.copyStackWithSize(stackInSlot, toExtract);
             }
-            else
-            {
-                return existing.copy();
-            }
-        }
-        else
-        {
-            if (!simulate)
-            {
-                this.stacks.set(slot, new SlotInfo(ItemHandlerHelper.copyStackWithSize(existing, existing.getCount() - toExtract), existing.getCount()));
-                onContentsChanged(slot);
-            }
-
-            return ItemHandlerHelper.copyStackWithSize(existing, toExtract);
         }
     }
 
     @Override
-    public int getSlotLimit(int slot)
-    {
-        return Integer.MAX_VALUE;
-    }
-
-    protected int getStackLimit(int slot, @NotNull ItemStack stack)
-    {
-        return Math.min(getSlotLimit(slot), stack.getMaxStackSize());
+    public int getSlotLimit(int slot) {
+        return (int)Math.min(Integer.MAX_VALUE , this.getSlotLimitLong(slot));
     }
 
     @Override
     public boolean isItemValid(int slot, @NotNull ItemStack stack)
     {
         return true;
-    }
-
-    @Override
-    public CompoundTag serializeNBT()
-    {
-        ListTag nbtTagList = new ListTag();
-        for (int i = 0; i < stacks.size(); i++)
-        {
-            if (!stacks.get(i).stack().isEmpty())
-            {
-                CompoundTag itemTag = new CompoundTag();
-                itemTag.putInt("Slot", i);
-                stacks.get(i).stack().save(itemTag);
-                nbtTagList.add(itemTag);
-            }
-        }
-        CompoundTag nbt = new CompoundTag();
-        nbt.put("Items", nbtTagList);
-        return nbt;
-    }
-
-    @Override
-    public void deserializeNBT(CompoundTag nbt)
-    {
-        ListTag tagList = nbt.getList("Items", Tag.TAG_COMPOUND);
-        for (int i = 0; i < tagList.size(); i++)
-        {
-            CompoundTag itemTags = tagList.getCompound(i);
-            int slot = itemTags.getInt("Slot");
-
-            if (slot >= 0 && slot < stacks.size())
-            {
-                stacks.set(slot, new SlotInfo(ItemStack.of(itemTags), itemTags.getByte("Count")));
-            }
-        }
-        onLoad();
-    }
-
-    protected void validateSlotIndex(int slot)
-    {
-        if (slot < 0 || slot > stacks.size())
-            throw new RuntimeException("Slot " + slot + " not in valid range - [0," + stacks.size() + ")");
-    }
-
-    protected void onLoad()
-    {
-
     }
 
     protected void onContentsChanged(int slot)

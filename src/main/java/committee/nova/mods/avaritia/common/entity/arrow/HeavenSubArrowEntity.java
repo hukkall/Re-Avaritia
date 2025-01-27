@@ -24,6 +24,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class HeavenSubArrowEntity extends Arrow {
 
+    private Entity shooter;
+
     public HeavenSubArrowEntity(EntityType<? extends Arrow> entityType, Level level) {
         super(entityType, level);
     }
@@ -31,14 +33,14 @@ public class HeavenSubArrowEntity extends Arrow {
     public static HeavenSubArrowEntity create(Level level, Entity shooter) {
         HeavenSubArrowEntity entity = new HeavenSubArrowEntity(ModEntities.HEAVEN_SUB_ARROW.get(), level);
         entity.setPos(shooter.getX(), shooter.getY() + 1.2, shooter.getZ());
-        entity.setOwner(shooter);
+        entity.shooter = shooter;
         return entity;
     }
 
     public static HeavenSubArrowEntity create(Level level, Entity shooter, double x, double y, double z) {
         HeavenSubArrowEntity entity = new HeavenSubArrowEntity(ModEntities.HEAVEN_SUB_ARROW.get(), level);
         entity.setPos(x, y, z);
-        entity.setOwner(shooter);
+        entity.shooter = shooter;
         return entity;
     }
 
@@ -68,6 +70,6 @@ public class HeavenSubArrowEntity extends Arrow {
     @Override
     protected void onHitEntity(@NotNull EntityHitResult result) {
         Entity entity = result.getEntity();
-        entity.hurt(ModDamageTypes.causeRandomDamage(this.getOwner()), 2000F);
+        if (shooter != null) entity.hurt(ModDamageTypes.causeRandomDamage(shooter), 2000F);
     }
 }

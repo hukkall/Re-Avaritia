@@ -36,6 +36,11 @@ public class ModConfig {
     public static final ForgeConfigSpec.IntValue vanillaTotemEmc;
 
     public static final ForgeConfigSpec.IntValue chestMaxItemSize;
+    public static final ForgeConfigSpec.BooleanValue useSinglePageMode;
+    public static final ForgeConfigSpec.LongValue slotStackLimit;
+    public static final ForgeConfigSpec.IntValue maxPageLimit;
+    public static final ForgeConfigSpec.IntValue resetMaxPage;
+    public static final ForgeConfigSpec.IntValue inventoryRows;
 
     //SERVER
     static {
@@ -67,6 +72,11 @@ public class ModConfig {
         common.pop();
         common.push("storage");
         chestMaxItemSize = buildInt(common, "Chest Max ItemSize", 32768, 2048, Integer.MAX_VALUE, "Define the maximum number of item .types. that can be stored in a Infinity Chest.");
+        useSinglePageMode = buildBoolean(common, "Use Single PageMode", false, "Use single page mode");
+        slotStackLimit = buildLong(common, "Slot Stack Limit", 4294967295L, 64L, 4294967295L, "Stack size limit of slot");
+        maxPageLimit = buildInt(common, "Max Page Limit", 79536431, 2, 79536431, "Maximum page limit");
+        resetMaxPage = buildInt(common, "Reset Max Page", 1, 1, 79536431, "*Recovery options* Reset the max page that is 0.");
+        inventoryRows =buildInt(common, "Inventory Rows", 3, 1, 6, "Inventory rows for multi page mode");
         common.pop();
         COMMON = common.build();
     }
@@ -85,6 +95,10 @@ public class ModConfig {
     }
 
     private static ForgeConfigSpec.DoubleValue buildDouble(ForgeConfigSpec.Builder builder, String name, double defaultValue, double min, double max, String comment) {
+        return builder.comment(comment).translation(name).defineInRange(name, defaultValue, min, max);
+    }
+
+    private static ForgeConfigSpec.LongValue buildLong(ForgeConfigSpec.Builder builder, String name, long defaultValue, long min, long max, String comment) {
         return builder.comment(comment).translation(name).defineInRange(name, defaultValue, min, max);
     }
 
