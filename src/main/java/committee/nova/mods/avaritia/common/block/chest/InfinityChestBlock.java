@@ -123,8 +123,4 @@ public class InfinityChestBlock extends BaseTileEntityBlock {
         return false;
     }
 
-    @Override
-    protected <T extends BlockEntity> BlockEntityTicker<T> getClientTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return createTicker(type, ModTileEntities.infinity_chest_tile.get(), InfinityChestTile::lidAnimateTick);
-    }
 }

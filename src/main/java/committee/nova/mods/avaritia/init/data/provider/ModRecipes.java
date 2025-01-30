@@ -64,6 +64,8 @@ public class ModRecipes extends RecipeProvider implements IConditionBuilder {
         nineBlockStorageRecipesWithCustomPacking(consumer, RecipeCategory.MISC, ModItems.infinity_nugget.get(), RecipeCategory.MISC, ModItems.infinity_ingot.get(), "infinity_ingot_from_infinity_nugget", "infinity_ingot");
         nineBlockStorageRecipes(consumer, RecipeCategory.MISC, ModItems.crystal_matrix_ingot.get(), RecipeCategory.BUILDING_BLOCKS, ModBlocks.crystal_matrix.get());
         nineBlockStorageRecipes(consumer, RecipeCategory.MISC, ModItems.blaze_cube.get(), RecipeCategory.BUILDING_BLOCKS, ModBlocks.blaze_cube_block.get());
+        nineBlockStorageRecipes(consumer, RecipeCategory.MISC, ModItems.diamond_lattice.get(), RecipeCategory.BUILDING_BLOCKS, ModBlocks.diamond_lattice_block.get());
+        nineBlockStorageRecipes(consumer, RecipeCategory.MISC, ModItems.star_fuel.get(), RecipeCategory.BUILDING_BLOCKS, ModBlocks.star_fuel_block.get());
         nineBlockStorageRecipesRecipesWithCustomUnpacking(consumer, RecipeCategory.BUILDING_BLOCKS, ModBlocks.compressed_crafting_table.get(), RecipeCategory.BUILDING_BLOCKS, ModBlocks.double_compressed_crafting_table.get(),
                 "compressed_crafting_table_from_double_compressed_crafting_table", "compressed_crafting_table");
         nineBlockStorageRecipesRecipesWithCustomUnpacking(consumer, RecipeCategory.MISC, Blocks.CRAFTING_TABLE, RecipeCategory.BUILDING_BLOCKS, ModBlocks.compressed_crafting_table.get(),

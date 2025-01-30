@@ -5,6 +5,7 @@ import committee.nova.mods.avaritia.common.menu.InfinityChestMenu;
 import committee.nova.mods.avaritia.common.wrappers.InfinityChestWrapper;
 import committee.nova.mods.avaritia.common.wrappers.StorageItem;
 import committee.nova.mods.avaritia.init.config.ModConfig;
+import committee.nova.mods.avaritia.init.registry.ModTileEntities;
 import committee.nova.mods.avaritia.util.StorageUtils;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.core.BlockPos;
@@ -17,7 +18,6 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -55,13 +55,13 @@ public class InfinityChestTile extends BaseContainerBlockEntity implements MenuP
         }
     };
 
-    private final Int2ObjectMap<StorageItem> containers = StorageUtils.newContainers();
+    public Int2ObjectMap<StorageItem> containers = StorageUtils.newContainers();
     private int maxPage = 1;
     private int page = 0;
     static final Component CONTAINER_NAME = Component.translatable("container.infinity_chest");
 
-    protected InfinityChestTile(BlockEntityType<?> pType, BlockPos pPos, BlockState pBlockState) {
-        super(pType, pPos, pBlockState);
+    public InfinityChestTile(BlockPos pPos, BlockState pBlockState) {
+        super(ModTileEntities.infinity_chest_tile.get(), pPos, pBlockState);
     }
 
     @Override
@@ -77,10 +77,8 @@ public class InfinityChestTile extends BaseContainerBlockEntity implements MenuP
 
     @Override
     protected @NotNull AbstractContainerMenu createMenu(int pContainerId, @NotNull Inventory pInventory) {
-        return new InfinityChestMenu(pContainerId, pInventory, this, this.chestData);
+        return new InfinityChestMenu(pContainerId, pInventory, this.getBlockPos(),this, this.chestData);
     }
-
-
 
     @Override
     public boolean stillValid(@NotNull Player pPlayer) {

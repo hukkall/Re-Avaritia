@@ -91,11 +91,6 @@ public class ExtremeAnvilScreen extends BaseContainerScreen<ExtremeAnvilMenu> {
     }
 
     @Override
-    protected void renderLabels(@NotNull GuiGraphics pGuiGraphics, int pMouseX, int pMouseY) {
-        super.renderLabels(pGuiGraphics, pMouseX, pMouseY);
-    }
-
-    @Override
     protected void renderBg(@NotNull GuiGraphics pGuiGraphics, float pPartialTick, int pMouseX, int pMouseY) {
         super.renderBg(pGuiGraphics, pPartialTick, pMouseX, pMouseY);
         pGuiGraphics.blit(ANVIL_LOCATION, this.leftPos + 59, this.topPos + 23, 0, this.imageHeight + (this.menu.getSlot(0).hasItem() ? 0 : 16), 110, 16);

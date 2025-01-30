@@ -144,6 +144,8 @@
   "block.avaritia.extreme_smithing_table": "终焉锻造台",
   "block.avaritia.extreme_anvil": "终焉之砧",
   "block.avaritia.infinity_chest": "无尽之箱",
+  "block.avaritia.star_fuel_block": "恒星燃料块",
+  "block.avaritia.diamond_lattice_block": "钻石晶格块",
   "container.compressor": "中子态素压缩机",
   "container.neutron_collector": "中子态素收集器",
   "container.dense_neutron_collector": "致密中子态素收集器",
@@ -253,5 +255,16 @@
   "config.jade.plugin_avaritia.extreme_smithing":"终焉锻造台",
   "config.jade.plugin_avaritia.crafting_table":"无尽合成",
   "rarity.legend.name": "传说",
-  "rarity.cosmic.name": "无尽"
+  "rarity.cosmic.name": "无尽",
+  "key.avaritia.filter": "打开过滤界面",
+  "key.avaritia.infinity_chest.sort0": "排序 0",
+  "key.avaritia.infinity_chest.sort1": "排序 1",
+  "key.avaritia.infinity_chest.sort2": "排序 2",
+  "key.avaritia.infinity_chest.sort3": "排序 3",
+  "key.avaritia.infinity_chest.sort4": "排序 4",
+  "key.avaritia.infinity_chest.sort5": "排序 5",
+  "key.avaritia.infinity_chest.sort6": "排序 6",
+  "key.avaritia.infinity_chest.sort7": "排序 7",
+  "key.avaritia.infinity_chest.sort8": "排序 8",
+  "key.avaritia.infinity_chest.sort9": "排序 9"
 }

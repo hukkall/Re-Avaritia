@@ -1,6 +1,7 @@
 package committee.nova.mods.avaritia.init.registry;
 
 import committee.nova.mods.avaritia.Static;
+import committee.nova.mods.avaritia.api.common.block.BaseBlock;
 import committee.nova.mods.avaritia.common.block.ResourceBlock;
 import committee.nova.mods.avaritia.common.block.cake.EndlessCakeBlock;
 import committee.nova.mods.avaritia.common.block.chest.CompressedChestBlock;
@@ -15,7 +16,9 @@ import committee.nova.mods.avaritia.common.block.misc.SoulFarmLandBlock;
 import committee.nova.mods.avaritia.common.block.extreme.ExtremeSmithingTableBlock;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
@@ -24,6 +27,7 @@ import net.minecraft.world.level.material.PushReaction;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
 
@@ -38,50 +42,62 @@ public class ModBlocks {
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, Static.MOD_ID);
 
     //CRAFTING
-    public static RegistryObject<Block> compressed_crafting_table = block("compressed_crafting_table", CompressedCraftTableBlock::new, ModRarities.UNCOMMON);
-    public static RegistryObject<Block> double_compressed_crafting_table = block("double_compressed_crafting_table", DoubleCompressedCraftTableBlock::new, ModRarities.UNCOMMON);
+    public static RegistryObject<Block> compressed_crafting_table = itemBlock("compressed_crafting_table", CompressedCraftTableBlock::new, ModRarities.UNCOMMON);
+    public static RegistryObject<Block> double_compressed_crafting_table = itemBlock("double_compressed_crafting_table", DoubleCompressedCraftTableBlock::new, ModRarities.UNCOMMON);
 
     //RESOURCE
-    public static RegistryObject<Block> neutron = block("neutron", () -> new ResourceBlock(ModResourceBlocks.NEUTRON), ModRarities.EPIC);
-    public static RegistryObject<Block> infinity = block("infinity", () -> new ResourceBlock(ModResourceBlocks.INFINITY), ModRarities.COSMIC);
-    public static RegistryObject<Block> crystal_matrix = block("crystal_matrix", () -> new ResourceBlock(ModResourceBlocks.CRYSTAL), ModRarities.RARE);
-    public static RegistryObject<Block> blaze_cube_block = block("blaze_cube_block", () -> new ResourceBlock(ModResourceBlocks.BLAZE), ModRarities.RARE);
-    public static RegistryObject<Block> compressed_chest = block("compressed_chest", CompressedChestBlock::new, ModRarities.RARE);
-    public static RegistryObject<Block> infinity_chest = block("infinity_chest", InfinityChestBlock::new, ModRarities.LEGEND);
-    public static RegistryObject<Block> soul_farmland = block("soul_farmland", SoulFarmLandBlock::new, ModRarities.RARE);
+    public static RegistryObject<Block> neutron = itemBlock("neutron", () -> new ResourceBlock(ModResourceBlocks.NEUTRON), ModRarities.EPIC);
+    public static RegistryObject<Block> infinity = itemBlock("infinity", () -> new ResourceBlock(ModResourceBlocks.INFINITY), ModRarities.COSMIC);
+    public static RegistryObject<Block> crystal_matrix = itemBlock("crystal_matrix", () -> new ResourceBlock(ModResourceBlocks.CRYSTAL), ModRarities.RARE);
+    public static RegistryObject<Block> blaze_cube_block = itemBlock("blaze_cube_block", () -> new ResourceBlock(ModResourceBlocks.BLAZE), ModRarities.RARE);
+    public static RegistryObject<Block> compressed_chest = itemBlock("compressed_chest", CompressedChestBlock::new, ModRarities.RARE);
+    public static RegistryObject<Block> infinity_chest = itemBlock("infinity_chest", InfinityChestBlock::new, ModRarities.LEGEND);
+    public static RegistryObject<Block> soul_farmland = itemBlock("soul_farmland", SoulFarmLandBlock::new, ModRarities.RARE);
+    public static RegistryObject<Block> diamond_lattice_block = itemBlock("diamond_lattice_block",
+            () -> new BaseBlock(BlockBehaviour.Properties.of()
+                    .strength(100F, 100F)
+                    .sound(SoundType.GLASS)
+            ), true,
+            new Item.Properties().rarity(ModRarities.UNCOMMON)
+            );
+    public static RegistryObject<Block> star_fuel_block = itemBurnBlock("star_fuel_block", () -> new BaseBlock(BlockBehaviour.Properties.of()
+                    .strength(100F, 200F)
+                    .sound(SoundType.STONE)
+            ),  true,
+            new Item.Properties().rarity(ModRarities.RARE), Integer.MAX_VALUE);
 
     //MACHINE
-    public static RegistryObject<Block> sculk_crafting_table = block("sculk_crafting_table", () -> new TierCraftTableBlock(ModCraftTier.SCULK), ModRarities.COMMON);
-    public static RegistryObject<Block> nether_crafting_table = block("nether_crafting_table", () -> new TierCraftTableBlock(ModCraftTier.NETHER), ModRarities.UNCOMMON);
-    public static RegistryObject<Block> end_crafting_table = block("end_crafting_table", () -> new TierCraftTableBlock(ModCraftTier.END), ModRarities.RARE);
-    public static RegistryObject<Block> extreme_crafting_table = block("extreme_crafting_table", () -> new TierCraftTableBlock(ModCraftTier.EXTREME), ModRarities.EPIC);
-    public static RegistryObject<Block> neutron_collector = block("neutron_collector", BaseNeutronCollectorBlock::new, ModRarities.RARE);
-    public static RegistryObject<Block> dense_neutron_collector = block("dense_neutron_collector", BaseNeutronCollectorBlock::new, ModRarities.EPIC);
-    public static RegistryObject<Block> denser_neutron_collector = block("denser_neutron_collector", BaseNeutronCollectorBlock::new, ModRarities.LEGEND);
-    public static RegistryObject<Block> densest_neutron_collector = block("densest_neutron_collector", BaseNeutronCollectorBlock::new, ModRarities.COSMIC);
-    public static RegistryObject<Block> neutron_compressor = block("neutron_compressor", CompressorBlock::new, ModRarities.RARE);
-    public static RegistryObject<Block> extreme_smithing_table = block("extreme_smithing_table", ExtremeSmithingTableBlock::new, ModRarities.LEGEND);
+    public static RegistryObject<Block> sculk_crafting_table = itemBlock("sculk_crafting_table", () -> new TierCraftTableBlock(ModCraftTier.SCULK), ModRarities.COMMON);
+    public static RegistryObject<Block> nether_crafting_table = itemBlock("nether_crafting_table", () -> new TierCraftTableBlock(ModCraftTier.NETHER), ModRarities.UNCOMMON);
+    public static RegistryObject<Block> end_crafting_table = itemBlock("end_crafting_table", () -> new TierCraftTableBlock(ModCraftTier.END), ModRarities.RARE);
+    public static RegistryObject<Block> extreme_crafting_table = itemBlock("extreme_crafting_table", () -> new TierCraftTableBlock(ModCraftTier.EXTREME), ModRarities.EPIC);
+    public static RegistryObject<Block> neutron_collector = itemBlock("neutron_collector", BaseNeutronCollectorBlock::new, ModRarities.RARE);
+    public static RegistryObject<Block> dense_neutron_collector = itemBlock("dense_neutron_collector", BaseNeutronCollectorBlock::new, ModRarities.EPIC);
+    public static RegistryObject<Block> denser_neutron_collector = itemBlock("denser_neutron_collector", BaseNeutronCollectorBlock::new, ModRarities.LEGEND);
+    public static RegistryObject<Block> densest_neutron_collector = itemBlock("densest_neutron_collector", BaseNeutronCollectorBlock::new, ModRarities.COSMIC);
+    public static RegistryObject<Block> neutron_compressor = itemBlock("neutron_compressor", CompressorBlock::new, ModRarities.RARE);
+    public static RegistryObject<Block> extreme_smithing_table = itemBlock("extreme_smithing_table", ExtremeSmithingTableBlock::new, ModRarities.LEGEND);
 
-    public static RegistryObject<Block> extreme_anvil = block("extreme_anvil", ExtremeAnvilBlock::new, ModRarities.LEGEND);
+    public static RegistryObject<Block> extreme_anvil = itemBlock("extreme_anvil", ExtremeAnvilBlock::new, ModRarities.LEGEND);
 
     //CAKE
-    public static RegistryObject<Block> endless_cake = block("endless_cake", EndlessCakeBlock::new, ModRarities.UNCOMMON);
+    public static RegistryObject<Block> endless_cake = itemBlock("endless_cake", EndlessCakeBlock::new, ModRarities.UNCOMMON);
 
 
-    public static RegistryObject<Block> fake_bedrock = block("fake_bedrock", ()-> new Block(
+    public static RegistryObject<Block> fake_bedrock = itemBlock("fake_bedrock", ()-> new Block(
             BlockBehaviour.Properties.of()
                     .mapColor(MapColor.STONE)
                     .instrument(NoteBlockInstrument.BASEDRUM)
                     .strength(1000F, 3600000.0F)
                     .isValidSpawn((state, level, pos, value) -> false)), false);
-    public static RegistryObject<Block> fake_end_portal_frame = block("fake_end_portal_frame", ()-> new EndPortalFrameBlock(
+    public static RegistryObject<Block> fake_end_portal_frame = itemBlock("fake_end_portal_frame", ()-> new EndPortalFrameBlock(
             BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_GREEN)
                     .instrument(NoteBlockInstrument.BASEDRUM)
                     .sound(SoundType.GLASS)
                     .lightLevel((blockState) -> 1)
                     .strength(400F, 3600000.0F)), false);
-    public static RegistryObject<Block> fake_end_portal = block("fake_end_portal", () -> new EndPortalBlock(
+    public static RegistryObject<Block> fake_end_portal = itemBlock("fake_end_portal", () -> new EndPortalBlock(
             BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_BLACK)
                     .noCollission()
@@ -90,24 +106,36 @@ public class ModBlocks {
                     .pushReaction(PushReaction.BLOCK)), false);
 
 
-    private static RegistryObject<Block> candleBlock(String name, Supplier<Block> block) {
+    private static RegistryObject<Block> baseBlock(String name, Supplier<Block> block) {
         return BLOCKS.register(name, block);
     }
 
-    public static RegistryObject<Block> block(String name, Supplier<Block> block) {
-        return block(name, block, true);
+    public static RegistryObject<Block> itemBlock(String name, Supplier<Block> block) {
+        return itemBlock(name, block, true);
     }
 
-    public static RegistryObject<Block> block(String name, Supplier<Block> block, boolean hasItem) {
+    public static RegistryObject<Block> itemBlock(String name, Supplier<Block> block, boolean hasItem) {
+        return itemBlock(name, block, hasItem, new Item.Properties());
+    }
+
+    public static RegistryObject<Block> itemBlock(String name, Supplier<Block> block, Rarity rarity) {
+        return itemBlock(name, block, true, new Item.Properties().rarity(rarity));
+    }
+
+    public static RegistryObject<Block> itemBlock(String name, Supplier<Block> block, boolean hasItem, Item.Properties properties) {
         var reg = BLOCKS.register(name, block);
-        if (hasItem) ModItems.item(name, () -> new BlockItem(reg.get(), new Item.Properties()));
+        if (hasItem) ModItems.item(name, () -> new BlockItem(reg.get(), properties));
         return reg;
     }
 
-
-    public static RegistryObject<Block> block(String name, Supplier<Block> block, Rarity rarity) {
+    public static RegistryObject<Block> itemBurnBlock(String name, Supplier<Block> block, boolean hasItem, Item.Properties properties, int burnTime) {
         var reg = BLOCKS.register(name, block);
-        ModItems.item(name, () -> new BlockItem(reg.get(), new Item.Properties().rarity(rarity)));
+        if (hasItem) ModItems.item(name, () -> new BlockItem(reg.get(), properties){
+            @Override
+            public int getBurnTime(ItemStack itemStack, @Nullable RecipeType<?> recipeType) {
+                return burnTime;
+            }
+        });
         return reg;
     }
 }

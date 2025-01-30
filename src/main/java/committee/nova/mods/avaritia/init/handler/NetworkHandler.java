@@ -37,5 +37,6 @@ public class NetworkHandler {
         CHANNEL.registerMessage(id++, C2SICFilterPacket.class, C2SICFilterPacket::write, C2SICFilterPacket::new, C2SICFilterPacket::run, Optional.of(NetworkDirection.PLAY_TO_SERVER));
         CHANNEL.registerMessage(id++, C2SItemFilterPacket.class, C2SItemFilterPacket::write, C2SItemFilterPacket::new, C2SItemFilterPacket::run, Optional.of(NetworkDirection.PLAY_TO_SERVER));
         CHANNEL.registerMessage(id++, C2SRenamePacket.class, C2SRenamePacket::write, C2SRenamePacket::new, C2SRenamePacket::run, Optional.of(NetworkDirection.PLAY_TO_SERVER));
+        CHANNEL.registerMessage(id++, C2SChangePagePacket.class, C2SChangePagePacket::write, C2SChangePagePacket::new, C2SChangePagePacket::run, Optional.of(NetworkDirection.PLAY_TO_SERVER));
     }
 }

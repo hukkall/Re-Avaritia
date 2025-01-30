@@ -144,6 +144,8 @@
   "block.avaritia.extreme_smithing_table": "Extreme Smithing Table",
   "block.avaritia.extreme_anvil": "Extreme Anvil",
   "block.avaritia.infinity_chest": "Infinity Chest",
+  "block.avaritia.star_fuel_block": "Star Fuel Block",
+  "block.avaritia.diamond_lattice_block": "Diamond Lattice Block",
   "container.compressor": "Neutronium Compressor",
   "container.neutron_collector": "Neutron Collector",
   "container.dense_neutron_collector": "Dense Neutron Collector",
@@ -253,5 +255,16 @@
   "config.jade.plugin_avaritia.extreme_smithing":"Extreme Smithing",
   "config.jade.plugin_avaritia.crafting_table":"Avaritia Crafting",
   "rarity.legend.name": "Legend",
-  "rarity.cosmic.name": "Cosmic"
+  "rarity.cosmic.name": "Cosmic",
+  "key.avaritia.filter": "Open filter screen",
+  "key.avaritia.infinity_chest.sort0": "sort 0",
+  "key.avaritia.infinity_chest.sort1": "sort 1",
+  "key.avaritia.infinity_chest.sort2": "sort 2",
+  "key.avaritia.infinity_chest.sort3": "sort 3",
+  "key.avaritia.infinity_chest.sort4": "sort 4",
+  "key.avaritia.infinity_chest.sort5": "sort 5",
+  "key.avaritia.infinity_chest.sort6": "sort 6",
+  "key.avaritia.infinity_chest.sort7": "sort 7",
+  "key.avaritia.infinity_chest.sort8": "sort 8",
+  "key.avaritia.infinity_chest.sort9": "sort 9"
 }

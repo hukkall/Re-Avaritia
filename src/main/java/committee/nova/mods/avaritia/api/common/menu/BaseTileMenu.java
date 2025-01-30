@@ -41,7 +41,7 @@ public abstract class BaseTileMenu<T extends BlockEntity> extends BaseMenu {
 
 
     @SuppressWarnings("unchecked")
-    protected T getTileEntity() {
+    public T getTileEntity() {
         return (T) level.getBlockEntity(pos);
     }
 

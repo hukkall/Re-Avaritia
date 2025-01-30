@@ -25,7 +25,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 import static committee.nova.mods.avaritia.Static.LOGGER;
-import static committee.nova.mods.avaritia.client.AvaritiaForgeClient.SIGN_IN_SCREEN_KEY;
+import static committee.nova.mods.avaritia.client.AvaritiaForgeClient.FILTER_KEY;
 
 /**
  * Author cnlimiter
@@ -47,7 +47,7 @@ public class AvaritiaModClient {
     @SubscribeEvent
     public static void registerKeyMappings(RegisterKeyMappingsEvent event) {
         LOGGER.debug("Registering key bindings");
-        event.register(SIGN_IN_SCREEN_KEY);
+        event.register(FILTER_KEY);
     }
 
     @SubscribeEvent

@@ -24,13 +24,13 @@ public class UpgradeSmithingTemplateItem extends SmithingTemplateItem {
     private static final ResourceLocation EMPTY_SLOT_BLOCK = new ResourceLocation("item/empty_slot_block");
 
     public UpgradeSmithingTemplateItem() {
-        super(Component.empty(),
-                Component.empty()
+        super(Component.translatable("item.avaritia.upgrade_smithing_template"),
+                Component.translatable("item.avaritia.upgrade_smithing_template")
                         .withStyle(DESCRIPTION_FORMAT),
-                Component.empty()
+                Component.translatable("item.avaritia.upgrade_smithing_template")
                         .withStyle(TITLE_FORMAT),
-                Component.empty(),
-                Component.empty(),
+                Component.translatable("item.avaritia.upgrade_smithing_template"),
+                Component.translatable("item.avaritia.upgrade_smithing_template"),
                 List.of(EMPTY_SLOT_SWORD, EMPTY_SLOT_PICKAXE, EMPTY_SLOT_AXE, EMPTY_SLOT_HOE, EMPTY_SLOT_SHOVEL),
                 List.of(EMPTY_SLOT_BLOCK));
     }

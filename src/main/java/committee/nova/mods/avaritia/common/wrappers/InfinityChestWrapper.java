@@ -125,7 +125,7 @@ public abstract class InfinityChestWrapper implements IItemHandler, IItemHandler
         StorageItem container = this.getContainerInSlot(slot);
         ItemStack stack = container.getStack();
         int size = (int)Math.min(container.getCount(), stack.getMaxStackSize());
-        return ItemHandlerHelper.copyStackWithSize(stack, size);
+        return ItemHandlerHelper.copyStackWithSize(stack, (int) container.getCount());
     }
 
     @Override

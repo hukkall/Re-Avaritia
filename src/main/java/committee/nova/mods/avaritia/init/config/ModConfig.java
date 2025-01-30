@@ -76,7 +76,7 @@ public class ModConfig {
         slotStackLimit = buildLong(common, "Slot Stack Limit", 4294967295L, 64L, 4294967295L, "Stack size limit of slot");
         maxPageLimit = buildInt(common, "Max Page Limit", 79536431, 2, 79536431, "Maximum page limit");
         resetMaxPage = buildInt(common, "Reset Max Page", 1, 1, 79536431, "*Recovery options* Reset the max page that is 0.");
-        inventoryRows =buildInt(common, "Inventory Rows", 3, 1, 6, "Inventory rows for multi page mode");
+        inventoryRows =buildInt(common, "Inventory Rows", 6, 1, 6, "Inventory rows for multi page mode");
         common.pop();
         COMMON = common.build();
     }
