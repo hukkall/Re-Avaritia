@@ -38,7 +38,7 @@ public class ModMenus {
         MenuScreens.register(compressor.get(), CompressorScreen::new);
         MenuScreens.register(GENERIC_9x27.get(), CompressedChestScreen::new);
         MenuScreens.register(neutron_ring.get(), NeutronRingScreen::new);
-        MenuScreens.register(infinity_chest.get(), InfinityChestScreen::new);
+        MenuScreens.register(infinity_chest2.get(), InfinityChestScreen::new);
         MenuScreens.register(extreme_smithing_table.get(), ExtremeSmithingScreen::new);
         MenuScreens.register(extreme_anvil.get(), ExtremeAnvilScreen::new);
     }
@@ -55,7 +55,7 @@ public class ModMenus {
     public static RegistryObject<MenuType<NeutronCollectorMenu>> neutron_collector = menu("neutron_collector", () -> IForgeMenuType.create(NeutronCollectorMenu::new));
     public static RegistryObject<MenuType<CompressorMenu>> compressor = menu("compressor", () -> IForgeMenuType.create(CompressorMenu::new));
     public static RegistryObject<MenuType<ExtremeSmithingMenu>> extreme_smithing_table = menu("extreme_smithing_table", () -> IForgeMenuType.create(ExtremeSmithingMenu::new));
-    public static RegistryObject<MenuType<InfinityChestMenu>> infinity_chest = menu("infinity_chest", () -> IForgeMenuType.create(InfinityChestMenu::new));
+    public static RegistryObject<MenuType<InfinityChestMenu>> infinity_chest2 = menu("infinity_chest", () -> IForgeMenuType.create(InfinityChestMenu::new));
     public static RegistryObject<MenuType<CompressedChestMenu>> GENERIC_9x27 = menu("generic_9x27", () -> IForgeMenuType.create(CompressedChestMenu::new));
     public static RegistryObject<MenuType<ExtremeAnvilMenu>> extreme_anvil = menu("extreme_anvil", () -> IForgeMenuType.create(ExtremeAnvilMenu::new));
 

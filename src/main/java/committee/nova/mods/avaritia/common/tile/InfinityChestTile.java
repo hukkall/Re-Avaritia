@@ -1,8 +1,8 @@
 package committee.nova.mods.avaritia.common.tile;
 
-import committee.nova.mods.avaritia.common.container.InfinityChestContainer;
+import committee.nova.mods.avaritia.api.common.container.OffsetContainer;
+import committee.nova.mods.avaritia.api.common.wrapper.OffsetItemStackWrapper;
 import committee.nova.mods.avaritia.common.menu.InfinityChestMenu;
-import committee.nova.mods.avaritia.common.wrappers.InfinityChestWrapper;
 import committee.nova.mods.avaritia.common.wrappers.StorageItem;
 import committee.nova.mods.avaritia.init.config.ModConfig;
 import committee.nova.mods.avaritia.init.registry.ModTileEntities;
@@ -11,12 +11,9 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.items.IItemHandler;
@@ -25,49 +22,20 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @Project: Avaritia
  * @Author: cnlimiter
- * @CreateTime: 2024/11/17 02:36
+ * @CreateTime: 2025/1/31 15:28
  * @Description:
  */
-public class InfinityChestTile extends BaseContainerBlockEntity implements MenuProvider, InfinityChestContainer {
-    private final ContainerData chestData = new ContainerData() {
-        @Override
-        public int get(int index) {
-            if (index == 0) {
-                return InfinityChestTile.this.maxPage;
-            } else {
-                return index == 1 ? InfinityChestTile.this.page : 0;
-            }
-        }
-        @Override
-        public void set(int index, int value) {
-            if (index == 0) {
-                InfinityChestTile.this.maxPage = value;
-            }
-
-            if (index == 1) {
-                InfinityChestTile.this.page = value;
-            }
-
-        }
-        @Override
-        public int getCount() {
-            return 2;
-        }
-    };
-
+public class InfinityChestTile extends BaseContainerBlockEntity implements OffsetContainer {
     public Int2ObjectMap<StorageItem> containers = StorageUtils.newContainers();
-    private int maxPage = 1;
+    private static final Component CONTAINER_NAME = Component.translatable("container.infinity_chest");
     private int page = 0;
-    static final Component CONTAINER_NAME = Component.translatable("container.infinity_chest");
-
-    public InfinityChestTile(BlockPos pPos, BlockState pBlockState) {
-        super(ModTileEntities.infinity_chest_tile.get(), pPos, pBlockState);
+    public InfinityChestTile(BlockPos pos, BlockState state) {
+        super(ModTileEntities.infinity_chest2_tile.get(), pos, state);
     }
 
     @Override
-    public InfinityChestWrapper getItemHandler() {
-        int slots = ModConfig.inventoryRows.get() * 9;
-        return InfinityChestWrapper.create(this.containers, () -> this.page * slots, () -> slots);
+    protected @NotNull AbstractContainerMenu createMenu(int pContainerId, @NotNull Inventory pInventory) {
+        return new InfinityChestMenu(pContainerId, pInventory, this.getBlockPos(), this, this.chestData);
     }
 
     @Override
@@ -76,37 +44,40 @@ public class InfinityChestTile extends BaseContainerBlockEntity implements MenuP
     }
 
     @Override
-    protected @NotNull AbstractContainerMenu createMenu(int pContainerId, @NotNull Inventory pInventory) {
-        return new InfinityChestMenu(pContainerId, pInventory, this.getBlockPos(),this, this.chestData);
-    }
-
-    @Override
-    public boolean stillValid(@NotNull Player pPlayer) {
-        Level world = this.getLevel();
-        BlockPos pos = this.getBlockPos();
-        if (world != null && world.getBlockEntity(pos) == this) {
-            return !(pPlayer.distanceToSqr((double)pos.getX() + 0.5, (double)pos.getY() + 0.5, (double)pos.getZ() + 0.5) > 64.0);
-        } else {
-            return false;
-        }
-    }
-
-
-    @Override
     public void load(@NotNull CompoundTag pTag) {
         super.load(pTag);
-        this.containers.clear();
-        StorageUtils.loadAllItems(pTag, this.containers);
-        this.maxPage = pTag.getInt("MaxPage");
+        StorageUtils.loadAllItems(pTag, this.containers, true);
         this.page = pTag.getInt("Page");
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag pTag) {
+    public void saveAdditional(@NotNull CompoundTag pTag) {
         super.saveAdditional(pTag);
         StorageUtils.saveAllItems(pTag, this.containers);
-        pTag.putInt("MaxPage", this.maxPage);
         pTag.putInt("Page", this.page);
+    }
+
+
+    private final ContainerData chestData = new ContainerData() {
+        @Override
+        public int get(int index) {
+            return index == 0 ? InfinityChestTile.this.page : 0;
+        }
+        @Override
+        public void set(int index, int value) {
+            if (index == 0) InfinityChestTile.this.page = value;
+
+        }
+        @Override
+        public int getCount() {
+            return 1;
+        }
+    };
+
+    @Override
+    public OffsetItemStackWrapper getItemHandler() {
+        int slots = ModConfig.inventoryRows.get() * 9;
+        return new OffsetItemStackWrapper(this.containers, this.page * slots, slots);
     }
 
     @Override

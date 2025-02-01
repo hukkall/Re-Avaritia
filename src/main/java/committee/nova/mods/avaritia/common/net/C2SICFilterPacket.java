@@ -1,11 +1,8 @@
 package committee.nova.mods.avaritia.common.net;
 
 import committee.nova.mods.avaritia.Static;
-import committee.nova.mods.avaritia.common.container.slot.ModCraftRecipeSlot;
-import committee.nova.mods.avaritia.common.menu.InfinityChestMenu;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;

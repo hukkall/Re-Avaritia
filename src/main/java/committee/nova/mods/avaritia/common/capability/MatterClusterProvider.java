@@ -9,7 +9,6 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -20,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class MatterClusterProvider implements ICapabilitySerializable<CompoundTag> {
     private final ItemStackWrapper inv = new ItemStackWrapper(64 * 64);
-    private final LazyOptional<ItemStackHandler> inventoryCap = LazyOptional.of(() -> inv);
+    private final LazyOptional<ItemStackWrapper> inventoryCap = LazyOptional.of(() -> inv);
 
     public MatterClusterProvider(ItemStack stack, CompoundTag nbt) {
         this.inv.setSlotValidator((integer, itemStack) -> !(itemStack.getItem() instanceof MatterClusterItem));

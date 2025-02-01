@@ -1,6 +1,6 @@
-package committee.nova.mods.avaritia.common.container;
+package committee.nova.mods.avaritia.api.common.container;
 
-import committee.nova.mods.avaritia.common.wrappers.InfinityChestWrapper;
+import committee.nova.mods.avaritia.api.common.wrapper.OffsetItemStackWrapper;
 import committee.nova.mods.avaritia.common.wrappers.StorageItem;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
@@ -15,45 +15,43 @@ import org.jetbrains.annotations.NotNull;
  * @CreateTime: 2024/11/14 22:58
  * @Description:
  */
-public interface InfinityChestContainer extends Container {
+public interface OffsetContainer extends Container {
 
-    static InfinityChestContainer dummy(int length) {
-        final InfinityChestWrapper itemHandler = InfinityChestWrapper.dummy(length);
-        return new InfinityChestContainer() {
+    static OffsetContainer dummy(int length) {
+        final OffsetItemStackWrapper itemHandler = new OffsetItemStackWrapper(length);
+        return new OffsetContainer() {
             @Override
-            public InfinityChestWrapper getItemHandler() {
+            public OffsetItemStackWrapper getItemHandler() {
                 return itemHandler;
             }
             @Override
             public void setChanged() {
             }
             @Override
-            public boolean stillValid(@NotNull Player player) {
-                return true;
+            public boolean stillValid(@NotNull Player pPlayer) {
+                return OffsetContainer.super.stillValid(pPlayer);
             }
         };
     }
 
-    InfinityChestWrapper getItemHandler();
+    OffsetItemStackWrapper getItemHandler();
     default StorageItem getContainerInSlot(int index) {
         return this.getItemHandler().getContainerInSlot(index);
     }
 
     default ContainerData getItemCountAccessor() {
         return new ContainerData() {
-            public int get(int index) {
-                return index >= 0 && index < InfinityChestContainer.this.getContainerSize() ? (int) InfinityChestContainer.this.getContainerInSlot(index).getCount() : 0;
+            @Override public int get(int index) {
+                return index >= 0 && index < OffsetContainer.this.getContainerSize() ? (int) OffsetContainer.this.getContainerInSlot(index).getCount() : 0;
             }
-
-            public void set(int index, int value) {
-                if (index >= 0 && index < InfinityChestContainer.this.getContainerSize()) {
-                    InfinityChestContainer.this.getContainerInSlot(index).setCount(Integer.toUnsignedLong(value));
+            @Override public void set(int index, int value) {
+                if (index >= 0 && index < OffsetContainer.this.getContainerSize()) {
+                    OffsetContainer.this.getContainerInSlot(index).setCount(Integer.toUnsignedLong(value));
                 }
 
             }
-
-            public int getCount() {
-                return InfinityChestContainer.this.getContainerSize();
+            @Override public int getCount() {
+                return OffsetContainer.this.getContainerSize();
             }
         };
     }
@@ -112,5 +110,10 @@ public interface InfinityChestContainer extends Container {
             this.getItemHandler().removeContainerInSlot(i);
         }
 
+    }
+
+    @Override
+    default boolean stillValid(@NotNull Player pPlayer) {
+        return true;
     }
 }

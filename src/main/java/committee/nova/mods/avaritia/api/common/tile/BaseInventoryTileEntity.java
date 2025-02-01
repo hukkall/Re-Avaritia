@@ -1,5 +1,6 @@
 package committee.nova.mods.avaritia.api.common.tile;
 
+import committee.nova.mods.avaritia.api.common.wrapper.BaseItemWrapper;
 import committee.nova.mods.avaritia.api.common.wrapper.ItemStackWrapper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -47,7 +48,7 @@ public abstract class BaseInventoryTileEntity extends BaseTileEntity implements 
         }
     }
 
-    public abstract @NotNull ItemStackWrapper getInventory();
+    public abstract @NotNull BaseItemWrapper getInventory();
 
     @Override
     public void load(@NotNull CompoundTag tag) {

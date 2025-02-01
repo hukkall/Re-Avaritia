@@ -2,10 +2,13 @@ package committee.nova.mods.avaritia.api.common.wrapper;
 
 
 import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.items.ItemHandlerHelper;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,7 +22,9 @@ import java.util.function.BiFunction;
  * @CreateTime: 2022/4/2 10:59
  * @Description:
  */
-public class ItemStackWrapper extends ItemStackHandler {
+public class ItemStackWrapper implements BaseItemWrapper {
+    protected NonNullList<ItemStack> stacks;
+
     private final Runnable onContentsChanged;
     private final Map<Integer, Integer> slotSizeMap;
     private BiFunction<Integer, ItemStack, Boolean> slotValidator;
@@ -39,7 +44,7 @@ public class ItemStackWrapper extends ItemStackHandler {
     }
 
     public ItemStackWrapper(int size, int maxStackSize, Runnable onContentsChanged) {
-        super(size);
+        this.stacks = NonNullList.withSize(size, ItemStack.EMPTY);
         this.slotValidator = null;
         this.maxStackSize = maxStackSize;
         this.outputSlots = null;
@@ -52,7 +57,7 @@ public class ItemStackWrapper extends ItemStackHandler {
     }
 
     public ItemStackWrapper(NonNullList<ItemStack> stacks, int maxStackSize, Runnable onContentsChanged) {
-        super(stacks);
+        this.stacks = stacks;
         this.slotValidator = null;
         this.maxStackSize = maxStackSize;
         this.outputSlots = null;
@@ -60,14 +65,70 @@ public class ItemStackWrapper extends ItemStackHandler {
         this.slotSizeMap = new HashMap<>();
     }
 
+    public void setSize(int size)
+    {
+        this.stacks = NonNullList.withSize(size, ItemStack.EMPTY);
+    }
+
+    @Override
+    public int getSlots() {
+        return this.stacks.size();
+    }
+
+    @Override
+    public @NotNull ItemStack getStackInSlot(int slot) {
+        validateSlotIndex(slot);
+        return this.stacks.get(slot);
+    }
+
+    @Override
+    public void setStackInSlot(int slot, @NotNull ItemStack stack) {
+
+    }
+
+    @Override
+    public CompoundTag serializeNBT() {
+        ListTag nbtTagList = new ListTag();
+        for (int i = 0; i < stacks.size(); i++)
+        {
+            if (!stacks.get(i).isEmpty())
+            {
+                CompoundTag itemTag = new CompoundTag();
+                itemTag.putInt("Slot", i);
+                stacks.get(i).save(itemTag);
+                nbtTagList.add(itemTag);
+            }
+        }
+        CompoundTag nbt = new CompoundTag();
+        nbt.put("Items", nbtTagList);
+        nbt.putInt("Size", stacks.size());
+        return nbt;
+    }
+
+    @Override
+    public void deserializeNBT(CompoundTag nbt) {
+        setSize(nbt.contains("Size", Tag.TAG_INT) ? nbt.getInt("Size") : stacks.size());
+        ListTag tagList = nbt.getList("Items", Tag.TAG_COMPOUND);
+        for (int i = 0; i < tagList.size(); i++)
+        {
+            CompoundTag itemTags = tagList.getCompound(i);
+            int slot = itemTags.getInt("Slot");
+
+            if (slot >= 0 && slot < stacks.size())
+            {
+                stacks.set(slot, ItemStack.of(itemTags));
+            }
+        }
+    }
+
     @Override
     public @NotNull ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
-        return this.outputSlots != null && ArrayUtils.contains(this.outputSlots, slot) ? stack : super.insertItem(slot, stack, simulate);
+        return this.outputSlots != null && ArrayUtils.contains(this.outputSlots, slot) ? stack : this.insertItemSuper(slot, stack, simulate);
     }
 
     @Override
     public @NotNull ItemStack extractItem(int slot, int amount, boolean simulate) {
-        return this.outputSlots != null && !ArrayUtils.contains(this.outputSlots, slot) ? ItemStack.EMPTY : super.extractItem(slot, amount, simulate);
+        return this.outputSlots != null && !ArrayUtils.contains(this.outputSlots, slot) ? ItemStack.EMPTY : this.extractItemSuper(slot, amount, simulate);
     }
 
     @Override
@@ -80,20 +141,10 @@ public class ItemStackWrapper extends ItemStackHandler {
         return this.slotValidator == null || this.slotValidator.apply(slot, stack);
     }
 
-    @Override
     protected void onContentsChanged(int slot) {
         if (this.onContentsChanged != null) {
             this.onContentsChanged.run();
         }
-
-    }
-
-    public ItemStack insertItemSuper(int slot, ItemStack stack, boolean simulate) {
-        return super.insertItem(slot, stack, simulate);
-    }
-
-    public ItemStack extractItemSuper(int slot, int amount, boolean simulate) {
-        return super.extractItem(slot, amount, simulate);
     }
 
     @NotNull
@@ -140,4 +191,99 @@ public class ItemStackWrapper extends ItemStackHandler {
 
         return newInventory;
     }
+
+    public ItemStack insertItemSuper(int slot, ItemStack stack, boolean simulate) {
+        if (stack.isEmpty())
+            return ItemStack.EMPTY;
+
+        if (!isItemValid(slot, stack))
+            return stack;
+
+        validateSlotIndex(slot);
+
+        ItemStack existing = this.stacks.get(slot);
+
+        int limit = getStackLimit(slot, stack);
+
+        if (!existing.isEmpty())
+        {
+            if (!ItemHandlerHelper.canItemStacksStack(stack, existing))
+                return stack;
+
+            limit -= existing.getCount();
+        }
+
+        if (limit <= 0)
+            return stack;
+
+        boolean reachedLimit = stack.getCount() > limit;
+
+        if (!simulate)
+        {
+            if (existing.isEmpty())
+            {
+                this.stacks.set(slot, reachedLimit ? ItemHandlerHelper.copyStackWithSize(stack, limit) : stack);
+            }
+            else
+            {
+                existing.grow(reachedLimit ? limit : stack.getCount());
+            }
+            onContentsChanged(slot);
+        }
+
+        return reachedLimit ? ItemHandlerHelper.copyStackWithSize(stack, stack.getCount()- limit) : ItemStack.EMPTY;
+    }
+
+    public ItemStack extractItemSuper(int slot, int amount, boolean simulate)
+    {
+        if (amount == 0)
+            return ItemStack.EMPTY;
+
+        validateSlotIndex(slot);
+
+        ItemStack existing = this.stacks.get(slot);
+
+        if (existing.isEmpty())
+            return ItemStack.EMPTY;
+
+        int toExtract = Math.min(amount, existing.getMaxStackSize());
+
+        if (existing.getCount() <= toExtract)
+        {
+            if (!simulate)
+            {
+                this.stacks.set(slot, ItemStack.EMPTY);
+                onContentsChanged(slot);
+                return existing;
+            }
+            else
+            {
+                return existing.copy();
+            }
+        }
+        else
+        {
+            if (!simulate)
+            {
+                this.stacks.set(slot, ItemHandlerHelper.copyStackWithSize(existing, existing.getCount() - toExtract));
+                onContentsChanged(slot);
+            }
+
+            return ItemHandlerHelper.copyStackWithSize(existing, toExtract);
+        }
+    }
+
+
+    protected int getStackLimit(int slot, @NotNull ItemStack stack)
+    {
+        return Math.min(getSlotLimit(slot), stack.getMaxStackSize());
+    }
+
+    protected void validateSlotIndex(int slot)
+    {
+        if (slot < 0 || slot >= stacks.size())
+            throw new RuntimeException("Slot " + slot + " not in valid range - [0," + stacks.size() + ")");
+    }
+
+
 }

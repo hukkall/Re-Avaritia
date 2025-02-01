@@ -2,6 +2,7 @@ package committee.nova.mods.avaritia.common.wrappers;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 /**
@@ -10,7 +11,7 @@ import net.minecraftforge.items.ItemHandlerHelper;
  * @CreateTime: 2025/1/28 02:22
  * @Description:
  */
-public class StorageItem {
+public class StorageItem{
     public static final StorageItem EMPTY = new StorageItem(ItemStack.EMPTY, 0L);
     private boolean empty;
     private final ItemStack stack;
@@ -89,5 +90,4 @@ public class StorageItem {
         nbt.putInt("Count", (int)this.count);
         return nbt;
     }
-
 }
