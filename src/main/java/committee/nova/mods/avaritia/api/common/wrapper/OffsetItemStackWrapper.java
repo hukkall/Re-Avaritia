@@ -4,8 +4,6 @@ import committee.nova.mods.avaritia.common.wrappers.StorageItem;
 import committee.nova.mods.avaritia.init.config.ModConfig;
 import committee.nova.mods.avaritia.util.StorageUtils;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -16,44 +14,39 @@ import org.jetbrains.annotations.NotNull;
  * @Project: Avaritia
  * @Author: cnlimiter
  * @CreateTime: 2025/1/31 22:33
- * @Description:
+ * @Description: 多页容器IItemHandler
  */
 public class OffsetItemStackWrapper implements IItemHandler, IItemHandlerModifiable {
 
     protected Int2ObjectMap<StorageItem> stacks;
-    protected int offset;
-    protected int slots;
+    protected final int slotsPerPage;  // 每页槽位数
+    protected final int totalPages;    // 总页数
+    protected int page;    // 当前页
 
-    public OffsetItemStackWrapper(int slots)
-    {
-        this(0, slots);
+    public OffsetItemStackWrapper(int slotsPerPage) {
+        this(StorageUtils.newContainers(), 0, slotsPerPage);
     }
 
-    public OffsetItemStackWrapper(int offset, int slots)
-    {
-        this.stacks = new Int2ObjectOpenHashMap<>();
-        this.stacks.defaultReturnValue(StorageItem.EMPTY);
-        this.offset = offset;
-        this.slots = slots;
-    }
-
-    public OffsetItemStackWrapper(Int2ObjectMap<StorageItem> stacks, int offset, int slots)
-    {
+    public OffsetItemStackWrapper(Int2ObjectMap<StorageItem> stacks, int page, int slotsPerPage) {
         this.stacks = stacks;
-        this.offset = offset;
-        this.slots = slots;
+        this.page = page;
+        this.slotsPerPage = slotsPerPage;
+        this.totalPages = ModConfig.maxPageLimit.get();
     }
 
-    public StorageItem getContainerInSlot(int slot) {
-        return this.stacks.get(this.offset + slot);
+    public StorageItem getItemInSlot(int slot) {
+        int slotInPage = slot % slotsPerPage;
+        return this.stacks.get(page * slotsPerPage + slotInPage);
     }
 
-    public void setContainerInSlot(int slot, StorageItem container) {
-        this.stacks.put(this.offset + slot, container);
+    public void setItemInSlot(int slot, StorageItem container) {
+        int slotInPage = slot % slotsPerPage;
+        this.stacks.put(page * slotsPerPage + slotInPage, container);
     }
 
-    public StorageItem removeContainerInSlot(int slot) {
-        return this.stacks.remove(this.offset + slot);
+    public StorageItem removeItemInSlot(int slot) {
+        int slotInPage = slot % slotsPerPage;
+        return this.stacks.remove(page * slotsPerPage + slotInPage);
     }
 
     public long getSlotLimitLong(int slot) {
@@ -61,30 +54,32 @@ public class OffsetItemStackWrapper implements IItemHandler, IItemHandlerModifia
     }
 
     public long getSlotFreeSpace(int slot) {
-        return this.getSlotLimitLong(slot) - this.getContainerInSlot(slot).getCount();
+        return this.getSlotLimitLong(slot) - this.getItemInSlot(slot).getCount();
     }
 
     @Override
     public void setStackInSlot(int slot, @NotNull ItemStack stack) {
         if (stack.isEmpty()) {
-            this.removeContainerInSlot(slot);
+            this.removeItemInSlot(slot);
         } else {
             int size = (int) Math.min(stack.getCount(), this.getSlotLimitLong(slot));
-            this.setContainerInSlot(slot, StorageItem.create(stack, size));
+            this.setItemInSlot(slot, StorageItem.create(stack, size));
         }
     }
 
     @Override
     public int getSlots() {
-        return this.slots;
+        return this.slotsPerPage;
+                //* ModConfig.maxPageLimit.get();
     }
 
     @Override
     public @NotNull ItemStack getStackInSlot(int slot) {
-        StorageItem container = this.getContainerInSlot(slot);
+        StorageItem container = this.getItemInSlot(slot);
         ItemStack stack = container.getStack();
         return ItemHandlerHelper.copyStackWithSize(stack, (int) container.getCount());
     }
+
 
     @Override
     public @NotNull ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
@@ -93,7 +88,7 @@ public class OffsetItemStackWrapper implements IItemHandler, IItemHandlerModifia
         } else if (!this.isItemValid(slot, stack)) {
             return stack;
         } else {
-            StorageItem container = this.getContainerInSlot(slot);
+            StorageItem container = this.getItemInSlot(slot);
             ItemStack stackInSlot = container.getStack();
             long limit = this.getSlotLimitLong(slot);
             if (!container.isEmpty()) {
@@ -110,7 +105,7 @@ public class OffsetItemStackWrapper implements IItemHandler, IItemHandlerModifia
                 int toInsert = (int)Math.min(stack.getCount(), limit);
                 if (!simulate) {
                     if (container.isEmpty()) {
-                        this.setContainerInSlot(slot, StorageItem.create(stack, toInsert));
+                        this.setItemInSlot(slot, StorageItem.create(stack, toInsert));
                     } else {
                         container.growCount(toInsert);
                     }
@@ -127,7 +122,7 @@ public class OffsetItemStackWrapper implements IItemHandler, IItemHandlerModifia
         if (amount == 0) {
             return ItemStack.EMPTY;
         } else {
-            StorageItem container = this.getContainerInSlot(slot);
+            StorageItem container = this.getItemInSlot(slot);
             if (container.isEmpty()) {
                 return ItemStack.EMPTY;
             } else {
@@ -138,7 +133,7 @@ public class OffsetItemStackWrapper implements IItemHandler, IItemHandlerModifia
                     if (stackCount > (long)toExtract) {
                         container.shrinkCount(toExtract);
                     } else {
-                        this.removeContainerInSlot(slot);
+                        this.removeItemInSlot(slot);
                     }
                     onContentsChanged(slot);
                 }

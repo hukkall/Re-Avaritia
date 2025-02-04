@@ -1,6 +1,7 @@
 package committee.nova.mods.avaritia.common.tile;
 
 import committee.nova.mods.avaritia.api.common.container.OffsetContainer;
+import committee.nova.mods.avaritia.api.common.tile.BaseTileEntity;
 import committee.nova.mods.avaritia.api.common.wrapper.OffsetItemStackWrapper;
 import committee.nova.mods.avaritia.common.menu.InfinityChestMenu;
 import committee.nova.mods.avaritia.common.wrappers.StorageItem;
@@ -9,15 +10,22 @@ import committee.nova.mods.avaritia.init.registry.ModTileEntities;
 import committee.nova.mods.avaritia.util.StorageUtils;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @Project: Avaritia
@@ -34,13 +42,13 @@ public class InfinityChestTile extends BaseContainerBlockEntity implements Offse
     }
 
     @Override
-    protected @NotNull AbstractContainerMenu createMenu(int pContainerId, @NotNull Inventory pInventory) {
-        return new InfinityChestMenu(pContainerId, pInventory, this.getBlockPos(), this, this.chestData);
+    protected @NotNull Component getDefaultName() {
+        return CONTAINER_NAME;
     }
 
     @Override
-    protected @NotNull Component getDefaultName() {
-        return CONTAINER_NAME;
+    protected @NotNull AbstractContainerMenu createMenu(int pContainerId, @NotNull Inventory pInventory) {
+        return new InfinityChestMenu(pContainerId, pInventory, this.getBlockPos(), this, this.chestData);
     }
 
     @Override
@@ -56,7 +64,6 @@ public class InfinityChestTile extends BaseContainerBlockEntity implements Offse
         StorageUtils.saveAllItems(pTag, this.containers);
         pTag.putInt("Page", this.page);
     }
-
 
     private final ContainerData chestData = new ContainerData() {
         @Override
@@ -77,12 +84,11 @@ public class InfinityChestTile extends BaseContainerBlockEntity implements Offse
     @Override
     public OffsetItemStackWrapper getItemHandler() {
         int slots = ModConfig.inventoryRows.get() * 9;
-        return new OffsetItemStackWrapper(this.containers, this.page * slots, slots);
+        return new OffsetItemStackWrapper(this.containers, this.page, slots);
     }
 
     @Override
     protected @NotNull IItemHandler createUnSidedHandler() {
         return this.getItemHandler();
     }
-
 }

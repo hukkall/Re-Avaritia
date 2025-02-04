@@ -2,6 +2,7 @@ package committee.nova.mods.avaritia.api.common.container;
 
 import committee.nova.mods.avaritia.api.common.wrapper.OffsetItemStackWrapper;
 import committee.nova.mods.avaritia.common.wrappers.StorageItem;
+import committee.nova.mods.avaritia.init.config.ModConfig;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerData;
@@ -13,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
  * @Project: Avaritia
  * @Author: cnlimiter
  * @CreateTime: 2024/11/14 22:58
- * @Description:
+ * @Description: 多页容器
  */
 public interface OffsetContainer extends Container {
 
@@ -35,20 +36,19 @@ public interface OffsetContainer extends Container {
     }
 
     OffsetItemStackWrapper getItemHandler();
-    default StorageItem getContainerInSlot(int index) {
-        return this.getItemHandler().getContainerInSlot(index);
+    default StorageItem getItemInSlot(int index) {
+        return this.getItemHandler().getItemInSlot(index);
     }
 
     default ContainerData getItemCountAccessor() {
         return new ContainerData() {
             @Override public int get(int index) {
-                return index >= 0 && index < OffsetContainer.this.getContainerSize() ? (int) OffsetContainer.this.getContainerInSlot(index).getCount() : 0;
+                return index >= 0 && index < OffsetContainer.this.getContainerSize() ? (int) OffsetContainer.this.getItemInSlot(index).getCount() : 0;
             }
             @Override public void set(int index, int value) {
                 if (index >= 0 && index < OffsetContainer.this.getContainerSize()) {
-                    OffsetContainer.this.getContainerInSlot(index).setCount(Integer.toUnsignedLong(value));
+                    OffsetContainer.this.getItemInSlot(index).setCount(Integer.toUnsignedLong(value));
                 }
-
             }
             @Override public int getCount() {
                 return OffsetContainer.this.getContainerSize();
@@ -64,17 +64,16 @@ public interface OffsetContainer extends Container {
     @Override
     default boolean isEmpty() {
         for(int i = 0; i < this.getContainerSize(); ++i) {
-            if (!this.getContainerInSlot(i).isEmpty()) {
+            if (!this.getItemInSlot(i).isEmpty()) {
                 return false;
             }
         }
-
         return true;
     }
 
     @Override
     default @NotNull ItemStack getItem(int index) {
-        return this.getContainerInSlot(index).getStack().copy();
+        return this.getItemInSlot(index).getStack().copy();
     }
 
     @Override
@@ -84,13 +83,13 @@ public interface OffsetContainer extends Container {
 
     @Override
     default @NotNull ItemStack removeItemNoUpdate(int index) {
-        StorageItem container = this.getItemHandler().removeContainerInSlot(index);
+        StorageItem container = this.getItemHandler().removeItemInSlot(index);
         if (container.isEmpty()) {
             return ItemStack.EMPTY;
         } else {
             ItemStack stack = container.getStack();
-            int size = (int)Math.min(container.getCount(), stack.getMaxStackSize());
-            return ItemHandlerHelper.copyStackWithSize(stack, size);
+            //int size = (int)Math.min(container.getCount(), stack.getMaxStackSize());
+            return ItemHandlerHelper.copyStackWithSize(stack, (int) container.getCount());
         }
     }
 
@@ -101,15 +100,14 @@ public interface OffsetContainer extends Container {
 
     @Override
     default int getMaxStackSize() {
-        return this.getItemHandler().getSlotLimit(0);
+        return (int)Math.min(Integer.MAX_VALUE , ModConfig.slotStackLimit.get());
     }
 
     @Override
     default void clearContent() {
         for(int i = 0; i < this.getContainerSize(); ++i) {
-            this.getItemHandler().removeContainerInSlot(i);
+            this.getItemHandler().removeItemInSlot(i);
         }
-
     }
 
     @Override

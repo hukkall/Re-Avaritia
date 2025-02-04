@@ -21,6 +21,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nullable;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Objects;
@@ -63,6 +64,17 @@ public class InfinityChestScreen extends BaseContainerScreen<InfinityChestMenu> 
     protected void renderBgOthers(GuiGraphics pGuiGraphics, int pX, int pY) {
         pGuiGraphics.blit(MULTI_PAGE_TEXTURE, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.inventoryRows * 18 + 35);
         pGuiGraphics.blit(MULTI_PAGE_TEXTURE, this.leftPos, this.topPos + this.inventoryRows * 18 + 35, 0, 143, this.imageWidth, 97);
+        int index = this.menu.getSwapIndex();
+        Slot slot = index >= 0 && index < this.menu.slots.size() ? this.menu.getSlot(index) : null;
+        if (slot != null && Objects.equals(slot.container, this.menu.getChestContainer())) {
+            RenderSystem.disableDepthTest();
+            int xPos = this.leftPos + slot.x;
+            int yPos = this.topPos + slot.y;
+            RenderSystem.colorMask(true, true, true, false);
+            pGuiGraphics.fillGradient(xPos, yPos, xPos + 16, yPos + 16, -2130771968, -2130771968);
+            RenderSystem.colorMask(true, true, true, true);
+            RenderSystem.enableDepthTest();
+        }
     }
 
     @Override
@@ -74,17 +86,6 @@ public class InfinityChestScreen extends BaseContainerScreen<InfinityChestMenu> 
         pGuiGraphics.drawString(font, "∞", 169 - 20, 24, 4210752, false);
     }
 
-    @Override
-    protected @NotNull List<Component> getTooltipFromContainerItem(@NotNull ItemStack pStack) {
-        List<Component> tooltip = super.getTooltipFromContainerItem(pStack);
-        Slot slot = this.getSlotUnderMouse();
-        if (slot != null && Objects.equals(slot.container, (this.menu).getChestInventory())) {
-            long count = (this.menu).getItemCount(slot.getSlotIndex());
-            String text = ModTooltips.NUM_ITEMS.args(count).buildString();
-            tooltip.add(1, Component.literal(text));
-        }
-        return tooltip;
-    }
 
     @Override
     public boolean keyPressed(int pKeyCode, int pScanCode, int pModifiers) {
@@ -137,6 +138,32 @@ public class InfinityChestScreen extends BaseContainerScreen<InfinityChestMenu> 
                         16777215);
                 poseStack.popPose();
             }
+        }
+    }
+
+    @Override
+    protected void slotClicked(@Nullable Slot slotIn, int slotId, int mouseButton, @NotNull ClickType type) {
+        if (type == ClickType.CLONE) {
+            super.slotClicked(null, slotId, 1, type);
+        } else {
+            if (slotIn != null) {
+                if (type == ClickType.PICKUP) {
+                    if (hasAltDown()) {
+                        if (Objects.equals(slotIn.container, this.menu.getChestContainer())) {
+                            super.slotClicked(slotIn, slotId, 2, type);
+                            return;
+                        }
+                    } else if (hasControlDown() && (Objects.equals(slotIn.container, this.menu.getChestContainer()) || Objects.equals(slotIn.container, this.menu.getPlayerInventory()))) {
+                        super.slotClicked(slotIn, slotId, 3, type);
+                        return;
+                    }
+                } else if (type == ClickType.QUICK_MOVE && (Objects.equals(slotIn.container, this.menu.getChestContainer()) || Objects.equals(slotIn.container, this.menu.getPlayerInventory())) && hasControlDown()) {
+                    super.slotClicked(slotIn, slotId, 2, type);
+                    return;
+                }
+            }
+
+            if (slotIn != null) super.slotClicked(slotIn, slotId, mouseButton, type);
         }
     }
 }
