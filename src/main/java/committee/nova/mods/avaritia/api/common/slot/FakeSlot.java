@@ -4,6 +4,7 @@ import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
@@ -14,43 +15,38 @@ import java.util.Optional;
  * @Description:
  */
 public class FakeSlot extends Slot {
-    public FakeSlot(Container container, int slotId, int x, int y) {
-        super(container, slotId, x, y);
+    public FakeSlot(Container pContainer, int pSlot, int pX, int pY) {
+        super(pContainer, pSlot, pX, pY);
     }
+    @Override
+    public void set(@NotNull ItemStack pStack) {}
 
     @Override
-    public void set(ItemStack pStack) {
-    }
+    public void onTake(@NotNull Player pPlayer, @NotNull ItemStack pStack) {}
 
     @Override
-    public void onTake(Player pPlayer, ItemStack pStack) {
-    }
-
-    @Override
-    public ItemStack remove(int pAmount) {
+    public @NotNull ItemStack remove(int pAmount) {
         return ItemStack.EMPTY;
     }
 
     @Override
-    public Optional<ItemStack> tryRemove(int pCount, int pDecrement, Player pPlayer) {
+    public @NotNull Optional<ItemStack> tryRemove(int pCount, int pDecrement, @NotNull Player pPlayer) {
         return Optional.of(ItemStack.EMPTY);
     }
 
     @Override
-    public ItemStack safeInsert(ItemStack pStack, int pIncrement) {
+    public @NotNull ItemStack safeInsert(@NotNull ItemStack pStack, int pIncrement) {
         return ItemStack.EMPTY;
     }
 
     @Override
-    public ItemStack safeTake(int pCount, int pDecrement, Player pPlayer) {
+    public @NotNull ItemStack safeTake(int pCount, int pDecrement, @NotNull Player pPlayer) {
         return ItemStack.EMPTY;
     }
 
     @Override
-    public void onQuickCraft(ItemStack pOldStack, ItemStack pNewStack) {
-    }
+    public void onQuickCraft(@NotNull ItemStack pOldStack, @NotNull ItemStack pNewStack) {}
 
     @Override
-    public void setChanged() {
-    }
+    public void setChanged() {}
 }

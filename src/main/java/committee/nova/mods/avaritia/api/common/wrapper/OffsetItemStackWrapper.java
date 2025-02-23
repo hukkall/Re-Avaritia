@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
  * @CreateTime: 2025/1/31 22:33
  * @Description: 多页容器IItemHandler
  */
-public class OffsetItemStackWrapper implements IItemHandler, IItemHandlerModifiable {
+public class OffsetItemStackWrapper implements IItemHandlerModifiable {
 
     protected Int2ObjectMap<StorageItem> stacks;
     protected final int slotsPerPage;  // 每页槽位数

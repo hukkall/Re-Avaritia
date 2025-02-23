@@ -348,14 +348,14 @@ public class InfinityChestMenu extends BaseTileMenu<InfinityChestTile> {
                         this.quickMoveStack(player, slotId);
                     }
                 } else if (clickTypeIn == ClickType.CLONE) {
-                    Comparator<StorageItem> comparator = StorageUtils.DEFAULT_1;
-                    if (dragType == 2) {
-                        comparator = StorageUtils.DEFAULT_2;
-                    } else if (dragType == 3) {
-                        comparator = StorageUtils.DEFAULT_3;
-                    }
-
-                    this.sort(comparator, 0, this.container.getContainerSize());
+//                    Comparator<StorageItem> comparator = StorageUtils.DEFAULT_1;
+//                    if (dragType == 2) {
+//                        comparator = StorageUtils.DEFAULT_2;
+//                    } else if (dragType == 3) {
+//                        comparator = StorageUtils.DEFAULT_3;
+//                    }
+//
+//                    this.sort(comparator, 0, this.container.getContainerSize());
                 }
             } else {
                 this.swapIndex = -1;

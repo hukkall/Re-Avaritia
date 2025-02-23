@@ -7,9 +7,17 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import java.text.DecimalFormat;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @Project: Avaritia
@@ -18,38 +26,122 @@ import java.util.Comparator;
  * @Description:
  */
 public class StorageUtils {
+    public static class Sort {
+        public static final byte ID_ASCENDING = 0;
+        public static final byte ID_DESCENDING = 1;
+        public static final byte NAMESPACE_ID_ASCENDING = 2;
+        public static final byte NAMESPACE_ID_DESCENDING = 3;
+        public static final byte MIRROR_ID_ASCENDING = 4;
+        public static final byte MIRROR_ID_DESCENDING = 5;
+        public static final byte COUNT_ASCENDING = 6;
+        public static final byte COUNT_DESCENDING = 7;
+    }
 
-    public static final Comparator<StorageItem> ITEM_REGISTRY_NAME = (item1, item2) -> {
-        ResourceLocation registryName1 = ForgeRegistries.ITEMS.getKey(item1.getStack().getItem());
-        ResourceLocation registryName2 = ForgeRegistries.ITEMS.getKey(item2.getStack().getItem());
-        if (registryName1 != null && registryName2 != null) {
-            return registryName1.getPath().compareTo(registryName2.getPath());
-        } else if (registryName1 == null && registryName2 == null) {
-            return 0;
+    public static final class Action {
+        public static final int LEFT_CLICK_DUMMY_SLOT = 0;
+        public static final int Right_CLICK_DUMMY_SLOT = 1;
+        public static final int LEFT_SHIFT_DUMMY_SLOT = 2;
+        public static final int Right_SHIFT_DUMMY_SLOT = 3;
+        public static final int THROW_ONE = 4;
+        public static final int THROW_STICK = 5;
+        public static final int LEFT_DRAG = 6;
+        public static final int RIGHT_DRAG = 7;
+        public static final int CLONE = 8;
+        public static final int DRAG_CLONE = 9;
+    }
+
+    public static final String UUID_REGEX = "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$";
+    public static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat(",###");
+    private static final HashMap<Item, String> ITEM_ID_MAP = new HashMap<>();
+    private static final HashMap<String, Item> ID_ITEM_MAP = new HashMap<>();
+    private static final HashMap<Fluid, String> FLUID_ID_MAP = new HashMap<>();
+    private static final HashMap<String, Fluid> ID_FLUID_MAP = new HashMap<>();
+
+    public static int sortFromCount(ItemStack i1, ItemStack i2, ConcurrentHashMap<ItemStack, Long> storageItems, boolean reverseOrder) {
+        String s1 = getItemId(i1.getItem());
+        String s2 = getItemId(i2.getItem());
+        int i;
+        if (reverseOrder) {
+            i = storageItems.get(i2).compareTo(storageItems.get(i1));
         } else {
-            return registryName1 == null ? 1 : -1;
+            i = storageItems.get(i1).compareTo(storageItems.get(i2));
         }
-    };
-    public static final Comparator<StorageItem> MOD_ID = (item1, item2) -> {
-        ResourceLocation registryName1 = ForgeRegistries.ITEMS.getKey(item1.getStack().getItem());
-        ResourceLocation registryName2 = ForgeRegistries.ITEMS.getKey(item2.getStack().getItem());
-        if (registryName1 != null && registryName2 != null) {
-            return registryName1.getNamespace().compareTo(registryName2.getNamespace());
-        } else if (registryName1 == null && registryName2 == null) {
-            return 0;
-        } else {
-            return registryName1 == null ? 1 : -1;
+        if (i == 0) i = s1.compareTo(s2);
+        return i;
+    }
+
+    public static int sortFromRightID(ItemStack i1, ItemStack i2) {
+        String s1 = getItemId(i1.getItem());
+        String s2 = getItemId(i2.getItem());
+        int i = s1.indexOf(":");
+        String a = s1.substring(i + 1);
+        int j = s2.indexOf(":");
+        String b = s2.substring(j + 1);
+        int k = a.compareTo(b);
+        if (k == 0) k = s1.compareTo(s2);
+        return k;
+    }
+
+    public static int sortFromMirrorID(ItemStack i1, ItemStack i2) {
+        String s1 = getItemId(i1.getItem());
+        String s2 = getItemId(i2.getItem());
+        char[] a = s1.toCharArray();
+        char[] b = s2.toCharArray();
+        int j = a.length - 1;
+        int k = b.length - 1;
+        int l;
+        int min = Math.min(a.length, b.length);
+        for (int i = 0; i < min; i++) {
+            l = Character.compare(a[j], b[k]);
+            if (l != 0) return l;
+            j--; k--;
         }
-    };
-    public static final Comparator<StorageItem> ITEM_NAME = (item1, item2) -> {
-        String name1 = item1.getStack().getDisplayName().getString();
-        String name2 = item2.getStack().getDisplayName().getString();
-        return name1.compareTo(name2);
-    };
-    public static final Comparator<StorageItem> ITEM_COUNT = Comparator.comparingLong(StorageItem::getCount);
-    public static final Comparator<StorageItem> DEFAULT_1 = ITEM_REGISTRY_NAME.thenComparing(MOD_ID).thenComparing(ITEM_COUNT.reversed());
-    public static final Comparator<StorageItem> DEFAULT_2 = ITEM_NAME.thenComparing(ITEM_COUNT.reversed());
-    public static final Comparator<StorageItem> DEFAULT_3 = ITEM_COUNT.reversed().thenComparing(ITEM_NAME);
+        return Integer.compare(a.length, b.length);
+    }
+
+
+    public static String getItemId(Item item) {
+        if (ITEM_ID_MAP.containsKey(item)) return ITEM_ID_MAP.get(item);
+        else {
+            String id = ForgeRegistries.ITEMS.getKey(item).toString();
+            ITEM_ID_MAP.put(item, id);
+            ID_ITEM_MAP.put(id, item);
+            return id;
+        }
+    }
+
+    public static Item getItem(String id) {
+        if (ID_ITEM_MAP.containsKey(id)) return ID_ITEM_MAP.get(id);
+        else {
+            Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(id));
+            if (item == null || item.equals(Items.AIR)) return Items.AIR;
+            ID_ITEM_MAP.put(id, item);
+            ITEM_ID_MAP.put(item, id);
+            return item;
+        }
+    }
+
+    public static String getFluidId(Fluid fluid) {
+        if (FLUID_ID_MAP.containsKey(fluid)) return FLUID_ID_MAP.get(fluid);
+        else {
+            String id = ForgeRegistries.FLUIDS.getKey(fluid).toString();
+            FLUID_ID_MAP.put(fluid, id);
+            ID_FLUID_MAP.put(id, fluid);
+            return id;
+        }
+    }
+
+    public static Fluid getFluid(String id) {
+        if (ID_FLUID_MAP.containsKey(id)) return ID_FLUID_MAP.get(id);
+        else {
+            Fluid fluid = ForgeRegistries.FLUIDS.getValue(new ResourceLocation(id));
+            if (fluid == null) return Fluids.EMPTY;
+            ID_FLUID_MAP.put(id, fluid);
+            FLUID_ID_MAP.put(fluid, id);
+            return fluid;
+        }
+    }
+
 
     public static Int2ObjectMap<StorageItem> newContainers() {
         Int2ObjectOpenHashMap<StorageItem> containers = new Int2ObjectOpenHashMap<>();

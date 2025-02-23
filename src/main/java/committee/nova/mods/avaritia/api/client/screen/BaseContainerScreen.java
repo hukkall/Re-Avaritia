@@ -24,6 +24,10 @@ public abstract class BaseContainerScreen<T extends AbstractContainerMenu> exten
     protected int bgImgWidth;
     protected int bgImgHeight;
 
+    public BaseContainerScreen(T container, Inventory inventory, Component title) {
+        this(container, inventory, title, null);
+    }
+
     public BaseContainerScreen(T container, Inventory inventory, Component title, ResourceLocation bgTexture) {
         this(container, inventory, title, bgTexture, 176, 166, 256, 256);
     }
@@ -53,12 +57,14 @@ public abstract class BaseContainerScreen<T extends AbstractContainerMenu> exten
     protected void subInit() {
     }
 
+    @Override
     protected void init() {
         super.init();
         this.subInit();
         this.menu.addSlotListener(this);
     }
 
+    @Override
     public void removed() {
         super.removed();
         this.menu.removeSlotListener(this);
@@ -77,7 +83,7 @@ public abstract class BaseContainerScreen<T extends AbstractContainerMenu> exten
 
     @Override
     protected void renderBg(@NotNull GuiGraphics pGuiGraphics, float pPartialTick, int pMouseX, int pMouseY) {
-        pGuiGraphics.blit(this.bgTexture, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.bgImgWidth, this.bgImgHeight);
+        if (this.bgTexture != null) pGuiGraphics.blit(this.bgTexture, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.bgImgWidth, this.bgImgHeight);
         this.renderBgOthers(pGuiGraphics, this.leftPos, this.topPos);
     }
 
