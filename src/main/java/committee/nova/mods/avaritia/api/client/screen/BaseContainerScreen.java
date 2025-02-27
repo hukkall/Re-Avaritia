@@ -1,7 +1,9 @@
 package committee.nova.mods.avaritia.api.client.screen;
 
+import committee.nova.mods.avaritia.api.iface.IDataReceiver;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -19,7 +21,7 @@ import java.text.NumberFormat;
  * Date: 2022/4/2 11:37
  * Version: 1.0
  */
-public abstract class BaseContainerScreen<T extends AbstractContainerMenu> extends AbstractContainerScreen<T> implements ContainerListener {
+public abstract class BaseContainerScreen<T extends AbstractContainerMenu> extends AbstractContainerScreen<T> implements ContainerListener, IDataReceiver {
     protected ResourceLocation bgTexture;
     protected int bgImgWidth;
     protected int bgImgHeight;
@@ -94,5 +96,10 @@ public abstract class BaseContainerScreen<T extends AbstractContainerMenu> exten
     }
 
     public void slotChanged(@NotNull AbstractContainerMenu pContainerToSend, int pSlotInd, @NotNull ItemStack pStack) {
+    }
+
+    @Override
+    public void receive(CompoundTag tag) {
+
     }
 }

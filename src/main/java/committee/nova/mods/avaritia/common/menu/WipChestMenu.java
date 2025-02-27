@@ -15,10 +15,8 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.player.StackedContents;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Recipe;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -317,7 +315,7 @@ public class WipChestMenu extends AbstractContainerMenu implements IDataReceiver
                     setCarried(stack);
                 } else {
                     if (clicked == null)return;
-                    StoredItemStack pulled = te.pullStack(clicked, Math.max(Math.min(clicked.getQuantity(), clicked.getMaxStackSize()) / 2, 1));
+                    StoredItemStack pulled = te.pullStack(clicked, Math.max(Math.min(clicked.getCount(), clicked.getMaxStackSize()) / 2, 1));
                     if(pulled != null) {
                         setCarried(pulled.getActualStack());
                     }
@@ -331,7 +329,7 @@ public class WipChestMenu extends AbstractContainerMenu implements IDataReceiver
                     setCarried(stack);
                 } else {
                     if (clicked == null)return;
-                    StoredItemStack pulled = te.pullStack(clicked, Math.max(Math.min(clicked.getQuantity(), clicked.getMaxStackSize()) / 4, 1));
+                    StoredItemStack pulled = te.pullStack(clicked, Math.max(Math.min(clicked.getCount(), clicked.getMaxStackSize()) / 4, 1));
                     if(pulled != null) {
                         setCarried(pulled.getActualStack());
                     }

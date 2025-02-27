@@ -2,6 +2,7 @@ package committee.nova.mods.avaritia.client.widget;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import committee.nova.mods.avaritia.Static;
 import it.unimi.dsi.fastutil.ints.Int2ObjectFunction;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -18,7 +19,7 @@ import java.util.function.Supplier;
  * @Description:
  */
 public class GuiButton extends Button{
-    public static final ResourceLocation BUTTON_TEXTURES = new ResourceLocation("toms_storage", "textures/gui/filter_buttons.png");
+    public static final ResourceLocation BUTTON_TEXTURES = Static.rl( "textures/gui/filter_buttons.png");
 
     public ResourceLocation texture;
     public int tile;

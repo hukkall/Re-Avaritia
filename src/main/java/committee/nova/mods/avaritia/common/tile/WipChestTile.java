@@ -1,36 +1,19 @@
 package committee.nova.mods.avaritia.common.tile;
 
 import committee.nova.mods.avaritia.api.common.tile.BaseInventoryTileEntity;
-import committee.nova.mods.avaritia.api.common.tile.BaseTileEntity;
-import committee.nova.mods.avaritia.api.common.wrapper.BaseItemWrapper;
-import committee.nova.mods.avaritia.api.utils.InventoryUtils;
-import committee.nova.mods.avaritia.api.utils.ItemUtils;
-import committee.nova.mods.avaritia.common.block.chest.InfinityChestBlock;
 import committee.nova.mods.avaritia.common.container.StoredItemStack;
 import committee.nova.mods.avaritia.common.menu.WipChestMenu;
-import committee.nova.mods.avaritia.common.tile.collector.BaseNeutronCollectorTile;
 import committee.nova.mods.avaritia.common.wrappers.InfinityChestWrapper;
 import committee.nova.mods.avaritia.init.registry.ModTileEntities;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.Containers;
-import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -43,7 +26,7 @@ import java.util.stream.IntStream;
  * @CreateTime: 2025/1/31 15:28
  * @Description:
  */
-public class WipChestTile extends BaseInventoryTileEntity implements MenuProvider {
+public class WipChestTile extends BaseInventoryTileEntity {
     private static final Component CONTAINER_NAME = Component.translatable("container.infinity_chest");
     private Map<StoredItemStack, Long> items = new HashMap<>();
     private int sort;
@@ -54,21 +37,57 @@ public class WipChestTile extends BaseInventoryTileEntity implements MenuProvide
     }
 
     @Override
-    protected AbstractContainerMenu createMenu(int pContainerId, Inventory pInventory) {
-        return new WipChestMenu(pContainerId, pInventory, this);
+    public void load(@NotNull CompoundTag pTag) {
+        super.load(pTag);
+        sort = pTag.getInt("sort");
     }
 
     @Override
-    public @NotNull BaseItemWrapper getInventory() {
+    public void saveAdditional(@NotNull CompoundTag pTag) {
+        super.saveAdditional(pTag);
+        pTag.putInt("sort", sort);
+
+    }
+
+    @Override
+    public @NotNull InfinityChestWrapper getInventory() {
         return new InfinityChestWrapper();
     }
 
+    @Override
+    protected @NotNull AbstractContainerMenu createMenu(int pContainerId, @NotNull Inventory pInventory) {
+        return new WipChestMenu(pContainerId, pInventory, this);
+    }
 
     @Override
     public @NotNull Component getDisplayName() {
         return CONTAINER_NAME;
     }
 
+    public static void tick(Level level, BlockPos pos, BlockState state, WipChestTile tile) {
+        if(tile.updateItems) {
+            IntStream.range(0, tile.getInventory().getSlots()).mapToObj(tile.getInventory()::getStackInSlot).filter(s -> !s.isEmpty()).
+                    map(StoredItemStack::new).forEach(s -> tile.items.merge(s, s.getCount(), Long::sum));
+            tile.updateItems = false;
+        }
+    }
+
+
+    public int getSorting() {
+        return sort;
+    }
+
+    public void setSorting(int newC) {
+        sort = newC;
+    }
+
+    public String getLastSearch() {
+        return lastSearch;
+    }
+
+    public void setLastSearch(String string) {
+        lastSearch = string;
+    }
 
     public Map<StoredItemStack, Long> getStacks() {
         updateItems = true;
@@ -98,10 +117,11 @@ public class WipChestTile extends BaseInventoryTileEntity implements MenuProvide
 
     public StoredItemStack pushStack(StoredItemStack stack) {
         if(stack != null) {
-            ItemStack is = ItemHandlerHelper.insertItemStacked(getInventory(), stack.getActualStack(), false);
-            if(is.isEmpty())return null;
+            StoredItemStack is = getInventory().addItem(stack);
+            //ItemStack is = ItemHandlerHelper.insertItemStacked(getInventory(), stack.getActualStack(), false);
+            if(is.isEmpty()) return null;
             else {
-                return new StoredItemStack(is);
+                return is;
             }
         }
         return stack;
@@ -120,57 +140,5 @@ public class WipChestTile extends BaseInventoryTileEntity implements MenuProvide
         }
     }
 
-    public static void tick(Level level, BlockPos pos, BlockState state, WipChestTile tile) {
-        if(tile.updateItems) {
-            IntStream.range(0, tile.getInventory().getSlots()).mapToObj(tile.getInventory()::getStackInSlot).filter(s -> !s.isEmpty()).
-                    map(StoredItemStack::new).forEach(s -> tile.items.merge(s, s.getQuantity(), Long::sum));
 
-            tile.updateItems = false;
-        }
-    }
-
-
-    public int getSorting() {
-        return sort;
-    }
-
-    public void setSorting(int newC) {
-        sort = newC;
-    }
-
-    @Override
-    public void saveAdditional(@NotNull CompoundTag compound) {
-        super.saveAdditional(compound);
-        compound.putInt("sort", sort);
-    }
-
-    @Override
-    public void load(@NotNull CompoundTag compound) {
-        super.load(compound);
-        sort = compound.getInt("sort");
-    }
-
-    public String getLastSearch() {
-        return lastSearch;
-    }
-
-    public void setLastSearch(String string) {
-        lastSearch = string;
-    }
-
-    public static enum TerminalPos implements StringRepresentable {
-        CENTER("center"),
-        UP("up"),
-        DOWN("down")
-        ;
-        private String name;
-        private TerminalPos(String name) {
-            this.name = name;
-        }
-
-        @Override
-        public String getSerializedName() {
-            return name;
-        }
-    }
 }

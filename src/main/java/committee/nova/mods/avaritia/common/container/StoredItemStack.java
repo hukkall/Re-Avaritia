@@ -13,6 +13,8 @@ import java.util.function.Function;
  * @Description:
  */
 public class StoredItemStack {
+    public static StoredItemStack EMPTY = new StoredItemStack(ItemStack.EMPTY, 0);
+
     private ItemStack stack;
     private long count;
     private static final String ITEM_COUNT_NAME = "c", ITEMSTACK_NAME = "s";
@@ -33,7 +35,7 @@ public class StoredItemStack {
         return stack;
     }
 
-    public long getQuantity() {
+    public long getCount() {
         return count;
     }
 
@@ -41,6 +43,10 @@ public class StoredItemStack {
         ItemStack s = stack.copy();
         s.setCount((int) count);
         return s;
+    }
+
+    public boolean isEmpty() {
+        return stack.isEmpty() || count == 0;
     }
 
     public static class ComparatorAmount implements IStoredItemStackComparator {
@@ -52,7 +58,7 @@ public class StoredItemStack {
 
         @Override
         public int compare(StoredItemStack in1, StoredItemStack in2) {
-            int c = in2.getQuantity() > in1.getQuantity() ? 1 : (in1.getQuantity() == in2.getQuantity() ? in1.getStack().getHoverName().getString().compareTo(in2.getStack().getHoverName().getString()) : -1);
+            int c = in2.getCount() > in1.getCount() ? 1 : (in1.getCount() == in2.getCount() ? in1.getStack().getHoverName().getString().compareTo(in2.getStack().getHoverName().getString()) : -1);
             return this.reversed ? -c : c;
         }
 

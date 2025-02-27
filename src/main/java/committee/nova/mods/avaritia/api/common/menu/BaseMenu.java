@@ -1,6 +1,9 @@
 package committee.nova.mods.avaritia.api.common.menu;
 
+import committee.nova.mods.avaritia.api.iface.IDataReceiver;
+import committee.nova.mods.avaritia.init.handler.NetworkHandler;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -17,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
  * @CreateTime: 2025/1/6 13:07
  * @Description:
  */
-public abstract class BaseMenu extends AbstractContainerMenu {
+public abstract class BaseMenu extends AbstractContainerMenu implements IDataReceiver {
 
     public final Level level;
     public final Player player;
@@ -36,6 +39,14 @@ public abstract class BaseMenu extends AbstractContainerMenu {
     @Override
     public boolean stillValid(@NotNull Player player) {
         return true;
+    }
+
+    public void sendMessage(CompoundTag compound) {
+        NetworkHandler.sendNbtDataToServer(compound);
+    }
+
+    @Override
+    public void receive(CompoundTag tag) {
     }
 
     protected void createInventorySlots(Inventory pInventory) {

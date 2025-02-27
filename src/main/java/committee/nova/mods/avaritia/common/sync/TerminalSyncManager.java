@@ -45,7 +45,7 @@ public class TerminalSyncManager {
         if (item.isDamageable(st) || item.shouldOverrideMultiplayerNbt()) {
             compoundtag = st.getShareTag();
         }
-        byte flags = (byte) ((stack.getQuantity() == 0 ? 1 : 0) | (compoundtag != null ? 2 : 0));
+        byte flags = (byte) ((stack.getCount() == 0 ? 1 : 0) | (compoundtag != null ? 2 : 0));
         boolean wr = true;
         int id = idMap.getInt(stack);
         if(id != 0) {
@@ -59,17 +59,17 @@ public class TerminalSyncManager {
             return i;
         }));
         if(wr)buf.writeId(BuiltInRegistries.ITEM, item);
-        if(stack.getQuantity() != 0)buf.writeVarLong(stack.getQuantity());
+        if(stack.getCount() != 0)buf.writeVarLong(stack.getCount());
         if(wr && compoundtag != null)buf.writeNbt(compoundtag);
     }
 
     private void writeMiniStack(FriendlyByteBuf buf, StoredItemStack stack) {
         int id = idMap.getInt(stack);
-        byte flags = (byte) ((stack.getQuantity() == 0 ? 1 : 0) | 2);
+        byte flags = (byte) ((stack.getCount() == 0 ? 1 : 0) | 2);
         buf.writeByte(flags);
         buf.writeVarInt(id);
         buf.writeId(BuiltInRegistries.ITEM, stack.getStack().getItem());
-        if(stack.getQuantity() != 0)buf.writeVarLong(stack.getQuantity());
+        if(stack.getCount() != 0)buf.writeVarLong(stack.getCount());
         CompoundTag tag = new CompoundTag();
         CompoundTag d = new CompoundTag();
         tag.put("display", d);
@@ -167,7 +167,7 @@ public class TerminalSyncManager {
                 in.add(read(buf));
             }
             in.forEach(s -> {
-                if(s.getQuantity() == 0) {
+                if(s.getCount() == 0) {
                     this.itemList.remove(s);
                 } else {
                     this.itemList.put(s, s);
@@ -186,7 +186,7 @@ public class TerminalSyncManager {
         } else {
             buf.writeByte(flags);
             buf.writeVarInt(idMap.getInt(intStack));
-            buf.writeVarLong(intStack.getQuantity());
+            buf.writeVarLong(intStack.getCount());
         }
         buf.writeEnum(action);
         NetworkHandler.sendNbtDataToServer(writeBuf("a", buf, buf.writerIndex()));
@@ -230,7 +230,7 @@ public class TerminalSyncManager {
 
     public long getAmount(StoredItemStack stack) {
         StoredItemStack s = itemList.get(stack);
-        return s != null ? s.getQuantity() : 0L;
+        return s != null ? s.getCount() : 0L;
     }
 
     public static interface InteractHandler {

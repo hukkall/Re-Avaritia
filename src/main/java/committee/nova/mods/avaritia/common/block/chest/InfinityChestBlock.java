@@ -1,6 +1,7 @@
 package committee.nova.mods.avaritia.common.block.chest;
 
 import committee.nova.mods.avaritia.api.common.block.BaseTileEntityBlock;
+import committee.nova.mods.avaritia.common.tile.OffsetChestTile;
 import committee.nova.mods.avaritia.common.tile.WipChestTile;
 import committee.nova.mods.avaritia.common.tile.WipChestTile.*;
 import committee.nova.mods.avaritia.init.registry.ModTileEntities;
@@ -39,37 +40,30 @@ import org.jetbrains.annotations.NotNull;
  * @Description:
  */
 public class InfinityChestBlock extends BaseTileEntityBlock implements SimpleWaterloggedBlock {
-    public static final EnumProperty<WipChestTile.TerminalPos> TERMINAL_POS = EnumProperty.create("pos", WipChestTile.TerminalPos.class);
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
-    private static final VoxelShape SHAPE_N = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 16.0D, 6.0D);
-    private static final VoxelShape SHAPE_S = Block.box(0.0D, 0.0D, 10.0D, 16.0D, 16.0D, 16.0D);
-    private static final VoxelShape SHAPE_E = Block.box(10.0D, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D);
-    private static final VoxelShape SHAPE_W = Block.box(0.0D, 0.0D, 0.0D, 6.0D, 16.0D, 16.0D);
-    private static final VoxelShape SHAPE_U = Block.box(0.0D, 10.0D, 0.0D, 16.0D, 16.0D, 16.0D);
-    private static final VoxelShape SHAPE_D = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 6.0D, 16.0D);
 
     public InfinityChestBlock() {
         super(Properties.of().mapColor(MapColor.GOLD).instrument(NoteBlockInstrument.BASS).strength(2.5F).sound(SoundType.GLASS).ignitedByLava());
-        this.registerDefaultState(defaultBlockState().setValue(TERMINAL_POS, WipChestTile.TerminalPos.CENTER).setValue(WATERLOGGED, Boolean.FALSE).setValue(FACING, Direction.NORTH));
+        this.registerDefaultState(defaultBlockState().setValue(WATERLOGGED, Boolean.FALSE).setValue(FACING, Direction.NORTH));
     }
 
-    @Override
-    protected <T extends BlockEntity> BlockEntityTicker<T> getServerTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return createTicker(type, ModTileEntities.infinity_chest_tile.get(), WipChestTile::tick);
-    }
-
-    @Override
-    protected <T extends BlockEntity> BlockEntityTicker<T> getClientTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return createTicker(type, ModTileEntities.infinity_chest_tile.get(), WipChestTile::tick);
-    }
+//    @Override
+//    protected <T extends BlockEntity> BlockEntityTicker<T> getServerTicker(Level level, BlockState state, BlockEntityType<T> type) {
+//        return createTicker(type, ModTileEntities.infinity_chest_tile.get(), WipChestTile::tick);
+//    }
+//
+//    @Override
+//    protected <T extends BlockEntity> BlockEntityTicker<T> getClientTicker(Level level, BlockState state, BlockEntityType<T> type) {
+//        return createTicker(type, ModTileEntities.infinity_chest_tile.get(), WipChestTile::tick);
+//    }
 
     @Override
     public @NotNull InteractionResult use(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult trace) {
         if (!level.isClientSide()) {
             var tile = level.getBlockEntity(pos);
 
-            if (tile instanceof WipChestTile chestTile) {
+            if (tile instanceof OffsetChestTile chestTile) {
                 NetworkHooks.openScreen((ServerPlayer) player, chestTile, pos);
             }
         }
@@ -81,25 +75,21 @@ public class InfinityChestBlock extends BaseTileEntityBlock implements SimpleWat
     public BlockState getStateForPlacement(BlockPlaceContext context) {
             Direction direction = context.getClickedFace().getOpposite();
             FluidState ifluidstate = context.getLevel().getFluidState(context.getClickedPos());
-            WipChestTile.TerminalPos pos = WipChestTile.TerminalPos.CENTER;
             if(direction.getAxis() == Direction.Axis.Y) {
-                if(direction == Direction.UP)pos = TerminalPos.UP;
-                if(direction == Direction.DOWN)pos = TerminalPos.DOWN;
                 direction = context.getHorizontalDirection();
             }
             return this.defaultBlockState().setValue(FACING, direction.getAxis() == Direction.Axis.Y ? Direction.NORTH : direction).
-                    setValue(TERMINAL_POS, pos).
-                    setValue(WATERLOGGED, Boolean.valueOf(ifluidstate.getType() == Fluids.WATER));
+                    setValue(WATERLOGGED, ifluidstate.getType() == Fluids.WATER);
     }
 
     @Override
     public @NotNull BlockEntity newBlockEntity(@NotNull BlockPos pPos, @NotNull BlockState pState) {
-        return new WipChestTile(pPos, pState);
+        return new OffsetChestTile(pPos, pState);
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder) {
-        pBuilder.add(TERMINAL_POS, WATERLOGGED, FACING);
+        pBuilder.add(WATERLOGGED, FACING);
     }
 
     @Override
@@ -140,34 +130,4 @@ public class InfinityChestBlock extends BaseTileEntityBlock implements SimpleWat
         return false;
     }
 
-    @Override
-    public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-        switch (state.getValue(TERMINAL_POS)) {
-            case CENTER:
-                switch (state.getValue(FACING)) {
-                    case NORTH:
-                        return SHAPE_N;
-                    case SOUTH:
-                        return SHAPE_S;
-                    case EAST:
-                        return SHAPE_E;
-                    case WEST:
-                        return SHAPE_W;
-                    default:
-                        break;
-                }
-                break;
-
-            case UP:
-                return SHAPE_U;
-
-            case DOWN:
-                return SHAPE_D;
-
-            default:
-                break;
-        }
-
-        return SHAPE_N;
-    }
 }

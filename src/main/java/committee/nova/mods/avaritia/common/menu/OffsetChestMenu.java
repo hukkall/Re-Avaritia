@@ -3,11 +3,10 @@ package committee.nova.mods.avaritia.common.menu;
 import committee.nova.mods.avaritia.api.common.container.OffsetContainer;
 import committee.nova.mods.avaritia.api.common.menu.BaseTileMenu;
 import committee.nova.mods.avaritia.api.common.wrapper.OffsetItemStackWrapper;
-import committee.nova.mods.avaritia.common.tile.InfinityChestTile;
+import committee.nova.mods.avaritia.common.tile.OffsetChestTile;
 import committee.nova.mods.avaritia.common.wrappers.StorageItem;
 import committee.nova.mods.avaritia.init.config.ModConfig;
 import committee.nova.mods.avaritia.init.registry.ModMenus;
-import committee.nova.mods.avaritia.util.StorageUtils;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.ints.IntListIterator;
@@ -34,7 +33,7 @@ import java.util.stream.IntStream;
  * @CreateTime: 2025/1/31 15:38
  * @Description:
  */
-public class InfinityChestMenu extends BaseTileMenu<InfinityChestTile> {
+public class OffsetChestMenu extends BaseTileMenu<OffsetChestTile> {
     private final Inventory playerInventory;
     private final OffsetContainer container;
     private final ContainerData chestData;
@@ -42,12 +41,12 @@ public class InfinityChestMenu extends BaseTileMenu<InfinityChestTile> {
     private final int mainInventorySize;
     private int swapIndex;
     
-    public InfinityChestMenu(int id, Inventory playerInventory, FriendlyByteBuf extraData) {
+    public OffsetChestMenu(int id, Inventory playerInventory, FriendlyByteBuf extraData) {
         this(id, playerInventory, extraData.readBlockPos(), OffsetContainer.dummy(54), new SimpleContainerData(1));
     }
 
-    public InfinityChestMenu(int id, Inventory playerInventory, @NotNull BlockPos pos, OffsetContainer container, final ContainerData chestData) {
-        super(ModMenus.infinity_chest2.get(), id, playerInventory, pos);
+    public OffsetChestMenu(int id, Inventory playerInventory, @NotNull BlockPos pos, OffsetContainer container, final ContainerData chestData) {
+        super(ModMenus.offset_chest.get(), id, playerInventory, pos);
         this.playerInventory = playerInventory;
         this.container = container;
         this.chestData = chestData;
@@ -69,11 +68,11 @@ public class InfinityChestMenu extends BaseTileMenu<InfinityChestTile> {
                 private int lastKnownPage = -1;
 
                 @Override public int get() {
-                    return InfinityChestMenu.this.itemCounts.get(finalI);
+                    return OffsetChestMenu.this.itemCounts.get(finalI);
                 }
 
                 @Override public void set(int value) {
-                    InfinityChestMenu.this.itemCounts.set(finalI, value);
+                    OffsetChestMenu.this.itemCounts.set(finalI, value);
                 }
 
                 @Override

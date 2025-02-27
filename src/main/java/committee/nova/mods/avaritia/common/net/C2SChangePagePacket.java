@@ -1,6 +1,6 @@
 package committee.nova.mods.avaritia.common.net;
 
-import committee.nova.mods.avaritia.common.menu.InfinityChestMenu;
+import committee.nova.mods.avaritia.common.menu.OffsetChestMenu;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkEvent;
@@ -35,7 +35,7 @@ public class C2SChangePagePacket {
         ctx.get().enqueueWork(() -> {
             ServerPlayer player = ctx.get().getSender();
             if (player == null) return;
-            if (player.containerMenu instanceof InfinityChestMenu infinityChestMenu) {
+            if (player.containerMenu instanceof OffsetChestMenu infinityChestMenu) {
                 infinityChestMenu.changePage(msg.page);
             }
         });

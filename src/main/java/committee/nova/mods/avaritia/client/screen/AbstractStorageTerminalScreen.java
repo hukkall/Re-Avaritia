@@ -5,7 +5,6 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import committee.nova.mods.avaritia.api.client.screen.BaseContainerScreen;
 import committee.nova.mods.avaritia.api.iface.IDataReceiver;
 import committee.nova.mods.avaritia.client.AvaritiaForgeClient;
 import committee.nova.mods.avaritia.client.widget.GuiButton;
@@ -14,7 +13,6 @@ import committee.nova.mods.avaritia.common.container.StoredItemStack.*;
 import committee.nova.mods.avaritia.common.container.slot.SlotStorage;
 import committee.nova.mods.avaritia.common.menu.WipChestMenu;
 import committee.nova.mods.avaritia.common.menu.WipChestMenu.*;
-
 import committee.nova.mods.avaritia.util.NumberFormatUtil;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
@@ -24,7 +22,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Tooltip;
-import net.minecraft.client.resources.language.I18n;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -36,9 +34,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 
@@ -50,14 +46,14 @@ import java.util.stream.Collectors;
 /**
  * @Project: Avaritia
  * @Author: cnlimiter
- * @CreateTime: 2025/2/23 01:58
- * @Description: from <a href="https://github.com/tom5454/Toms-Storage">...</a>
+ * @CreateTime: 2025/2/24 00:39
+ * @Description:
  */
-public abstract class AbstractWipChestScreen extends BaseContainerScreen<WipChestMenu> implements IDataReceiver {
+public abstract class AbstractStorageTerminalScreen<T extends WipChestMenu> extends AbstractContainerScreen<T> implements IDataReceiver {
     private static final LoadingCache<StoredItemStack, List<String>> tooltipCache = CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.SECONDS).build(new CacheLoader<StoredItemStack, List<String>>() {
 
         @Override
-        public @NotNull List<String> load(@NotNull StoredItemStack key) throws Exception {
+        public List<String> load(StoredItemStack key) throws Exception {
             return key.getStack().getTooltipLines(Minecraft.getInstance().player, getTooltipFlag()).stream().map(Component::getString).collect(Collectors.toList());
         }
 
@@ -85,12 +81,13 @@ public abstract class AbstractWipChestScreen extends BaseContainerScreen<WipChes
     private String searchLast = "";
     protected boolean loadedSearch = false, ghostItems, tallMode;
     public final int textureSlotCount, guiHeight, slotStartX, slotStartY;
-    private StoredItemStack.IStoredItemStackComparator comparator = new StoredItemStack.ComparatorAmount(false);
+    private StoredItemStack.IStoredItemStackComparator comparator = new ComparatorAmount(false);
     protected GuiButton buttonSortingType, buttonDirection, buttonSearchType, buttonCtrlMode, buttonGhostMode, buttonTallMode;
     private Comparator<StoredItemStack> sortComp;
-    public AbstractWipChestScreen(WipChestMenu container, Inventory inventory, Component title, int textureSlotCount, int guiHeight, int slotStartX, int slotStartY) {
-        super(container, inventory, title);
-        container.onPacket = this::onPacket;
+
+    public AbstractStorageTerminalScreen(T screenContainer, Inventory inv, Component titleIn, int textureSlotCount, int guiHeight, int slotStartX, int slotStartY) {
+        super(screenContainer, inv, titleIn);
+        screenContainer.onPacket = this::onPacket;
         this.textureSlotCount = textureSlotCount;
         this.guiHeight = guiHeight;
         this.slotStartX = slotStartX;
@@ -108,7 +105,7 @@ public abstract class AbstractWipChestScreen extends BaseContainerScreen<WipChes
         controllMode = (s & 0b000_00_0_11) % ControllMode.VALUES.length;
         boolean rev = (s & 0b000_00_1_00) > 0;
         int type = (s & 0b000_11_0_00) >> 3;
-        comparator = StoredItemStack.SortingTypes.VALUES[type % StoredItemStack.SortingTypes.VALUES.length].create(rev);
+        comparator = SortingTypes.VALUES[type % SortingTypes.VALUES.length].create(rev);
         searchType = (s & 0b111_00_0_00) >> 5;
         ghostItems = (s & 0b1_0_000_00_0_00) == 0;
         boolean tallMode  =  (s & 0b1_0_0_000_00_0_00) != 0;
@@ -152,12 +149,8 @@ public abstract class AbstractWipChestScreen extends BaseContainerScreen<WipChes
         return d;
     }
 
-    public void renderBackground(GuiGraphics guiGraphics, int i, int j, float f) {
-        super.renderBackground(guiGraphics);
-    }
-
     @Override
-    protected void subInit() {
+    protected void init() {
         clearWidgets();
         if (tallMode) {
             int guiSize = guiHeight - textureSlotCount * 18;
@@ -171,6 +164,7 @@ public abstract class AbstractWipChestScreen extends BaseContainerScreen<WipChes
             menu.addStorageSlots(rowCount, slotStartX + 1, slotStartY + 1);
         }
         inventoryLabelY = imageHeight - 92;
+        super.init();
         this.searchField = new EditBox(getFont(), this.leftPos + 82, this.topPos + 6, 89, this.getFont().lineHeight, Component.translatable("narrator.toms_storage.terminal_search"));
         this.searchField.setMaxLength(100);
         this.searchField.setBordered(false);
@@ -192,8 +186,7 @@ public abstract class AbstractWipChestScreen extends BaseContainerScreen<WipChes
             refreshItemList = true;
         }));
         buttonSearchType = addRenderableWidget(new GuiButton(leftPos - 18, topPos + 5 + 18*2, 2, b -> {
-            searchType = 0b011;
-            //searchType = (searchType + 1) & ((IAutoFillTerminal.hasSync() || this instanceof CraftingTerminalScreen) ? 0b111 : 0b011);
+            searchType =  0b011;
             buttonSearchType.setState(searchType);
             sendUpdate();
         }) {
@@ -268,7 +261,7 @@ public abstract class AbstractWipChestScreen extends BaseContainerScreen<WipChes
                     StoredItemStack is = getMenu().itemListClient.get(i);
                     if (is != null && is.getStack() != null) {
                         String dspName;
-                        if (searchMod) dspName = ForgeRegistries.ITEMS.getKey(is.getStack().getItem()).getNamespace();
+                        if (searchMod) dspName = BuiltInRegistries.ITEM.getKey(is.getStack().getItem()).getNamespace();
                         else if (searchNbt && is.getStack().hasTag()) dspName = nbtCache.get(is);
                         else dspName = is.getStack().getHoverName().getString();
                         notDone = true;
@@ -291,7 +284,7 @@ public abstract class AbstractWipChestScreen extends BaseContainerScreen<WipChes
                 }
             } catch (Exception e) {
             }
-            getMenu().itemListClientSorted.sort(menu.noSort ? sortComp : comparator);
+            Collections.sort(getMenu().itemListClientSorted, menu.noSort ? sortComp : comparator);
             if(!searchLast.equals(searchString)) {
                 getMenu().scrollTo(0);
                 this.currentScroll = 0;
@@ -377,11 +370,12 @@ public abstract class AbstractWipChestScreen extends BaseContainerScreen<WipChes
 
         searchField.render(st, mouseX, mouseY, partialTicks);
 
+
         if(this.menu.getCarried().isEmpty() && slotIDUnderMouse != -1) {
             SlotStorage slot = getMenu().storageSlotList.get(slotIDUnderMouse);
             if(slot.stack != null) {
-                if (slot.stack.getQuantity() > 9999) {
-                    AvaritiaForgeClient.setTooltip(Component.translatable("tooltip.toms_storage.amount", slot.stack.getQuantity()));
+                if (slot.stack.getCount() > 9999) {
+                    AvaritiaForgeClient.setTooltip(Component.translatable("tooltip.toms_storage.amount", slot.stack.getCount()));
                 }
                 st.renderTooltip(font, slot.stack.getActualStack(), mouseX, mouseY);
                 AvaritiaForgeClient.setTooltip();
@@ -415,7 +409,7 @@ public abstract class AbstractWipChestScreen extends BaseContainerScreen<WipChes
             st.renderItem(stack, i, j);
             st.renderItemDecorations(font, stack, i, j);
 
-            drawStackSize(st, getFont(), slot.stack.getQuantity(), i, j);
+            drawStackSize(st, getFont(), slot.stack.getCount(), i, j);
         }
 
         if (mouseX >= getGuiLeft() + slot.xDisplayPosition - 1 && mouseY >= getGuiTop() + slot.yDisplayPosition - 1 && mouseX < getGuiLeft() + slot.xDisplayPosition + 17 && mouseY < getGuiTop() + slot.yDisplayPosition + 17) {
@@ -451,8 +445,8 @@ public abstract class AbstractWipChestScreen extends BaseContainerScreen<WipChes
     public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
         if (slotIDUnderMouse > -1) {
             if (isPullOne(mouseButton)) {
-                if (getMenu().getSlotByID(slotIDUnderMouse).stack != null && getMenu().getSlotByID(slotIDUnderMouse).stack.getQuantity() > 0) {
-                    storageSlotClick(getMenu().getSlotByID(slotIDUnderMouse).stack, SlotAction.PULL_ONE, isTransferOne(mouseButton));
+                if (getMenu().getSlotByID(slotIDUnderMouse).stack != null && getMenu().getSlotByID(slotIDUnderMouse).stack.getCount() > 0) {
+                    storageSlotClick(getMenu().getSlotByID(slotIDUnderMouse).stack, WipChestMenu.SlotAction.PULL_ONE, isTransferOne(mouseButton));
                     return true;
                 }
                 return true;
@@ -460,8 +454,8 @@ public abstract class AbstractWipChestScreen extends BaseContainerScreen<WipChes
                 if (!menu.getCarried().isEmpty()) {
                     storageSlotClick(null, hasControlDown() ? SlotAction.GET_QUARTER : SlotAction.GET_HALF, false);
                 } else {
-                    if (getMenu().getSlotByID(slotIDUnderMouse).stack != null && getMenu().getSlotByID(slotIDUnderMouse).stack.getQuantity() > 0) {
-                        storageSlotClick(getMenu().getSlotByID(slotIDUnderMouse).stack, hasControlDown() ? SlotAction.GET_QUARTER : WipChestMenu.SlotAction.GET_HALF, false);
+                    if (getMenu().getSlotByID(slotIDUnderMouse).stack != null && getMenu().getSlotByID(slotIDUnderMouse).stack.getCount() > 0) {
+                        storageSlotClick(getMenu().getSlotByID(slotIDUnderMouse).stack, hasControlDown() ? SlotAction.GET_QUARTER : SlotAction.GET_HALF, false);
                         return true;
                     }
                 }
@@ -470,7 +464,7 @@ public abstract class AbstractWipChestScreen extends BaseContainerScreen<WipChes
                     storageSlotClick(null, SlotAction.PULL_OR_PUSH_STACK, false);
                 } else {
                     if (getMenu().getSlotByID(slotIDUnderMouse).stack != null) {
-                        if (getMenu().getSlotByID(slotIDUnderMouse).stack.getQuantity() > 0) {
+                        if (getMenu().getSlotByID(slotIDUnderMouse).stack.getCount() > 0) {
                             storageSlotClick(getMenu().getSlotByID(slotIDUnderMouse).stack, hasShiftDown() ? SlotAction.SHIFT_PULL : SlotAction.PULL_OR_PUSH_STACK, false);
                             return true;
                         }
@@ -498,37 +492,53 @@ public abstract class AbstractWipChestScreen extends BaseContainerScreen<WipChes
     }
 
     public boolean isPullOne(int mouseButton) {
-        return switch (ctrlm()) {
-            case AE -> mouseButton == 1 && hasShiftDown();
-            case RS -> mouseButton == 2;
-            case DEF -> mouseButton == 1 && !menu.getCarried().isEmpty();
-            default -> false;
-        };
+        switch (ctrlm()) {
+            case AE:
+                return mouseButton == 1 && hasShiftDown();
+            case RS:
+                return mouseButton == 2;
+            case DEF:
+                return mouseButton == 1 && !menu.getCarried().isEmpty();
+            default:
+                return false;
+        }
     }
 
     public boolean isTransferOne(int mouseButton) {
-        return switch (ctrlm()) {
-            case AE -> hasShiftDown() && hasControlDown();//not in AE
-            case RS -> hasShiftDown() && mouseButton == 2;
-            case DEF -> mouseButton == 1 && hasShiftDown();
-            default -> false;
-        };
+        switch (ctrlm()) {
+            case AE:
+                return hasShiftDown() && hasControlDown();//not in AE
+            case RS:
+                return hasShiftDown() && mouseButton == 2;
+            case DEF:
+                return mouseButton == 1 && hasShiftDown();
+            default:
+                return false;
+        }
     }
 
     public boolean pullHalf(int mouseButton) {
-        return switch (ctrlm()) {
-            case AE -> mouseButton == 1;
-            case RS -> mouseButton == 1;
-            case DEF -> mouseButton == 1 && menu.getCarried().isEmpty();
-            default -> false;
-        };
+        switch (ctrlm()) {
+            case AE:
+                return mouseButton == 1;
+            case RS:
+                return mouseButton == 1;
+            case DEF:
+                return mouseButton == 1 && menu.getCarried().isEmpty();
+            default:
+                return false;
+        }
     }
 
     public boolean pullNormal(int mouseButton) {
-        return switch (ctrlm()) {
-            case AE, RS, DEF -> mouseButton == 0;
-            default -> false;
-        };
+        switch (ctrlm()) {
+            case AE:
+            case RS:
+            case DEF:
+                return mouseButton == 0;
+            default:
+                return false;
+        }
     }
 
     private ControllMode ctrlm() {
@@ -573,6 +583,24 @@ public abstract class AbstractWipChestScreen extends BaseContainerScreen<WipChes
 
     public abstract ResourceLocation getGui();
 
+    @Override
+    protected void renderBg(@NotNull GuiGraphics st, float partialTicks, int mouseX, int mouseY) {
+        if(tallMode) {
+            st.blit(getGui(), this.leftPos, this.topPos, 0, 0, this.imageWidth, slotStartY);
+            int guiStart = textureSlotCount * 18 + slotStartY;
+            int guiRStart = rowCount * 18 + slotStartY;
+            int guiSize = guiHeight - textureSlotCount * 18 - slotStartY;
+            st.blit(getGui(), this.leftPos, this.topPos + guiRStart, 0, guiStart, this.imageWidth, guiSize);
+            int scrollbarW = 25;
+            st.blit(getGui(), this.leftPos, this.topPos + slotStartY, 0, slotStartY, slotStartX + 9 * 18 + scrollbarW, 18);
+            for (int i = 1;i < rowCount - 1;i++) {
+                st.blit(getGui(), this.leftPos, this.topPos + slotStartY + i * 18, 0, slotStartY + 18, slotStartX + 9 * 18 + scrollbarW, 18);
+            }
+            st.blit(getGui(), this.leftPos, this.topPos + slotStartY + (rowCount - 1) * 18, 0, slotStartY + (textureSlotCount - 1) * 18, slotStartX + 9 * 18 + scrollbarW, 18);
+        } else
+            st.blit(getGui(), this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
+    }
+
     public GuiButton makeButton(int x, int y, int tile, Button.OnPress pressable) {
         GuiButton btn = new GuiButton(x, y, tile, pressable);
         btn.texX = 194;
@@ -598,15 +626,15 @@ public abstract class AbstractWipChestScreen extends BaseContainerScreen<WipChes
         }
 
         @Override
-        public boolean allowModification(@NotNull Player p_150652_) {
+        public boolean allowModification(Player p_150652_) {
             return false;
         }
 
         @Override
-        public void set(@NotNull ItemStack p_40240_) {}
+        public void set(ItemStack p_40240_) {}
 
         @Override
-        public @NotNull ItemStack remove(int p_40227_) {
+        public ItemStack remove(int p_40227_) {
             return ItemStack.EMPTY;
         }
     }
@@ -622,22 +650,8 @@ public abstract class AbstractWipChestScreen extends BaseContainerScreen<WipChes
         return null;
     }
 
-    @Override
-    protected void renderBgOthers(GuiGraphics st, int pX, int pY) {
-        if(tallMode) {
-            st.blit(getGui(), this.leftPos, this.topPos, 0, 0, this.imageWidth, slotStartY);
-            int guiStart = textureSlotCount * 18 + slotStartY;
-            int guiRStart = rowCount * 18 + slotStartY;
-            int guiSize = guiHeight - textureSlotCount * 18 - slotStartY;
-            st.blit(getGui(), this.leftPos, this.topPos + guiRStart, 0, guiStart, this.imageWidth, guiSize);
-            int scrollbarW = 25;
-            st.blit(getGui(), this.leftPos, this.topPos + slotStartY, 0, slotStartY, slotStartX + 9 * 18 + scrollbarW, 18);
-            for (int i = 1;i < rowCount - 1;i++) {
-                st.blit(getGui(), this.leftPos, this.topPos + slotStartY + i * 18, 0, slotStartY + 18, slotStartX + 9 * 18 + scrollbarW, 18);
-            }
-            st.blit(getGui(), this.leftPos, this.topPos + slotStartY + (rowCount - 1) * 18, 0, slotStartY + (textureSlotCount - 1) * 18, slotStartX + 9 * 18 + scrollbarW, 18);
-        } else
-            st.blit(getGui(), this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
+    public void renderBackground(GuiGraphics guiGraphics, int i, int j, float f) {
+        super.renderBackground(guiGraphics);
     }
 
     protected static final ResourceLocation creativeInventoryTabs = new ResourceLocation("textures/gui/container/creative_inventory/tabs.png");
