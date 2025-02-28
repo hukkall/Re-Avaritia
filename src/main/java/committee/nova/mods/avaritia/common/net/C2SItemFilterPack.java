@@ -1,11 +1,7 @@
 package committee.nova.mods.avaritia.common.net;
 
-import committee.nova.mods.avaritia.Static;
 import committee.nova.mods.avaritia.api.iface.IFilterItem;
-import committee.nova.mods.avaritia.init.registry.ModCaps;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
@@ -22,49 +18,49 @@ import java.util.function.Supplier;
  * @description
  * @date 2024/3/28 14:02
  */
-public class C2SItemFilterPacket {
+public class C2SItemFilterPack {
     private final int action;
     private final ItemStack stack;
 
-    public C2SItemFilterPacket(FriendlyByteBuf buf) {
+    public C2SItemFilterPack(FriendlyByteBuf buf) {
         this.action = buf.readInt();
         this.stack = buf.readItem();
     }
 
-    public C2SItemFilterPacket(int action, ItemStack stack) {
+    public C2SItemFilterPack(int action, ItemStack stack) {
         this.action = action;
         this.stack = stack;
     }
 
-    public static void write(C2SItemFilterPacket msg, FriendlyByteBuf buf) {
-        buf.writeInt(msg.action);
-        buf.writeItem(msg.stack);
+    public void write(FriendlyByteBuf buf) {
+        buf.writeInt(action);
+        buf.writeItem(stack);
     }
 
-    public static void run(C2SItemFilterPacket msg, Supplier<NetworkEvent.Context> ctx) {
+    public void run(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             ServerPlayer player = ctx.get().getSender();
             if (player == null) return;
             if (player.getMainHandItem().getItem() instanceof IFilterItem) {
                 var tag = player.getMainHandItem().getOrCreateTag();
-                switch(msg.action) {
+                switch(action) {
                         case 0 -> {
                             if (tag.contains("filters")){
-                                if (!tag.getCompound("filters").contains(ForgeRegistries.ITEMS.getKey(msg.stack.getItem()).toString())){
+                                if (!tag.getCompound("filters").contains(ForgeRegistries.ITEMS.getKey(stack.getItem()).toString())){
                                     tag.getCompound("filters")
-                                            .put(ForgeRegistries.ITEMS.getKey(msg.stack.getItem()).toString(), msg.stack.serializeNBT());
+                                            .put(ForgeRegistries.ITEMS.getKey(stack.getItem()).toString(), stack.serializeNBT());
                                 }
                             } else {
                                 CompoundTag filters = new CompoundTag();
-                                filters.put(ForgeRegistries.ITEMS.getKey(msg.stack.getItem()).toString(), msg.stack.serializeNBT());
+                                filters.put(ForgeRegistries.ITEMS.getKey(stack.getItem()).toString(), stack.serializeNBT());
                                 tag.put("filters", filters);
                             }
 
                         }
                         case 1 -> {
                             CompoundTag filters = tag.getCompound("filters");
-                            if (filters.contains(ForgeRegistries.ITEMS.getKey(msg.stack.getItem()).toString())){
-                                filters.remove(ForgeRegistries.ITEMS.getKey(msg.stack.getItem()).toString());
+                            if (filters.contains(ForgeRegistries.ITEMS.getKey(stack.getItem()).toString())){
+                                filters.remove(ForgeRegistries.ITEMS.getKey(stack.getItem()).toString());
                             }
                         }
                         case 2 -> {

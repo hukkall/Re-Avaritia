@@ -3,12 +3,11 @@ package committee.nova.mods.avaritia.client.screen;
 import committee.nova.mods.avaritia.Static;
 import committee.nova.mods.avaritia.api.client.screen.BaseContainerScreen;
 import committee.nova.mods.avaritia.common.menu.ExtremeAnvilMenu;
-import committee.nova.mods.avaritia.common.net.C2SRenamePacket;
+import committee.nova.mods.avaritia.common.net.C2SRenamePack;
 import committee.nova.mods.avaritia.init.handler.NetworkHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.client.gui.screens.inventory.ItemCombinerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -84,7 +83,7 @@ public class ExtremeAnvilScreen extends BaseContainerScreen<ExtremeAnvilMenu> {
             }
 
             if (this.menu.setItemName(s)) {
-                NetworkHandler.CHANNEL.sendToServer(new C2SRenamePacket(s));
+                NetworkHandler.CHANNEL.sendToServer(new C2SRenamePack(s));
             }
 
         }

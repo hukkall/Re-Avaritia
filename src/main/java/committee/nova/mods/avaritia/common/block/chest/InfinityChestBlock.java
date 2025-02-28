@@ -1,17 +1,26 @@
 package committee.nova.mods.avaritia.common.block.chest;
 
 import committee.nova.mods.avaritia.api.common.block.BaseTileEntityBlock;
-import committee.nova.mods.avaritia.common.tile.OffsetChestTile;
+import committee.nova.mods.avaritia.common.sync.ClientChannelManager;
+import committee.nova.mods.avaritia.common.sync.ServerChannelManager;
 import committee.nova.mods.avaritia.common.tile.WipChestTile;
-import committee.nova.mods.avaritia.common.tile.WipChestTile.*;
+import committee.nova.mods.avaritia.common.wrappers.channel.ServerChannel;
 import committee.nova.mods.avaritia.init.registry.ModTileEntities;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -28,10 +37,13 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
+import java.util.UUID;
 
 /**
  * @Project: Avaritia
@@ -48,23 +60,53 @@ public class InfinityChestBlock extends BaseTileEntityBlock implements SimpleWat
         this.registerDefaultState(defaultBlockState().setValue(WATERLOGGED, Boolean.FALSE).setValue(FACING, Direction.NORTH));
     }
 
-//    @Override
-//    protected <T extends BlockEntity> BlockEntityTicker<T> getServerTicker(Level level, BlockState state, BlockEntityType<T> type) {
-//        return createTicker(type, ModTileEntities.infinity_chest_tile.get(), WipChestTile::tick);
-//    }
-//
-//    @Override
-//    protected <T extends BlockEntity> BlockEntityTicker<T> getClientTicker(Level level, BlockState state, BlockEntityType<T> type) {
-//        return createTicker(type, ModTileEntities.infinity_chest_tile.get(), WipChestTile::tick);
-//    }
+    @Override
+    protected <T extends BlockEntity> BlockEntityTicker<T> getServerTicker(Level level, BlockState state, BlockEntityType<T> type) {
+        return createTicker(type, ModTileEntities.infinity_chest_tile.get(), WipChestTile::tick);
+    }
+
+    @Override
+    protected <T extends BlockEntity> BlockEntityTicker<T> getClientTicker(Level level, BlockState state, BlockEntityType<T> type) {
+        return createTicker(type, ModTileEntities.infinity_chest_tile.get(), WipChestTile::tick);
+    }
+
+
+    @Override
+    public void appendHoverText(ItemStack pStack, @Nullable BlockGetter pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
+        if (Minecraft.getInstance().player == null) return;
+        if (!pStack.hasTag()) return;
+        if (pStack.getTag().contains("BlockEntityTag")) {
+            CompoundTag nbt = pStack.getTag().getCompound("BlockEntityTag");
+            if (nbt.contains("owner")) {
+                UUID selfUUID = Minecraft.getInstance().player.getUUID();
+                UUID ownerUUID = nbt.getUUID("owner");
+                String ownerName = ClientChannelManager.getInstance().getUserName(nbt.getUUID("owner"));
+                boolean lock = nbt.getBoolean("locked");
+                if (selfUUID.equals(ownerUUID)) pTooltip.add(Component.translatable("gui.avaritia.owner", "§a" + ownerName));
+                else if (lock) pTooltip.add(Component.translatable("gui.avaritia.owner", "§c" + ownerName));
+                else pTooltip.add(Component.translatable("gui.avaritia.owner", ownerName));
+            }
+        }
+    }
 
     @Override
     public @NotNull InteractionResult use(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult trace) {
         if (!level.isClientSide()) {
             var tile = level.getBlockEntity(pos);
 
-            if (tile instanceof OffsetChestTile chestTile) {
-                NetworkHooks.openScreen((ServerPlayer) player, chestTile, pos);
+            if (tile instanceof WipChestTile chestTile) {
+                NetworkHooks.openScreen((ServerPlayer) player, chestTile, buf -> {
+                    buf.writeBlockPos(pos);
+                    buf.writeInt(-2);
+                    buf.writeUUID(chestTile.getOwner());
+                    buf.writeBoolean(chestTile.isLocked());
+                    buf.writeBoolean(chestTile.isCraftingMode());
+                    buf.writeUtf(chestTile.getFilter(), 64);
+                    buf.writeByte(chestTile.getSortType());
+                    buf.writeByte(chestTile.getViewType());
+                    buf.writeUUID(chestTile.getChannelOwner());
+                    buf.writeInt(chestTile.getChannelID());
+                });
             }
         }
 
@@ -84,7 +126,32 @@ public class InfinityChestBlock extends BaseTileEntityBlock implements SimpleWat
 
     @Override
     public @NotNull BlockEntity newBlockEntity(@NotNull BlockPos pPos, @NotNull BlockState pState) {
-        return new OffsetChestTile(pPos, pState);
+        return new WipChestTile(pPos, pState);
+    }
+
+    @Override
+    public void setPlacedBy(@NotNull Level pLevel, @NotNull BlockPos pPos, @NotNull BlockState pState, @Nullable LivingEntity pPlacer, @NotNull ItemStack pStack) {
+        if (pPlacer instanceof ServerPlayer player && !pStack.getOrCreateTag().contains("BlockEntityTag")) {
+            WipChestTile blockEntity = (WipChestTile) pLevel.getBlockEntity(pPos);
+            if (blockEntity != null) {
+                blockEntity.setOwner(pPlacer.getUUID());
+                blockEntity.setChannelOwner(pPlacer.getUUID());
+                blockEntity.setChannelId(1);
+                ServerChannel channel = new ServerChannel("block");
+                ServerChannelManager.getInstance().tryAddChannel(player, channel, true);
+                blockEntity.setChannel(channel);
+                blockEntity.setCapability(LazyOptional.of(() -> channel));
+            }
+        }
+    }
+
+    @Override
+    public void entityInside(@NotNull BlockState pState, Level pLevel, @NotNull BlockPos pPos, @NotNull Entity pEntity) {
+        if (pLevel.isClientSide) return;
+        BlockEntity blockentity = pLevel.getBlockEntity(pPos);
+        if (blockentity instanceof WipChestTile wipChestTile && pEntity instanceof ItemEntity itemEntity) {
+            wipChestTile.inhaleItem(itemEntity);
+        }
     }
 
     @Override

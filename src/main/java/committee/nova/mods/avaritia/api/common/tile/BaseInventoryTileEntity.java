@@ -28,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
  * Date: 2022/4/2 13:59
  * Version: 1.0
  */
-public abstract class BaseInventoryTileEntity extends BaseTileEntity implements MenuProvider {
+public abstract class BaseInventoryTileEntity extends BaseTileEntity {
 
     private LazyOptional<IItemHandler> capability = LazyOptional.of(this::getInventory);
     private LockCode lockKey = LockCode.NO_LOCK;

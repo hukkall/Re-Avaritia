@@ -62,32 +62,32 @@ public class OffsetChestMenu extends BaseTileMenu<OffsetChestTile> {
         }
         createInventorySlots(playerInventory, 0, 38 + offset);
         this.addDataSlots(this.chestData);
-        for(int i = 0; i < this.itemCounts.getCount(); ++i) {
-            int finalI = i;
-            this.addDataSlot(new DataSlot() {
-                private int lastKnownPage = -1;
-
-                @Override public int get() {
-                    return OffsetChestMenu.this.itemCounts.get(finalI);
-                }
-
-                @Override public void set(int value) {
-                    OffsetChestMenu.this.itemCounts.set(finalI, value);
-                }
-
-                @Override
-                public boolean checkAndClearUpdateFlag() {
-                    if (super.checkAndClearUpdateFlag()) {
-                        return true;
-                    } else {
-                        int page = chestData.get(0);
-                        boolean flag = page != this.lastKnownPage;
-                        this.lastKnownPage = page;
-                        return flag;
-                    }
-                }
-            });
-        }
+//        for(int i = 0; i < this.itemCounts.getCount(); ++i) {
+//            int finalI = i;
+//            this.addDataSlot(new DataSlot() {
+//                private int lastKnownPage = -1;
+//
+//                @Override public int get() {
+//                    return OffsetChestMenu.this.itemCounts.get(finalI);
+//                }
+//
+//                @Override public void set(int value) {
+//                    OffsetChestMenu.this.itemCounts.set(finalI, value);
+//                }
+//
+//                @Override
+//                public boolean checkAndClearUpdateFlag() {
+//                    if (super.checkAndClearUpdateFlag()) {
+//                        return true;
+//                    } else {
+//                        int page = chestData.get(0);
+//                        boolean flag = page != this.lastKnownPage;
+//                        this.lastKnownPage = page;
+//                        return flag;
+//                    }
+//                }
+//            });
+//        }
     }
 
     public void changePage(int page) {

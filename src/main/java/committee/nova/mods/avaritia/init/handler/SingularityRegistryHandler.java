@@ -9,7 +9,7 @@ import com.google.gson.JsonParser;
 import committee.nova.mods.avaritia.Static;
 import committee.nova.mods.avaritia.common.crafting.recipe.EternalSingularityCraftRecipe;
 import committee.nova.mods.avaritia.common.item.singularity.Singularity;
-import committee.nova.mods.avaritia.common.net.S2CSingularitiesPacket;
+import committee.nova.mods.avaritia.common.net.S2CSingularitiesPack;
 import committee.nova.mods.avaritia.init.registry.ModSingularities;
 import committee.nova.mods.avaritia.util.SingularityUtils;
 import net.minecraft.network.FriendlyByteBuf;
@@ -51,7 +51,7 @@ public class SingularityRegistryHandler {
 
     @SubscribeEvent
     public static void onDataPackSync(OnDatapackSyncEvent event) {
-        var message = new S2CSingularitiesPacket(SingularityRegistryHandler.getInstance().getSingularities());
+        var message = new S2CSingularitiesPack(SingularityRegistryHandler.getInstance().getSingularities());
         var player = event.getPlayer();
 
         if (player != null) {
@@ -136,7 +136,7 @@ public class SingularityRegistryHandler {
         return singularities;
     }
 
-    public void loadSingularities(S2CSingularitiesPacket message) {
+    public void loadSingularities(S2CSingularitiesPack message) {
         var singularities = message.getSingularities()
                 .stream()
                 .collect(Collectors.toMap(Singularity::getId, s -> s));

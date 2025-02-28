@@ -6,7 +6,7 @@ import committee.nova.mods.avaritia.Static;
 import committee.nova.mods.avaritia.api.client.screen.BaseContainerScreen;
 import committee.nova.mods.avaritia.client.AvaritiaForgeClient;
 import committee.nova.mods.avaritia.common.menu.OffsetChestMenu;
-import committee.nova.mods.avaritia.common.net.C2SChangePagePacket;
+import committee.nova.mods.avaritia.common.net.C2SChangePagePack;
 import committee.nova.mods.avaritia.init.config.ModConfig;
 import committee.nova.mods.avaritia.init.handler.NetworkHandler;
 import net.minecraft.client.KeyMapping;
@@ -51,10 +51,10 @@ public class OffsetChestScreen extends BaseContainerScreen<OffsetChestMenu> {
 
     @Override
     protected void subInit() {
-        this.addRenderableWidget(new ImageButton(this.leftPos + 121, this.topPos + 6, 11, 11, 187, 22, 11, MULTI_PAGE_TEXTURE, (button) -> NetworkHandler.CHANNEL.sendToServer(new C2SChangePagePacket((this.menu).getCurrentPage() - 10))));
-        this.addRenderableWidget(new ImageButton(this.leftPos + 134, this.topPos + 6, 7, 11, 183, 0, 11, MULTI_PAGE_TEXTURE, (button) -> NetworkHandler.CHANNEL.sendToServer(new C2SChangePagePacket((this.menu).getCurrentPage() - 1))));
-        this.addRenderableWidget(new ImageButton(this.leftPos + 149, this.topPos + 6, 7, 11, 176, 0, 11, MULTI_PAGE_TEXTURE, (button) -> NetworkHandler.CHANNEL.sendToServer(new C2SChangePagePacket((this.menu).getCurrentPage() + 1))));
-        this.addRenderableWidget(new ImageButton(this.leftPos + 158, this.topPos + 6, 11, 11, 176, 22, 11, MULTI_PAGE_TEXTURE, (button) -> NetworkHandler.CHANNEL.sendToServer(new C2SChangePagePacket((this.menu).getCurrentPage() + 10))));
+        this.addRenderableWidget(new ImageButton(this.leftPos + 121, this.topPos + 6, 11, 11, 187, 22, 11, MULTI_PAGE_TEXTURE, (button) -> NetworkHandler.CHANNEL.sendToServer(new C2SChangePagePack((this.menu).getCurrentPage() - 10))));
+        this.addRenderableWidget(new ImageButton(this.leftPos + 134, this.topPos + 6, 7, 11, 183, 0, 11, MULTI_PAGE_TEXTURE, (button) -> NetworkHandler.CHANNEL.sendToServer(new C2SChangePagePack((this.menu).getCurrentPage() - 1))));
+        this.addRenderableWidget(new ImageButton(this.leftPos + 149, this.topPos + 6, 7, 11, 176, 0, 11, MULTI_PAGE_TEXTURE, (button) -> NetworkHandler.CHANNEL.sendToServer(new C2SChangePagePack((this.menu).getCurrentPage() + 1))));
+        this.addRenderableWidget(new ImageButton(this.leftPos + 158, this.topPos + 6, 11, 11, 176, 22, 11, MULTI_PAGE_TEXTURE, (button) -> NetworkHandler.CHANNEL.sendToServer(new C2SChangePagePack((this.menu).getCurrentPage() + 10))));
     }
 
     @Override

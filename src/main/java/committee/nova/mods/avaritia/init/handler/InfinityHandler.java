@@ -5,7 +5,7 @@ import committee.nova.mods.avaritia.common.entity.ImmortalItemEntity;
 import committee.nova.mods.avaritia.common.item.InfinityArmorItem;
 import committee.nova.mods.avaritia.common.item.MatterClusterItem;
 import committee.nova.mods.avaritia.common.item.tools.infinity.*;
-import committee.nova.mods.avaritia.common.net.S2CTotemPacket;
+import committee.nova.mods.avaritia.common.net.S2CTotemPack;
 import committee.nova.mods.avaritia.init.config.ModConfig;
 import committee.nova.mods.avaritia.init.registry.ModBlocks;
 import committee.nova.mods.avaritia.init.registry.ModDamageTypes;
@@ -229,7 +229,7 @@ public class InfinityHandler {
             }
             ItemStack totem = ToolUtils.getPlayerTotemItem(player);
             if (!totem.isEmpty()) {
-                NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new S2CTotemPacket(totem, player.getId()));
+                NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new S2CTotemPack(totem, player.getId()));
 
                 player.removeAllEffects();
                 int damage = totem.getUseDuration();

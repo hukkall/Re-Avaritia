@@ -16,33 +16,33 @@ import java.util.function.Supplier;
  * @CreateTime: 2025/2/23 01:45
  * @Description:
  */
-public class NbtDataPacket {
+public class NbtDataPack {
     public CompoundTag tag;
 
-    public NbtDataPacket(CompoundTag tag) {
+    public NbtDataPack(CompoundTag tag) {
         this.tag = tag;
     }
 
-    public NbtDataPacket(FriendlyByteBuf pb) {
+    public NbtDataPack(FriendlyByteBuf pb) {
         tag = pb.readAnySizeNbt();
     }
 
-    public static void write(NbtDataPacket msg, FriendlyByteBuf pb) {
-        pb.writeNbt(msg.tag);
+    public void write(FriendlyByteBuf pb) {
+        pb.writeNbt(tag);
     }
 
-    public static void run(NbtDataPacket msg, Supplier<NetworkEvent.Context> ctx) {
+    public void run(Supplier<NetworkEvent.Context> ctx) {
         if(ctx.get().getDirection() == NetworkDirection.PLAY_TO_SERVER) {
             ctx.get().enqueueWork(() -> {
                 ServerPlayer sender = ctx.get().getSender();
                 if (sender != null && sender.containerMenu instanceof IDataReceiver dataReceiver) {
-                    dataReceiver.receive(msg.tag);
+                    dataReceiver.receive(tag);
                 }
             });
         } else if(ctx.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
             ctx.get().enqueueWork(() -> {
                 if(Minecraft.getInstance().screen instanceof IDataReceiver dataReceiver) {
-                    dataReceiver.receive(msg.tag);
+                    dataReceiver.receive(tag);
                 }
             });
         }

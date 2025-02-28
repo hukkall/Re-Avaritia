@@ -15,28 +15,28 @@ import java.util.function.Supplier;
  * @description
  * @date 2024/3/28 14:02
  */
-public class C2SChangePagePacket {
+public class C2SChangePagePack {
     private final int page;
 
 
-    public C2SChangePagePacket(FriendlyByteBuf buf) {
+    public C2SChangePagePack(FriendlyByteBuf buf) {
         this.page = buf.readInt();
     }
 
-    public C2SChangePagePacket(int page) {
+    public C2SChangePagePack(int page) {
         this.page = page;
     }
 
-    public static void write(C2SChangePagePacket msg, FriendlyByteBuf buf) {
-        buf.writeInt(msg.page);
+    public void write(FriendlyByteBuf buf) {
+        buf.writeInt(page);
     }
 
-    public static void run(C2SChangePagePacket msg, Supplier<NetworkEvent.Context> ctx) {
+    public void run(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             ServerPlayer player = ctx.get().getSender();
             if (player == null) return;
             if (player.containerMenu instanceof OffsetChestMenu infinityChestMenu) {
-                infinityChestMenu.changePage(msg.page);
+                infinityChestMenu.changePage(page);
             }
         });
         ctx.get().setPacketHandled(true);

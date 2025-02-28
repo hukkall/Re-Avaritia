@@ -4,6 +4,7 @@ import committee.nova.mods.avaritia.api.utils.TileEntityUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -15,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
  * Date: 2022/4/2 14:00
  * Version: 1.0
  */
-public abstract class BaseTileEntity extends BlockEntity {
+public abstract class BaseTileEntity extends BlockEntity implements MenuProvider {
     private boolean isChanged = false;
 
     public BaseTileEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {

@@ -15,25 +15,25 @@ import java.util.function.Supplier;
  * Date: 2022/4/2 12:58
  * Version: 1.0
  */
-public class S2CSingularitiesPacket {
+public class S2CSingularitiesPack {
 
     private final List<Singularity> singularities;
 
-    public S2CSingularitiesPacket(List<Singularity> singularities) {
+    public S2CSingularitiesPack(List<Singularity> singularities) {
         this.singularities = singularities;
     }
 
-    public S2CSingularitiesPacket(FriendlyByteBuf buf) {
+    public S2CSingularitiesPack(FriendlyByteBuf buf) {
         this.singularities = SingularityRegistryHandler.getInstance().readFromBuffer(buf);
     }
 
-    public static void write(S2CSingularitiesPacket msg, FriendlyByteBuf buf) {
+    public void write(FriendlyByteBuf buf) {
         SingularityRegistryHandler.getInstance().writeToBuffer(buf);
     }
 
-    public static void run(S2CSingularitiesPacket msg, Supplier<NetworkEvent.Context> ctx) {
+    public void run(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            SingularityRegistryHandler.getInstance().loadSingularities(msg);
+            SingularityRegistryHandler.getInstance().loadSingularities(this);
         });
 
         ctx.get().setPacketHandled(true);

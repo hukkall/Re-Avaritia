@@ -7,7 +7,7 @@ import committee.nova.mods.avaritia.api.client.screen.component.Text;
 import committee.nova.mods.avaritia.api.client.util.GuiUtils;
 import committee.nova.mods.avaritia.api.utils.ItemUtils;
 import committee.nova.mods.avaritia.api.utils.StringUtils;
-import committee.nova.mods.avaritia.common.net.C2SItemFilterPacket;
+import committee.nova.mods.avaritia.common.net.C2SItemFilterPack;
 import committee.nova.mods.avaritia.init.handler.NetworkHandler;
 import lombok.Getter;
 import net.minecraft.ChatFormatting;
@@ -17,7 +17,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Blocks;
@@ -26,7 +25,6 @@ import org.lwjgl.glfw.GLFW;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Predicate;
 
 /**
  * @Project: Avaritia
@@ -132,7 +130,7 @@ public class ItemFilterScreen extends Screen {
                 , (int) (90 - this.margin * 2), 20
                 , GuiUtils.textToComponent(Text.i18n("添加")), button -> {
                     Minecraft.getInstance().setScreen(new ItemSelectScreen(this, input -> {
-                        NetworkHandler.CHANNEL.sendToServer(new C2SItemFilterPacket(0, input));
+                        NetworkHandler.CHANNEL.sendToServer(new C2SItemFilterPack(0, input));
                         this.itemList.add(input);
                     }, Blocks.DIRT.asItem().getDefaultInstance()));
                 }));
@@ -142,7 +140,7 @@ public class ItemFilterScreen extends Screen {
                 , GuiUtils.textToComponent(Text.i18n("删除"))
                 , button -> {
                     this.itemList.remove(this.currentItem);
-                    if (this.currentItem != null) NetworkHandler.CHANNEL.sendToServer(new C2SItemFilterPacket(1, this.currentItem));
+                    if (this.currentItem != null) NetworkHandler.CHANNEL.sendToServer(new C2SItemFilterPack(1, this.currentItem));
                     Minecraft.getInstance().setScreen(null);
                 }));
     }

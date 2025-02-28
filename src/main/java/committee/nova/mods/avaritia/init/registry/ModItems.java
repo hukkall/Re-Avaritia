@@ -99,7 +99,7 @@ public class ModItems {
     //food
     public static RegistryObject<Item> ultimate_stew = item("ultimate_stew", () -> new BaseItem(pro -> pro.rarity(ModRarities.EPIC).food(ModFoods.ultimate_stew)));
     public static RegistryObject<Item> cosmic_meatballs = item("cosmic_meatballs", () -> new BaseItem(pro -> pro.rarity(ModRarities.EPIC).food(ModFoods.cosmic_meatballs)));
-
+    public static RegistryObject<Item> forge_energy = item("forge_energy");
     public static RegistryObject<Item> item(String name) {
         return item(name, (e) -> new BaseItem());
     }

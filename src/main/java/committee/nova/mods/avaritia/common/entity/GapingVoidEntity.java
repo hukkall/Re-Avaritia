@@ -72,7 +72,7 @@ public class GapingVoidEntity extends Entity {
         setSharedFlagOnFire(true);
         noCulling = true;
         if (level() instanceof ServerLevel) {
-            fakePlayer = FakePlayerFactory.get((ServerLevel) level(), Static.avaritiaFakePlayer);
+            fakePlayer = FakePlayerFactory.get((ServerLevel) level(), Static.AVARITIA_FAKE_PLAYER);
         }
     }
 
@@ -124,7 +124,7 @@ public class GapingVoidEntity extends Entity {
     protected void readAdditionalSaveData(CompoundTag tag) {
         setAge(tag.getInt("age"));
         if (level() instanceof ServerLevel) {
-            fakePlayer = FakePlayerFactory.get((ServerLevel) level(), Static.avaritiaFakePlayer);
+            fakePlayer = FakePlayerFactory.get((ServerLevel) level(), Static.AVARITIA_FAKE_PLAYER);
         }
     }
 

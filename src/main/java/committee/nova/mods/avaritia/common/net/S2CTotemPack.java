@@ -21,28 +21,28 @@ import java.util.function.Supplier;
  * @description
  * @date 2024/3/28 14:02
  */
-public class S2CTotemPacket {
+public class S2CTotemPack {
     private final ItemStack stack;
     private final int entityId;
 
-    public S2CTotemPacket(FriendlyByteBuf buf) {
+    public S2CTotemPack(FriendlyByteBuf buf) {
         this.stack = buf.readItem();
         this.entityId = buf.readInt();
     }
 
-    public S2CTotemPacket(ItemStack stack, int entityId) {
+    public S2CTotemPack(ItemStack stack, int entityId) {
         this.stack = stack;
         this.entityId = entityId;
     }
 
-    public static void write(S2CTotemPacket msg, FriendlyByteBuf buf) {
-        buf.writeItem(msg.stack);
-        buf.writeInt(msg.entityId);
+    public void write(FriendlyByteBuf buf) {
+        buf.writeItem(stack);
+        buf.writeInt(entityId);
     }
 
-    public static void run(S2CTotemPacket msg, Supplier<NetworkEvent.Context> ctx) {
+    public void run(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            playTotem(msg.stack, msg.entityId); //处理服务端发送给客户端的消息
+            playTotem(stack, entityId); //处理服务端发送给客户端的消息
         });
         ctx.get().setPacketHandled(true);
     }

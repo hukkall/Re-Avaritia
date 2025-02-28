@@ -1,13 +1,11 @@
 package committee.nova.mods.avaritia.api.common.wrapper;
 
-import committee.nova.mods.avaritia.Static;
 import committee.nova.mods.avaritia.common.wrappers.StorageItem;
 import committee.nova.mods.avaritia.init.config.ModConfig;
 import committee.nova.mods.avaritia.util.StorageUtils;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import net.minecraft.util.Mth;
+import lombok.Getter;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +18,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class OffsetItemStackWrapper implements IItemHandlerModifiable {
 
-    protected Int2ObjectMap<StorageItem> stacks;
+    @Getter
+    protected Int2ObjectMap<StorageItem> storages;
     protected final int slotsPerPage;  // 每页槽位数
     protected final int totalPages;    // 总页数
     protected int page;    // 当前页
@@ -29,8 +28,8 @@ public class OffsetItemStackWrapper implements IItemHandlerModifiable {
         this(StorageUtils.newContainers(), 0, slotsPerPage);
     }
 
-    public OffsetItemStackWrapper(Int2ObjectMap<StorageItem> stacks, int page, int slotsPerPage) {
-        this.stacks = stacks;
+    public OffsetItemStackWrapper(Int2ObjectMap<StorageItem> storages, int page, int slotsPerPage) {
+        this.storages = storages;
         this.page = page;
         this.slotsPerPage = slotsPerPage;
         this.totalPages = ModConfig.maxPageLimit.get();
@@ -38,17 +37,17 @@ public class OffsetItemStackWrapper implements IItemHandlerModifiable {
 
     public StorageItem getItemInSlot(int slot) {
         int slotInPage = slot % slotsPerPage;
-        return this.stacks.get(page * slotsPerPage + slotInPage);
+        return this.storages.get(page * slotsPerPage + slotInPage);
     }
 
     public void setItemInSlot(int slot, StorageItem container) {
         int slotInPage = slot % slotsPerPage;
-        this.stacks.put(page * slotsPerPage + slotInPage, container);
+        this.storages.put(page * slotsPerPage + slotInPage, container);
     }
 
     public StorageItem removeItemInSlot(int slot) {
         int slotInPage = slot % slotsPerPage;
-        return this.stacks.remove(page * slotsPerPage + slotInPage);
+        return this.storages.remove(page * slotsPerPage + slotInPage);
     }
 
     public long getSlotLimitLong(int slot) {
@@ -71,22 +70,17 @@ public class OffsetItemStackWrapper implements IItemHandlerModifiable {
 
     @Override
     public @NotNull ItemStack getStackInSlot(int slot) {
-        Static.LOGGER.info(slot);
-        StorageItem container = this.getItemInSlot(slot);
-        return ItemHandlerHelper.copyStackWithSize(container.getStack(), (int) container.getCount());
+        //Static.LOGGER.info(slot);
+        StorageItem container = this.storages.get(slot);
+        if (container.isEmpty()) return ItemStack.EMPTY;
+        else return ItemHandlerHelper.copyStackWithSize(container.getStack(), (int) container.getCount());
     }
 
     @Override
     public int getSlots() {
-        int maxSlot = stacks.keySet().intStream().max().orElse(0);
-        //Static.LOGGER.info(maxSlot + 1);
-        if (maxSlot >= slotsPerPage) {
-          int slots =  Mth.ceil((float) maxSlot / (float) slotsPerPage) * slotsPerPage;
-          Static.LOGGER.info(slots);
-          return slots;
-        }
-        else
-            return slotsPerPage;
+        int maxSlot = storages.keySet().intStream().max().orElse(0);
+        return maxSlot + 1;
+//        return maxSlot + slotsPerPage;
     }
 
 

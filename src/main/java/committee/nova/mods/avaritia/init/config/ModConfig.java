@@ -42,10 +42,15 @@ public class ModConfig {
     public static final ForgeConfigSpec.IntValue resetMaxPage;
     public static final ForgeConfigSpec.IntValue inventoryRows;
 
+    public static ForgeConfigSpec.IntValue MAX_SIZE_PRE_CHANNEL;
+    public static ForgeConfigSpec.IntValue MAX_CHANNELS_PRE_PLAYER;
+    public static ForgeConfigSpec.IntValue MAX_PUBLIC_CHANNELS;
+    public static ForgeConfigSpec.IntValue CHANNEL_FAST_UPDATE_RATE;
+    public static ForgeConfigSpec.IntValue CHANNEL_FULL_UPDATE_RATE;
     //SERVER
     static {
         final var common = new ForgeConfigSpec.Builder();
-        common.comment("Avaritia Config");
+        common.comment("Avaritia Common Config");
         common.push("tools");
         isKeepStone = buildBoolean(common, "Is Stone", false, "Does the super mode of endless tools retain stone and soil");
         isMergeMatterCluster = buildBoolean(common, "Is Merge Matter Cluster", true, "Whether to merge matter cluster");
@@ -77,6 +82,13 @@ public class ModConfig {
         maxPageLimit = buildInt(common, "Max Page Limit", 79536431, 2, 79536431, "Maximum page limit");
         resetMaxPage = buildInt(common, "Reset Max Page", 1, 1, 79536431, "*Recovery options* Reset the max page that is 0.");
         inventoryRows =buildInt(common, "Inventory Rows", 6, 1, 6, "Inventory rows for multi page mode");
+        common.pop();
+        common.push("channel");
+        MAX_SIZE_PRE_CHANNEL = buildInt(common, "channelSize", 32768, 2048, Integer.MAX_VALUE, "");
+        MAX_CHANNELS_PRE_PLAYER = buildInt(common, "maxPlayerChannels", 16, 4, 64, "");
+        MAX_PUBLIC_CHANNELS = buildInt(common, "maxPublicChannels", 128, 32, 1024, "");
+        CHANNEL_FAST_UPDATE_RATE = buildInt(common,  "fast_update_rate", 1, 1, 40, "");
+        CHANNEL_FULL_UPDATE_RATE = buildInt(common, "full_update_rate", 40, 20, 1200, "");
         common.pop();
         COMMON = common.build();
     }
