@@ -5,11 +5,10 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import committee.nova.mods.avaritia.Static;
 import committee.nova.mods.avaritia.api.client.screen.BaseContainerScreen;
 import committee.nova.mods.avaritia.client.AvaritiaForgeClient;
-import committee.nova.mods.avaritia.common.menu.InfinityChestMenu;
+import committee.nova.mods.avaritia.common.menu.OffsetChestMenu;
 import committee.nova.mods.avaritia.common.net.C2SChangePagePacket;
 import committee.nova.mods.avaritia.init.config.ModConfig;
 import committee.nova.mods.avaritia.init.handler.NetworkHandler;
-import committee.nova.mods.avaritia.init.registry.ModTooltips;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ImageButton;
@@ -18,12 +17,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.text.DecimalFormat;
-import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -33,14 +30,14 @@ import java.util.stream.Stream;
  * @CreateTime: 2024/11/17 02:50
  * @Description:
  */
-public class InfinityChestScreen extends BaseContainerScreen<InfinityChestMenu> {
+public class OffsetChestScreen extends BaseContainerScreen<OffsetChestMenu> {
     private static final KeyMapping[] SORT_KEYS = new KeyMapping[]{AvaritiaForgeClient.SORT_0, AvaritiaForgeClient.SORT_1, AvaritiaForgeClient.SORT_2, AvaritiaForgeClient.SORT_3, AvaritiaForgeClient.SORT_4, AvaritiaForgeClient.SORT_5, AvaritiaForgeClient.SORT_6, AvaritiaForgeClient.SORT_7, AvaritiaForgeClient.SORT_8, AvaritiaForgeClient.SORT_9};
     private static final ResourceLocation MULTI_PAGE_TEXTURE = Static.rl("textures/gui/infinity_chest.png");
     public static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat(",###");
 
     private final int inventoryRows;
 
-    public InfinityChestScreen(InfinityChestMenu container, Inventory inventory, Component title) {
+    public OffsetChestScreen(OffsetChestMenu container, Inventory inventory, Component title) {
         super(container, inventory, title, MULTI_PAGE_TEXTURE);
         this.inventoryRows = ModConfig.inventoryRows.get();
         this.imageHeight = 132 + this.inventoryRows * 18;

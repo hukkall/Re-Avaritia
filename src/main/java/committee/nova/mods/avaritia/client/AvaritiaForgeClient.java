@@ -7,12 +7,16 @@ import committee.nova.mods.avaritia.client.screen.ItemFilterScreen;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.glfw.GLFW;
+
+import java.util.Collections;
 
 /**
  * Author cnlimiter
@@ -55,6 +59,16 @@ public class AvaritiaForgeClient {
                 Minecraft.getInstance().setScreen(new ItemFilterScreen());
             }
         }
+    }
+
+    private static Component[] tooltipExt = new Component[0];
+    public static void setTooltip(Component... string) {
+        tooltipExt = string;
+    }
+
+    @SubscribeEvent
+    public static void getTooltip(ItemTooltipEvent evt) {
+        Collections.addAll(evt.getToolTip(), tooltipExt);
     }
 
 }

@@ -1,12 +1,10 @@
 package committee.nova.mods.avaritia.api.common.menu;
 
+import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
@@ -17,32 +15,24 @@ import org.jetbrains.annotations.NotNull;
  * @CreateTime: 2025/1/6 13:07
  * @Description:
  */
+@Getter
 public abstract class BaseTileMenu<T extends BlockEntity> extends BaseMenu {
 
-    private BlockPos pos;
+    private final BlockPos blockPos;
 
-    protected BaseTileMenu(MenuType<?> menu, int id, Inventory playerInventory, @NotNull BlockPos pos) {
-        this(menu, id, playerInventory);
-        this.pos = pos;
-    }
-
-    protected BaseTileMenu(MenuType<?> menu, int id, Inventory playerInventory) {
+    protected BaseTileMenu(MenuType<?> menu, int id, Inventory playerInventory, @NotNull BlockPos blockPos) {
         super(menu, id, playerInventory);
+        this.blockPos = blockPos;
     }
 
     @Override
     public boolean stillValid(@NotNull Player player) {
-        return pos == null || player.distanceToSqr(this.pos.getX() + 0.5, this.pos.getY() + 0.5, this.pos.getZ() + 0.5) <= 64;
+        return blockPos == null || player.distanceToSqr(this.blockPos.getX() + 0.5, this.blockPos.getY() + 0.5, this.blockPos.getZ() + 0.5) <= 64;
     }
-
-    public BlockPos getBlockPos() {
-        return this.pos;
-    }
-
 
     @SuppressWarnings("unchecked")
     public T getTileEntity() {
-        return (T) level.getBlockEntity(pos);
+        return (T) level.getBlockEntity(blockPos);
     }
 
 }

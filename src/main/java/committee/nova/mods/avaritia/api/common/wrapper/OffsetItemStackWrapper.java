@@ -1,9 +1,11 @@
 package committee.nova.mods.avaritia.api.common.wrapper;
 
+import committee.nova.mods.avaritia.Static;
 import committee.nova.mods.avaritia.common.wrappers.StorageItem;
 import committee.nova.mods.avaritia.init.config.ModConfig;
 import committee.nova.mods.avaritia.util.StorageUtils;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -16,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
  * @CreateTime: 2025/1/31 22:33
  * @Description: 多页容器IItemHandler
  */
-public class OffsetItemStackWrapper implements IItemHandler, IItemHandlerModifiable {
+public class OffsetItemStackWrapper implements IItemHandlerModifiable {
 
     protected Int2ObjectMap<StorageItem> stacks;
     protected final int slotsPerPage;  // 每页槽位数
@@ -68,16 +70,23 @@ public class OffsetItemStackWrapper implements IItemHandler, IItemHandlerModifia
     }
 
     @Override
-    public int getSlots() {
-        return this.slotsPerPage;
-                //* ModConfig.maxPageLimit.get();
+    public @NotNull ItemStack getStackInSlot(int slot) {
+        Static.LOGGER.info(slot);
+        StorageItem container = this.getItemInSlot(slot);
+        return ItemHandlerHelper.copyStackWithSize(container.getStack(), (int) container.getCount());
     }
 
     @Override
-    public @NotNull ItemStack getStackInSlot(int slot) {
-        StorageItem container = this.getItemInSlot(slot);
-        ItemStack stack = container.getStack();
-        return ItemHandlerHelper.copyStackWithSize(stack, (int) container.getCount());
+    public int getSlots() {
+        int maxSlot = stacks.keySet().intStream().max().orElse(0);
+        //Static.LOGGER.info(maxSlot + 1);
+        if (maxSlot >= slotsPerPage) {
+          int slots =  Mth.ceil((float) maxSlot / (float) slotsPerPage) * slotsPerPage;
+          Static.LOGGER.info(slots);
+          return slots;
+        }
+        else
+            return slotsPerPage;
     }
 
 

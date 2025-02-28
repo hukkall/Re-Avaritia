@@ -2,7 +2,7 @@ package committee.nova.mods.avaritia.util;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import committee.nova.mods.avaritia.Static;
+import committee.nova.mods.avaritia.api.utils.InventoryUtils;
 import committee.nova.mods.avaritia.common.entity.BladeSlashEntity;
 import committee.nova.mods.avaritia.common.entity.EndestPearlEntity;
 import committee.nova.mods.avaritia.common.entity.arrow.HeavenSubArrowEntity;
@@ -19,7 +19,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -60,10 +59,8 @@ import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
-import top.theillusivec4.curios.api.CuriosApi;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -641,32 +638,7 @@ public class ToolUtils {
      * @return 图腾
      */
     public static ItemStack getPlayerTotemItem(Player player) {
-        AtomicReference<ItemStack> totemItem = new AtomicReference<>(ItemStack.EMPTY);
-        ;
-        ItemStack mainHandItem = player.getMainHandItem();
-        if (mainHandItem.is(ModItems.infinity_totem.get())) {
-            totemItem.set(mainHandItem);
-        }
-        ItemStack offhand = player.getOffhandItem();
-        if (offhand.is(ModItems.infinity_totem.get())) {
-            totemItem.set(offhand);
-        }
-        for (ItemStack stack : player.getInventory().items) {
-            if (stack.is(ModItems.infinity_totem.get()))
-                totemItem.set(stack);
-        }
-
-        if (Static.isLoad("curios") && Static.isLoad("charmofundying")) {
-            CuriosApi.getCuriosInventory(player).ifPresent(curiosInventory -> {
-                curiosInventory.getStacksHandler("charm").ifPresent(slotInventory -> {
-                    if (slotInventory.getStacks().getStackInSlot(0).is(ModItems.infinity_totem.get())) {
-                        totemItem.set(slotInventory.getStacks().getStackInSlot(0));
-                    }
-                });
-            });
-        }
-
-        return totemItem.get();
+        return InventoryUtils.findItemInPlayer(player, stack -> stack.is(ModItems.infinity_totem.get()), ItemStack.EMPTY, stack -> stack);
     }
 
     /**

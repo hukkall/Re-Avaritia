@@ -1,7 +1,10 @@
 package committee.nova.mods.avaritia.common.block.chest;
 
 import committee.nova.mods.avaritia.api.common.block.BaseTileEntityBlock;
-import committee.nova.mods.avaritia.common.tile.InfinityChestTile;
+import committee.nova.mods.avaritia.common.tile.OffsetChestTile;
+import committee.nova.mods.avaritia.common.tile.WipChestTile;
+import committee.nova.mods.avaritia.common.tile.WipChestTile.*;
+import committee.nova.mods.avaritia.init.registry.ModTileEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -15,17 +18,18 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
-import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
+import net.minecraft.world.level.block.state.properties.*;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,44 +39,52 @@ import org.jetbrains.annotations.NotNull;
  * @CreateTime: 2024/7/13 下午12:38
  * @Description:
  */
-public class InfinityChestBlock extends BaseTileEntityBlock {
+public class InfinityChestBlock extends BaseTileEntityBlock implements SimpleWaterloggedBlock {
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
-    private static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+    public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 
     public InfinityChestBlock() {
         super(Properties.of().mapColor(MapColor.GOLD).instrument(NoteBlockInstrument.BASS).strength(2.5F).sound(SoundType.GLASS).ignitedByLava());
-        this.registerDefaultState(this.stateDefinition.any().setValue(WATERLOGGED, Boolean.FALSE));
+        this.registerDefaultState(defaultBlockState().setValue(WATERLOGGED, Boolean.FALSE).setValue(FACING, Direction.NORTH));
     }
+
+//    @Override
+//    protected <T extends BlockEntity> BlockEntityTicker<T> getServerTicker(Level level, BlockState state, BlockEntityType<T> type) {
+//        return createTicker(type, ModTileEntities.infinity_chest_tile.get(), WipChestTile::tick);
+//    }
+//
+//    @Override
+//    protected <T extends BlockEntity> BlockEntityTicker<T> getClientTicker(Level level, BlockState state, BlockEntityType<T> type) {
+//        return createTicker(type, ModTileEntities.infinity_chest_tile.get(), WipChestTile::tick);
+//    }
 
     @Override
     public @NotNull InteractionResult use(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult trace) {
         if (!level.isClientSide()) {
             var tile = level.getBlockEntity(pos);
 
-            if (tile instanceof InfinityChestTile chestTile) {
-                NetworkHooks.openScreen((ServerPlayer) player, chestTile, buf -> {
-                        buf.writeBlockPos(pos);
-                        //buf.writeUtf(chestTile.getFilter(), 64);
-                    });
+            if (tile instanceof OffsetChestTile chestTile) {
+                NetworkHooks.openScreen((ServerPlayer) player, chestTile, pos);
             }
         }
 
         return InteractionResult.SUCCESS;
     }
 
-        @Override
+    @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
-        return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+            Direction direction = context.getClickedFace().getOpposite();
+            FluidState ifluidstate = context.getLevel().getFluidState(context.getClickedPos());
+            if(direction.getAxis() == Direction.Axis.Y) {
+                direction = context.getHorizontalDirection();
+            }
+            return this.defaultBlockState().setValue(FACING, direction.getAxis() == Direction.Axis.Y ? Direction.NORTH : direction).
+                    setValue(WATERLOGGED, ifluidstate.getType() == Fluids.WATER);
     }
 
     @Override
     public @NotNull BlockEntity newBlockEntity(@NotNull BlockPos pPos, @NotNull BlockState pState) {
-        return new InfinityChestTile(pPos, pState);
-    }
-
-    @Override
-    public @NotNull RenderShape getRenderShape(@NotNull BlockState pState) {
-        return RenderShape.MODEL;
+        return new OffsetChestTile(pPos, pState);
     }
 
     @Override
