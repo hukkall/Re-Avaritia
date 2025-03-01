@@ -84,11 +84,11 @@ public class ModConfig {
         inventoryRows =buildInt(common, "Inventory Rows", 6, 1, 6, "Inventory rows for multi page mode");
         common.pop();
         common.push("channel");
-        MAX_SIZE_PRE_CHANNEL = buildInt(common, "channelSize", 32768, 2048, Integer.MAX_VALUE, "");
-        MAX_CHANNELS_PRE_PLAYER = buildInt(common, "maxPlayerChannels", 16, 4, 64, "");
-        MAX_PUBLIC_CHANNELS = buildInt(common, "maxPublicChannels", 128, 32, 1024, "");
-        CHANNEL_FAST_UPDATE_RATE = buildInt(common,  "fast_update_rate", 1, 1, 40, "");
-        CHANNEL_FULL_UPDATE_RATE = buildInt(common, "full_update_rate", 40, 20, 1200, "");
+        MAX_SIZE_PRE_CHANNEL = buildInt(common, "Channel Size", 32768, 2048, Integer.MAX_VALUE, "");
+        MAX_CHANNELS_PRE_PLAYER = buildInt(common, "MaxPlayer Channels", 16, 4, 64, "");
+        MAX_PUBLIC_CHANNELS = buildInt(common, "MaxPublic Channels", 128, 32, 1024, "");
+        CHANNEL_FAST_UPDATE_RATE = buildInt(common,  "FastUpdate Rate", 1, 1, 40, "");
+        CHANNEL_FULL_UPDATE_RATE = buildInt(common, "FullUpdate Rate", 40, 20, 1200, "");
         common.pop();
         COMMON = common.build();
     }

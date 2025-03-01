@@ -1,11 +1,17 @@
 package committee.nova.mods.avaritia.common.tile;
 
+import committee.nova.mods.avaritia.Static;
 import committee.nova.mods.avaritia.api.common.tile.BaseTileEntity;
 import committee.nova.mods.avaritia.common.menu.WipChestMenu;
+import committee.nova.mods.avaritia.common.net.channel.ChannelAction;
+import committee.nova.mods.avaritia.common.net.channel.S2CChannelActionPack;
+import committee.nova.mods.avaritia.common.sync.ChannelInfo;
+import committee.nova.mods.avaritia.common.sync.IChannelTerminal;
 import committee.nova.mods.avaritia.common.sync.ServerChannelManager;
 import committee.nova.mods.avaritia.common.wrappers.channel.Channel;
 import committee.nova.mods.avaritia.common.wrappers.channel.NullChannel;
 import committee.nova.mods.avaritia.common.wrappers.channel.ServerChannel;
+import committee.nova.mods.avaritia.init.handler.NetworkHandler;
 import committee.nova.mods.avaritia.init.registry.ModTileEntities;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,6 +20,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -23,10 +30,13 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,7 +49,7 @@ import java.util.UUID;
  * @CreateTime: 2025/1/31 15:28
  * @Description:
  */
-public class WipChestTile extends BaseTileEntity {
+public class WipChestTile extends BaseTileEntity implements IChannelTerminal {
     private static final Component CONTAINER_NAME = Component.translatable("container.infinity_chest");
     private final int slotIndex;
     @Getter private UUID owner;
@@ -54,6 +64,12 @@ public class WipChestTile extends BaseTileEntity {
     private final HashSet<ServerPlayer> channelSelectors = new HashSet<>();
 
 
+    private boolean north = true;
+    private boolean south = true;
+    private boolean east = true;
+    private boolean west = true;
+    private boolean up = true;
+    private boolean down = true;
     @Getter private ServerChannel channel = NullChannel.INSTANCE;
     @Getter private LazyOptional<?> capability = LazyOptional.of(() -> channel);
 
@@ -67,10 +83,7 @@ public class WipChestTile extends BaseTileEntity {
     public static void tick(Level level, BlockPos pos, BlockState state, WipChestTile blockEntity) {
         if (level.isClientSide) return;
         if (blockEntity.channel.isRemoved()) {
-            if (blockEntity.channelID >= 0) {
-                blockEntity.channelOwner = null;
-                blockEntity.channelID = -1;
-            }
+            if (blockEntity.channelID >= 0) blockEntity.setChannel(null, -1);
         } else {
             if (blockEntity.waterlogged) blockEntity.channel.addFluid(new FluidStack(Fluids.WATER, 1000));
         }
@@ -78,12 +91,17 @@ public class WipChestTile extends BaseTileEntity {
 
     public void onBlockStateChange() {
         BlockState state = getBlockState();
+        north = state.getValue(BlockStateProperties.NORTH);
+        south = state.getValue(BlockStateProperties.SOUTH);
+        west = state.getValue(BlockStateProperties.WEST);
+        east = state.getValue(BlockStateProperties.EAST);
+        up = state.getValue(BlockStateProperties.UP);
+        down = state.getValue(BlockStateProperties.DOWN);
         waterlogged = state.getValue(BlockStateProperties.WATERLOGGED);
     }
 
     @Override
     public void load(@NotNull CompoundTag pTag) {
-        super.load(pTag);
         if (pTag.contains("owner")) {
             owner = pTag.getUUID("owner");
             locked = pTag.getBoolean("locked");
@@ -102,7 +120,6 @@ public class WipChestTile extends BaseTileEntity {
 
     @Override
     public void saveAdditional(@NotNull CompoundTag pTag) {
-        super.saveAdditional(pTag);
         if (owner != null) {
             pTag.putUUID("owner", owner);
             pTag.putBoolean("locked", locked);
@@ -132,12 +149,82 @@ public class WipChestTile extends BaseTileEntity {
     @Override
     public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
         if (channel.isRemoved()) return LazyOptional.empty();
+        if (side == Direction.NORTH && !north) return LazyOptional.empty();
+        else if (side == Direction.SOUTH && !south) return LazyOptional.empty();
+        else if (side == Direction.WEST && !west) return LazyOptional.empty();
+        else if (side == Direction.EAST && !east) return LazyOptional.empty();
+        else if (side == Direction.UP && !up) return LazyOptional.empty();
+        else if (side == Direction.DOWN && !down) return LazyOptional.empty();
         else if (cap == ForgeCapabilities.ITEM_HANDLER
                 || cap == ForgeCapabilities.FLUID_HANDLER
                 || cap == ForgeCapabilities.ENERGY) {
             return capability.cast();
         }
         return LazyOptional.empty();
+    }
+
+    @Override
+    public UUID getTerminalOwner() {
+        return owner;
+    }
+
+    @Override
+    public @Nullable ChannelInfo getChannelInfo() {
+        if (channelID >= 0) return new ChannelInfo(channelOwner, channelID);
+        return null;
+    }
+
+    @Override
+    public void setChannel(UUID channelOwner, int channelID) {
+        this.channelOwner = channelOwner;
+        this.channelID = channelID;
+        this.setChanged();
+        channelSelectors.forEach(player -> ServerChannelManager.sendChannelSet(player, owner, channelOwner, channelID));
+        this.channel = ServerChannelManager.getInstance().getChannel(channelOwner, channelID);
+        this.capability = LazyOptional.of(() -> channel);
+    }
+
+    @Override
+    public void removeChannel(ServerPlayer actor) {
+        if (channelOwner == null) return;
+        if (channelOwner.equals(actor.getUUID()) || channelOwner.equals(Static.AVARITIA_FAKE_PLAYER.getId())) {
+            if (!ServerChannelManager.getInstance().tryRemoveChannel(channelOwner, channelID)) return;
+            this.channelID = -1;
+            this.channelOwner = null;
+            this.setChanged();
+            channelSelectors.forEach(player -> NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new S2CChannelActionPack(ChannelAction.SET, (byte) -1, "", -1)));
+            this.channel = NullChannel.INSTANCE;
+        }
+    }
+
+    @Override
+    public void renameChannel(ServerPlayer actor, String name) {
+        if (channelID < 0) return;
+        if (actor.getUUID().equals(channelOwner) || channelOwner.equals(Static.AVARITIA_FAKE_PLAYER.getId()))
+            ServerChannelManager.getInstance().renameChannel(new ChannelInfo(channelOwner, channelID), name);
+    }
+
+    @Override
+    public void addChannelSelector(ServerPlayer player) {
+        channelSelectors.add(player);
+        if (channelID < 0) return;
+        ServerChannelManager.sendChannelSet(player, owner, channelOwner, channelID);
+    }
+
+    @Override
+    public void removeChannelSelector(ServerPlayer player) {
+        channelSelectors.remove(player);
+    }
+
+    @Override
+    public boolean stillValid() {
+        return !isRemoved();
+    }
+
+    @Override
+    public void tryReOpenMenu(ServerPlayer player) {
+        if (channelID >= 0) this.getBlockState().use(level, player, InteractionHand.MAIN_HAND, new BlockHitResult(
+                new Vec3(worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5), Direction.UP, worldPosition, false));
     }
 
     public void inhaleItem(ItemEntity itemEntity) {
@@ -188,16 +275,6 @@ public class WipChestTile extends BaseTileEntity {
 
     public void setChannelId(int id) {
         this.channelID = id;
-        this.setChanged();
-    }
-
-    public void setChannel(ServerChannel channel) {
-        this.channel = channel;
-        this.setChanged();
-    }
-
-    public void setCapability(LazyOptional<?> capability) {
-        this.capability = capability;
         this.setChanged();
     }
 }

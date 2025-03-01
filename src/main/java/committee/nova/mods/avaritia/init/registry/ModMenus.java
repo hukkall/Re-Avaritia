@@ -40,6 +40,7 @@ public class ModMenus {
         MenuScreens.register(neutron_ring.get(), NeutronRingScreen::new);
         MenuScreens.register(offset_chest.get(), OffsetChestScreen::new);
         MenuScreens.register(infinity_chest.get(), WipChestScreen::new);
+        MenuScreens.register(channel_select_menu.get(), ChannelSelectScreen::new);
         MenuScreens.register(extreme_smithing_table.get(), ExtremeSmithingScreen::new);
         MenuScreens.register(extreme_anvil.get(), ExtremeAnvilScreen::new);
     }
@@ -60,6 +61,7 @@ public class ModMenus {
     public static RegistryObject<MenuType<WipChestMenu>> infinity_chest = menu("infinity_chest", () -> IForgeMenuType.create(WipChestMenu::new));
     public static RegistryObject<MenuType<CompressedChestMenu>> GENERIC_9x27 = menu("generic_9x27", () -> IForgeMenuType.create(CompressedChestMenu::new));
     public static RegistryObject<MenuType<ExtremeAnvilMenu>> extreme_anvil = menu("extreme_anvil", () -> IForgeMenuType.create(ExtremeAnvilMenu::new));
+    public static RegistryObject<MenuType<ChannelSelectMenu>> channel_select_menu = menu("channel_select_menu", () -> IForgeMenuType.create(ChannelSelectMenu::new));
 
 
 }

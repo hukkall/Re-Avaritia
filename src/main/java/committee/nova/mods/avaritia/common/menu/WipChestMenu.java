@@ -38,6 +38,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
+import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
@@ -66,7 +67,7 @@ public class WipChestMenu extends AbstractContainerMenu {
     private final ItemStack panelItem;
     private final TransientCraftingContainer craftSlots = new TransientCraftingContainer(this, 3, 3);
     private final ResultContainer resultSlots = new ResultContainer();
-    public WipChestTile controlPanelBlock;
+    public WipChestTile wipChestTile;
     public DummyContainer dummyContainer;
     public boolean locked;
     public UUID channelOwner;
@@ -133,7 +134,7 @@ public class WipChestMenu extends AbstractContainerMenu {
 
         if (panelItemSlotIndex >= 0) {
             this.blockPos = BlockPos.ZERO;
-            this.controlPanelBlock = null;
+            this.wipChestTile = null;
             this.panelItem = player.getInventory().getItem(panelItemSlotIndex);
             CompoundTag nbt = panelItem.getTag();
             this.owner = nbt.contains("owner") ? nbt.getUUID("owner") : player.getUUID();
@@ -150,7 +151,7 @@ public class WipChestMenu extends AbstractContainerMenu {
         }
         else {
             this.blockPos = blockEntity.getBlockPos();
-            this.controlPanelBlock = blockEntity;
+            this.wipChestTile = blockEntity;
             this.owner = blockEntity.getOwner() == null ? player.getUUID() : blockEntity.getOwner();
             this.locked = blockEntity.isLocked();
             this.craftingMode = blockEntity.isCraftingMode();
@@ -188,7 +189,7 @@ public class WipChestMenu extends AbstractContainerMenu {
                         panelItem.setTag(nbt);
                     }
                     else {
-                        controlPanelBlock.setLocked(locked);
+                        wipChestTile.setLocked(locked);
                         if (locked) saveBlock();
                     }
                 }
@@ -847,10 +848,10 @@ public class WipChestMenu extends AbstractContainerMenu {
     }
 
     private void saveBlock() {
-        controlPanelBlock.setCraftingMode(craftingMode);
-        controlPanelBlock.setFilter(filter);
-        controlPanelBlock.setSortType(sortType);
-        controlPanelBlock.setViewType(viewType);
+        wipChestTile.setCraftingMode(craftingMode);
+        wipChestTile.setFilter(filter);
+        wipChestTile.setSortType(sortType);
+        wipChestTile.setViewType(viewType);
     }
 
     @Override
@@ -1023,11 +1024,11 @@ public class WipChestMenu extends AbstractContainerMenu {
                 nbt.remove("channel");
                 panelItem.setTag(nbt);
             }
-            //else controlPanelBlock.setChannel(null, -1);
+            else wipChestTile.setChannel(null, -1);
             openChannelScreen();
         }
         if (panelItemSlotIndex >= 0) return panelItem == player.getInventory().getItem(panelItemSlotIndex);
-        else return !controlPanelBlock.isRemoved() &&
+        else return !wipChestTile.isRemoved() &&
                 player.distanceToSqr(blockPos.getX() + 0.5D, blockPos.getY() + 0.5D, blockPos.getZ() + 0.5D) <= 32.0D;
     }
 
@@ -1055,19 +1056,21 @@ public class WipChestMenu extends AbstractContainerMenu {
             }
         }
         else {
-            if (!controlPanelBlock.isLocked()) saveBlock();
+            if (!wipChestTile.isLocked()) saveBlock();
         }
     }
 
     private void openChannelScreen() {
         if (locked) return;
-//        if (panelItemSlotIndex >= 0)
-//            NetworkHooks.openScreen((ServerPlayer) player,
+        if (panelItemSlotIndex >= 0){
+            //            NetworkHooks.openScreen((ServerPlayer) player,
 //                    new ChannelSelectMenuProvider(new ItemChannelTerminal(player.getInventory(), panelItem, panelItemSlotIndex)), buf -> {
 //                    });
-//        else NetworkHooks.openScreen((ServerPlayer) player, new ChannelSelectMenuProvider(controlPanelBlock), buf -> {
-//        });
+        }
+        else NetworkHooks.openScreen((ServerPlayer) player, new ChannelSelectMenuProvider(wipChestTile), buf -> {
+        });
     }
+
 
     @Override
     @ParametersAreNonnullByDefault

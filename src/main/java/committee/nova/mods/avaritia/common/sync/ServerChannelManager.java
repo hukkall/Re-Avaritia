@@ -172,7 +172,7 @@ public class ServerChannelManager {
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
-                    Static.LOGGER.info("成功保存频道： " + uuid + "——" + id + "——" + channel.getName());
+                    Static.LOGGER.info("成功保存频道： {}——{}——{}", uuid, id, channel.getName());
                 });
             });
 
@@ -195,7 +195,9 @@ public class ServerChannelManager {
     }
 
     private boolean isOverworld(LevelAccessor level) {
-        return !level.isClientSide() && level.equals(level.getServer().getLevel(Level.OVERWORLD));
+        return !level.isClientSide()
+                //&& level.equals(level.getServer().getLevel(Level.OVERWORLD))
+                ;
     }
 
     public CompoundTag getUserCache() {
@@ -204,7 +206,7 @@ public class ServerChannelManager {
 
     public String getUserName(UUID uuid) {
         String userName = userCache.getCompound("nameCache").getString(uuid.toString());
-        if (userName.equals("")) {
+        if (userName.isEmpty()) {
             userCache.getCompound("nameCache").putString(uuid.toString(), "unknownUser");
             NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new S2CChannelStatePack(ChannelState.NAME, userCache));
             userName = "unknownUser";
@@ -347,7 +349,4 @@ public class ServerChannelManager {
     }
 
 
-    public static record ChannelInfo(UUID owner, int id) {
-    }
-    
 }

@@ -19,17 +19,20 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.ImageButton;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
@@ -205,9 +208,11 @@ public class WipChestScreen extends AbstractContainerScreen<WipChestMenu> {
     protected void renderTooltip(GuiGraphics pPoseStack, int pX, int pY) {
         if (this.hoveredSlot != null) {
             if (hoveredSlot.index >= 51) {
-//                if (menu.getCarried().getCount() == 1 && !Config.INCOMPATIBLE_MODID.get().contains(ForgeRegistries.ITEMS.getKey(menu.getCarried().getItem()).getNamespace()))
-//                    renderObjectStorageTooltip(pPoseStack, pX, pY);
-//                else
+                if (menu.getCarried().getCount() == 1
+                       // && !Config.INCOMPATIBLE_MODID.get().contains(ForgeRegistries.ITEMS.getKey(menu.getCarried().getItem()).getNamespace())
+                )
+                    renderObjectStorageTooltip(pPoseStack, pX, pY);
+                else
                     renderCounterTooltip(pPoseStack, pX, pY);
             } else if (!hoveredSlot.getItem().isEmpty() && menu.getCarried().isEmpty()) pPoseStack.renderTooltip(font, this.hoveredSlot.getItem(), pX, pY);
         } else {
@@ -512,15 +517,14 @@ public class WipChestScreen extends AbstractContainerScreen<WipChestMenu> {
 
     private class ToggleLockButton extends ImageButton {
 
-        private final MutableComponent componentA;
-        private final MutableComponent componentB;
-        private final MutableComponent componentC;
-
         public ToggleLockButton(int pX, int pY) {
             super(pX, pY, 19, 16, 67, 215, GUI_IMG, pButton -> toggleLock());
-            componentA = Component.translatable("gui.avaritia.owner", "§a" + menu.player.getGameProfile().getName());
-            componentB = Component.translatable("gui.avaritia.owner", "§c" + ownerName);
-            componentC = Component.translatable("gui.avaritia.owner", ownerName);
+            MutableComponent componentA = Component.translatable("gui.avaritia.owner", "§a" + menu.player.getGameProfile().getName());
+            MutableComponent componentB = Component.translatable("gui.avaritia.owner", "§c" + ownerName);
+            MutableComponent componentC = Component.translatable("gui.avaritia.owner", ownerName);
+            if (menu.owner.equals(menu.player.getUUID())) setTooltip(Tooltip.create(componentA));
+            else if (menu.locked) setTooltip(Tooltip.create(componentB));
+            else setTooltip(Tooltip.create(componentC));
         }
 
         @Override
@@ -530,15 +534,6 @@ public class WipChestScreen extends AbstractContainerScreen<WipChestMenu> {
             int vOffset = this.isHoveredOrFocused() ? 231 : 215;
             this.renderTexture(pPoseStack, GUI_IMG, this.getX(), this.getY(),  uOffset, vOffset, this.yDiffTex, this.width, this.height, 256, 256);
             pPoseStack.blit(GUI_IMG, this.getX(), this.getY(), uOffset, vOffset, this.width, this.height, 256, 256);
-        }
-
-        @Override
-        protected @NotNull MutableComponent createNarrationMessage() {
-            if (this.isHovered) {
-                if (menu.owner.equals(menu.player.getUUID())) return componentA;
-                else if (menu.locked) return componentB;
-                else return componentC;
-            } else return super.createNarrationMessage();
         }
     }
 
@@ -554,18 +549,14 @@ public class WipChestScreen extends AbstractContainerScreen<WipChestMenu> {
             int uOffset = this.isHoveredOrFocused() ? 221 : 202;
             int vOffset = menu.sortType * 16;
             pPoseStack.blit(GUI_IMG, this.getX(), this.getY(), uOffset, vOffset, this.width, this.height, 256, 256);
-        }
-
-        @Override
-        protected @NotNull MutableComponent createNarrationMessage() {
-            if (sortButton.isHoveredOrFocused()) return CommonComponents.joinForNarration(
-                    Component.translatable(getSortKey(menu.sortType)),
-                    menu.sortType % 2 == 0 ? Component.translatable("gui.avaritia.sort.ascending") : Component.translatable("gui.avaritia.sort.descending"),
-                    Component.translatable("gui.avaritia.line"),
-                    Component.translatable("gui.avaritia.sort.tip1"),
-                    Component.translatable("gui.avaritia.sort.tip2")
-            );
-           else return super.createNarrationMessage();
+            List<FormattedCharSequence> list = new ArrayList<>();
+            list.add(Component.translatable(getSortKey(menu.sortType)).getVisualOrderText());
+            if (menu.sortType % 2 == 0) list.add(Component.translatable("gui.avaritia.sort.ascending").getVisualOrderText());
+            else list.add(Component.translatable("gui.avaritia.sort.descending").getVisualOrderText());
+            list.add(Component.translatable("gui.avaritia.line").getVisualOrderText());
+            list.add(Component.translatable("gui.avaritia.sort.tip1").getVisualOrderText());
+            list.add(Component.translatable("gui.avaritia.sort.tip2").getVisualOrderText());
+            if (sortButton.isHoveredOrFocused()) setTooltipForNextRenderPass(list);
         }
     }
 
@@ -585,79 +576,68 @@ public class WipChestScreen extends AbstractContainerScreen<WipChestMenu> {
     }
 
     private class ChannelButton extends ImageButton {
+        private final List<FormattedCharSequence> tips = new ArrayList<>();
         public ChannelButton(int pX, int pY) {
             super(pX, pY, 19, 16, 48, 215, GUI_IMG, pButton -> channelButtonPress());
+            if (menu.channelOwner.equals(menu.player.getUUID())) {
+                tips.add(Component.translatable("gui.avaritia.channel.tip1", "§a" + menu.channel.getName()).getVisualOrderText());
+                tips.add(Component.translatable("gui.avaritia.channel.tip2", "§a" + ClientChannelManager.getInstance().getUserName(menu.channelOwner)).getVisualOrderText());
+            }
+            else if (!menu.channelOwner.equals(Static.AVARITIA_FAKE_PLAYER.getId())) {
+                tips.add(Component.translatable("gui.avaritia.channel.tip1", "§c" + menu.channel.getName()).getVisualOrderText());
+                tips.add(Component.translatable("gui.avaritia.channel.tip2", "§c" + ClientChannelManager.getInstance().getUserName(menu.channelOwner)).getVisualOrderText());
+            }
+            else {
+                tips.add(Component.translatable("gui.avaritia.channel.tip1", menu.channel.getName()).getVisualOrderText());
+                tips.add(Component.translatable("gui.avaritia.channel.tip2", ClientChannelManager.getInstance().getUserName(menu.channelOwner)).getVisualOrderText());
+            }
         }
         @Override
         @ParametersAreNonnullByDefault
         public void renderWidget(GuiGraphics pPoseStack, int pMouseX, int pMouseY, float pPartialTick) {
             float vOffset = this.isHoveredOrFocused() ? 231.0F : 215.0F;
             pPoseStack.blit(GUI_IMG, this.getX(), this.getY(), 48.0F, vOffset, this.width, this.height, 256, 256);
-        }
-
-        @Override
-        protected @NotNull MutableComponent createNarrationMessage() {
-            if (this.isHovered){
-                if (menu.channelOwner.equals(menu.player.getUUID())) return CommonComponents.joinForNarration( Component.translatable("gui.avaritia.channel.tip1", "§a" + menu.channel.getName()),
-                        Component.translatable("gui.avaritia.channel.tip2", "§a" + ClientChannelManager.getInstance().getUserName(menu.channelOwner)));
-                else if (!menu.channelOwner.equals(Static.AVARITIA_FAKE_PLAYER.getId())) return CommonComponents.joinForNarration(Component.translatable("gui.avaritia.channel.tip1", "§c" + menu.channel.getName()),
-                        Component.translatable("gui.avaritia.channel.tip2", "§c" + ClientChannelManager.getInstance().getUserName(menu.channelOwner)));
-                else return CommonComponents.joinForNarration(Component.translatable("gui.avaritia.channel.tip1", menu.channel.getName()),
-                        Component.translatable("gui.avaritia.channel.tip2", ClientChannelManager.getInstance().getUserName(menu.channelOwner)));
-            } else return super.createNarrationMessage();
+            if (this.isHovered) setTooltipForNextRenderPass(tips);
         }
     }
 
     private class CraftToChannelButton extends ImageButton {
+        private final List<FormattedCharSequence> list = new ArrayList<>();
 
         public CraftToChannelButton (int x, int y) {
             super(x, y, 16, 16, 0, 215, GUI_IMG, pButton -> {});
-        }
-        @Override
-        protected @NotNull MutableComponent createNarrationMessage() {
-            if (craftToChannelButton.isHoveredOrFocused()) return  CommonComponents.joinForNarration(
-                    Component.translatable("gui.avaritia.craft.channel"),
-                    Component.translatable("gui.avaritia.craft.tip1"),
-                    Component.translatable("gui.avaritia.craft.tip2"),
-                    Component.translatable("gui.avaritia.craft.tip3"),
-                    Component.translatable("gui.avaritia.craft.tip4")
-            );
-            else return super.createNarrationMessage();
+            list.add(Component.translatable("gui.avaritia.craft.channel").getVisualOrderText());
+            list.add(Component.translatable("gui.avaritia.craft.tip1").getVisualOrderText());
+            list.add(Component.translatable("gui.avaritia.craft.tip2").getVisualOrderText());
+            list.add(Component.translatable("gui.avaritia.craft.tip3").getVisualOrderText());
+            list.add(Component.translatable("gui.avaritia.craft.tip4").getVisualOrderText());
+            setTooltipForNextRenderPass(list);
         }
     }
 
     private class CraftToInventoryButton extends ImageButton {
+        private final List<FormattedCharSequence> list = new ArrayList<>();
         public CraftToInventoryButton (int x, int y) {
             super(x, y, 16, 16, 16, 215, GUI_IMG, pButton -> {});
-        }
-        @Override
-        protected @NotNull MutableComponent createNarrationMessage() {
-            if (craftToInventoryButton.isHoveredOrFocused()) return  CommonComponents.joinForNarration(
-                    Component.translatable("gui.avaritia.craft.inv"),
-                    Component.translatable("gui.avaritia.craft.tip1"),
-                    Component.translatable("gui.avaritia.craft.tip2"),
-                    Component.translatable("gui.avaritia.craft.tip3"),
-                    Component.translatable("gui.avaritia.craft.tip4")
-            );
-            else return super.createNarrationMessage();
+            list.add(Component.translatable("gui.avaritia.craft.inv").getVisualOrderText());
+            list.add(Component.translatable("gui.avaritia.craft.tip1").getVisualOrderText());
+            list.add(Component.translatable("gui.avaritia.craft.tip2").getVisualOrderText());
+            list.add(Component.translatable("gui.avaritia.craft.tip3").getVisualOrderText());
+            list.add(Component.translatable("gui.avaritia.craft.tip4").getVisualOrderText());
+            setTooltipForNextRenderPass(list);
         }
     }
 
     private class CraftAndDropButton extends ImageButton {
+        private final List<FormattedCharSequence> list = new ArrayList<>();
         public CraftAndDropButton (int x, int y) {
             super(x, y, 16, 16, 32, 215, GUI_IMG, pButton -> {});
-        }
-
-        @Override
-        protected @NotNull MutableComponent createNarrationMessage() {
-            if (craftAndDropButton.isHoveredOrFocused()) return  CommonComponents.joinForNarration(
-                    Component.translatable("gui.avaritia.craft.drop"),
-                    Component.translatable("gui.avaritia.craft.tip1"),
-                    Component.translatable("gui.avaritia.craft.tip2"),
-                    Component.translatable("gui.avaritia.craft.tip3"),
-                    Component.translatable("gui.avaritia.craft.tip4")
-            );
-            else return super.createNarrationMessage();
+            list.add(Component.translatable("gui.avaritia.craft.drop").getVisualOrderText());
+            list.add(Component.translatable("gui.avaritia.craft.tip1").getVisualOrderText());
+            list.add(Component.translatable("gui.avaritia.craft.tip2").getVisualOrderText());
+            list.add(Component.translatable("gui.avaritia.craft.tip3").getVisualOrderText());
+            list.add(Component.translatable("gui.avaritia.craft.tip4").getVisualOrderText());
+            setTooltipForNextRenderPass(list);
         }
     }
 

@@ -46,6 +46,9 @@ public class NetworkHandler {
         CHANNEL.registerMessage(id++, S2CChannelListPack.class, S2CChannelListPack::write, S2CChannelListPack::new, S2CChannelListPack::run, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
         CHANNEL.registerMessage(id++, S2CChannelStatePack.class, S2CChannelStatePack::write, S2CChannelStatePack::new, S2CChannelStatePack::run, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
         CHANNEL.registerMessage(id++, C2SChannelFilterPack.class, C2SChannelFilterPack::write, C2SChannelFilterPack::new, C2SChannelFilterPack::run, Optional.of(NetworkDirection.PLAY_TO_SERVER));
+        CHANNEL.registerMessage(id++, ChannelSetPack.class, ChannelSetPack::write, ChannelSetPack::new, ChannelSetPack::run, Optional.of(NetworkDirection.PLAY_TO_SERVER));
+        CHANNEL.registerMessage(id++, ChannelAddPack.class, ChannelAddPack::write, ChannelAddPack::new, ChannelAddPack::run, Optional.of(NetworkDirection.PLAY_TO_SERVER));
+        CHANNEL.registerMessage(id++, ChannelRenamePack.class, ChannelRenamePack::write, ChannelRenamePack::new, ChannelRenamePack::run, Optional.of(NetworkDirection.PLAY_TO_SERVER));
     }
 
     public static void sendNbtDataToServer(CompoundTag tag) {

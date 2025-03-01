@@ -1,6 +1,7 @@
 package committee.nova.mods.avaritia.common.sync;
 
 import committee.nova.mods.avaritia.Static;
+import committee.nova.mods.avaritia.client.screen.ChannelSelectScreen;
 import committee.nova.mods.avaritia.common.container.DummyContainer;
 import committee.nova.mods.avaritia.common.wrappers.channel.ClientChannel;
 import net.minecraft.nbt.CompoundTag;
@@ -64,8 +65,8 @@ public class ClientChannelManager {
     public byte selectedChannelType = -1;
     public int selectedChannelID = -1;
     public String selectedChannelName = "";
-//    @Nullable
-//    private ChannelSelectScreen screen;
+    @Nullable
+    private ChannelSelectScreen screen;
 
 
     public ClientChannelManager() {
@@ -119,7 +120,7 @@ public class ClientChannelManager {
             case (byte) 1 -> otherChannels.put(id, name);
             case (byte) 2 -> publicChannels.put(id, name);
         }
-        //if (screen != null) screen.updateChannelList();
+        if (screen != null) screen.updateChannelList();
     }
 
     public void removeChannel(byte type, int id, String name) {
@@ -128,7 +129,7 @@ public class ClientChannelManager {
             case (byte) 1 -> otherChannels.remove(id);
             case (byte) 2 -> publicChannels.remove(id);
         }
-        //if (screen != null) screen.updateChannelList();
+        if (screen != null) screen.updateChannelList();
     }
 
     public void setSelectedChannel(byte type, int ID, String name) {
@@ -137,12 +138,12 @@ public class ClientChannelManager {
         selectedChannelName = name;
     }
 
-//    public void addScreen(ChannelSelectScreen screen) {
-//        this.screen = screen;
-//    }
+    public void addScreen(ChannelSelectScreen screen) {
+        this.screen = screen;
+    }
 
     public void onScreenClose() {
-        //screen = null;
+        screen = null;
         otherChannels.clear();
         selectedChannelType = -1;
         selectedChannelID = -1;
