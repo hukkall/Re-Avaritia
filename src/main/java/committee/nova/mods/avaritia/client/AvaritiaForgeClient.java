@@ -4,17 +4,17 @@ import com.mojang.blaze3d.platform.InputConstants;
 import committee.nova.mods.avaritia.Static;
 import committee.nova.mods.avaritia.api.iface.IFilterItem;
 import committee.nova.mods.avaritia.client.screen.ItemFilterScreen;
+import committee.nova.mods.avaritia.common.net.C2SElytraSpeedUpPacket;
+import committee.nova.mods.avaritia.init.handler.NetworkHandler;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.Collections;
 
@@ -44,6 +44,8 @@ public class AvaritiaForgeClient {
     public static final KeyMapping SORT_8 = new KeyMapping("key.avaritia.infinity_chest.sort8", InputConstants.KEY_8, CATEGORIES);
     public static final KeyMapping SORT_9 = new KeyMapping("key.avaritia.infinity_chest.sort9", InputConstants.KEY_9, CATEGORIES);
 
+    private static int infinityElytraCooldown = 0;
+
     /**
      * 在客户端Tick事件触发时执行
      *
@@ -59,9 +61,16 @@ public class AvaritiaForgeClient {
                 Minecraft.getInstance().setScreen(new ItemFilterScreen());
             }
         }
+
+        infinityElytraCooldown = Math.max(infinityElytraCooldown - 1, 0);
+        if (Minecraft.getInstance().options.keyJump.isDown() && infinityElytraCooldown <= 0) {
+            infinityElytraCooldown = 50;
+            NetworkHandler.CHANNEL.sendToServer(new C2SElytraSpeedUpPacket());
+        }
     }
 
     private static Component[] tooltipExt = new Component[0];
+
     public static void setTooltip(Component... string) {
         tooltipExt = string;
     }
