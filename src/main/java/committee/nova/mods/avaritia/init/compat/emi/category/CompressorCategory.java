@@ -11,10 +11,7 @@ import dev.emi.emi.api.stack.EmiStack;
 import dev.emi.emi.api.widget.WidgetHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -36,7 +33,7 @@ public record CompressorCategory(ICompressorRecipe recipe) implements EmiRecipe 
 
     @Override
     public List<EmiIngredient> getInputs() {
-        return this.recipe.getIngredients().stream().map(EmiIngredient::of).toList();
+        return this.recipe.getIngredients().stream().map(EmiIngredient::of).map(x -> x.setAmount(this.recipe.getInputCount())).toList();
     }
 
     @Override
@@ -60,10 +57,8 @@ public record CompressorCategory(ICompressorRecipe recipe) implements EmiRecipe 
     public void addWidgets(WidgetHolder widgets) {
         ClientLevel level = Minecraft.getInstance().level;
         assert level != null;
-        NonNullList<Ingredient> inputs = recipe.getIngredients();
-        ItemStack output = recipe.getResultItem(level.registryAccess());
         widgets.addTexture(TEXTURE, 1, 1);
-        widgets.addSlot(EmiIngredient.of(inputs.get(0)), 37, 21).drawBack(false);
-        widgets.addSlot(EmiStack.of(output), 117, 21).recipeContext(this).drawBack(false);
+        widgets.addSlot(this.getInputs().get(0), 37, 21).drawBack(false);
+        widgets.addSlot(this.getOutputs().get(0), 117, 21).recipeContext(this).drawBack(false);
     }
 }

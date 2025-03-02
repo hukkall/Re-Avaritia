@@ -13,11 +13,13 @@ import committee.nova.mods.avaritia.init.compat.emi.category.tables.SculkCraftin
 import committee.nova.mods.avaritia.init.registry.ModBlocks;
 import committee.nova.mods.avaritia.init.registry.ModItems;
 import committee.nova.mods.avaritia.init.registry.ModRecipeTypes;
+import committee.nova.mods.avaritia.util.SingularityUtils;
 import dev.emi.emi.api.EmiEntrypoint;
 import dev.emi.emi.api.EmiPlugin;
 import dev.emi.emi.api.EmiRegistry;
 import dev.emi.emi.api.recipe.EmiInfoRecipe;
 import dev.emi.emi.api.recipe.VanillaEmiRecipeCategories;
+import dev.emi.emi.api.stack.Comparison;
 import dev.emi.emi.api.stack.EmiIngredient;
 import dev.emi.emi.api.stack.EmiStack;
 import net.minecraft.network.chat.Component;
@@ -30,6 +32,8 @@ import java.util.List;
 public class AvaritiaEmiPlugin implements EmiPlugin {
     @Override
     public void register(EmiRegistry registry) {
+        registry.setDefaultComparison(ModItems.singularity.get(), Comparison.of((stack1, stack2) -> SingularityUtils.getSingularity(stack1.getItemStack()) == SingularityUtils.getSingularity(stack2.getItemStack())));
+
         registry.addWorkstation(VanillaEmiRecipeCategories.ANVIL_REPAIRING, EmiStack.of(ModBlocks.extreme_anvil.get()));
 
         registry.addCategory(CompressorCategory.CATEGORY);
