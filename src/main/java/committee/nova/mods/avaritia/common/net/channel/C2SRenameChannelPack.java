@@ -14,16 +14,16 @@ import java.util.function.Supplier;
  * @CreateTime: 2025/3/2 01:07
  * @Description:
  */
-public class ChannelRenamePack {
+public class C2SRenameChannelPack {
     private final int containerId;
     private final String name;
 
-    public ChannelRenamePack(FriendlyByteBuf buf) {
+    public C2SRenameChannelPack(FriendlyByteBuf buf) {
         this.containerId = buf.readInt();
         this.name = buf.readUtf();
     }
 
-    public ChannelRenamePack(int containerId, String name) {
+    public C2SRenameChannelPack(int containerId, String name) {
         this.containerId = containerId;
         this.name = name;
     }

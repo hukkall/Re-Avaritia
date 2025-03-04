@@ -123,6 +123,7 @@
   "tooltip.avaritia.init_enchant" : "Always has at least %s",
   "tooltip.avaritia.tool.smelt": "Smelt",
   "tooltip.avaritia.tool.blade_slash": "Blade Slash",
+  "tooltip.avaritia.more": "and %s more...",
   "block.avaritia.neutron": "Neutron Block",
   "block.avaritia.infinity": "Infinity Block",
   "block.avaritia.blaze_cube_block": "Blaze Cube Block",

@@ -40,7 +40,7 @@ public interface OffsetContainer extends Container {
         return this.getItemHandler().getItemInSlot(index);
     }
 
-    default ContainerData getItemCountAccessor() {
+    default ContainerData getItemCount() {
         return new ContainerData() {
             @Override public int get(int index) {
                 return index >= 0 && index < OffsetContainer.this.getContainerSize() ? (int) OffsetContainer.this.getItemInSlot(index).getCount() : 0;

@@ -1,6 +1,6 @@
 package committee.nova.mods.avaritia.common.item;
 
-import committee.nova.mods.avaritia.api.common.container.SimpleContainer;
+import committee.nova.mods.avaritia.api.common.container.NoMenuContainer;
 import committee.nova.mods.avaritia.api.utils.NBTUtils;
 import committee.nova.mods.avaritia.common.entity.ImmortalItemEntity;
 import committee.nova.mods.avaritia.init.registry.ModEntities;
@@ -13,7 +13,6 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -60,7 +59,7 @@ public class MatterClusterItem extends Item {
         LinkedList<ItemStack> stacks = new LinkedList<>(input);
 
         while (!stacks.isEmpty()) {
-            SimpleContainer clusterInventory = new SimpleContainer(CAPACITY);
+            NoMenuContainer clusterInventory = new NoMenuContainer(CAPACITY);
             int totalInserted = 0;
 
             ItemStack cluster;
@@ -86,13 +85,13 @@ public class MatterClusterItem extends Item {
     }
 
     public static boolean mergeClusters(ItemStack spawnCluster, ItemStack slotCluster) {
-        SimpleContainer receivingInv = readClusterInventory(slotCluster);
+        NoMenuContainer receivingInv = readClusterInventory(slotCluster);
         int recipientCount = Arrays.stream(receivingInv.items).mapToInt(ItemStack::getCount).sum();
         if (recipientCount >= CAPACITY) {
             return false;
         } else {
             boolean mergedAny = false;
-            SimpleContainer spawnClusterInv = readClusterInventory(spawnCluster);
+            NoMenuContainer spawnClusterInv = readClusterInventory(spawnCluster);
             for (ItemStack stack : spawnClusterInv.items) {
                 if (stack.isEmpty()) {
                     break;
@@ -124,13 +123,13 @@ public class MatterClusterItem extends Item {
     }
 
 
-    private static void writeClusterInventory(ItemStack cluster, SimpleContainer clusterContents) {
+    private static void writeClusterInventory(ItemStack cluster, NoMenuContainer clusterContents) {
         CompoundTag nbt = cluster.getOrCreateTag();
         nbt.put("items", NBTUtils.writeToTag(clusterContents.items));
     }
 
-    private static SimpleContainer readClusterInventory(ItemStack cluster) {
-        SimpleContainer clusterInventory = new SimpleContainer(CAPACITY);
+    private static NoMenuContainer readClusterInventory(ItemStack cluster) {
+        NoMenuContainer clusterInventory = new NoMenuContainer(CAPACITY);
         if (cluster.hasTag()) {
             NBTUtils.readFromTag(clusterInventory.items, cluster.getOrCreateTag().getList("items", Tag.TAG_COMPOUND));
         }

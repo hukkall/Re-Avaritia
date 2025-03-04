@@ -1,7 +1,7 @@
 package committee.nova.mods.avaritia.common.net.channel;
 
 import committee.nova.mods.avaritia.Static;
-import committee.nova.mods.avaritia.common.menu.WipChestMenu;
+import committee.nova.mods.avaritia.common.menu.ChannelMenu;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkEvent;
@@ -14,17 +14,17 @@ import java.util.function.Supplier;
  * @CreateTime: 2025/2/28 14:00
  * @Description:
  */
-public class C2SChannelFilterPack {
+public class C2SFilterChannelPack {
 
     private final int containerId;
     private final String filter;
 
-    public C2SChannelFilterPack(FriendlyByteBuf buf) {
+    public C2SFilterChannelPack(FriendlyByteBuf buf) {
         this.containerId = buf.readInt();
         this.filter = buf.readUtf(64);
     }
 
-    public C2SChannelFilterPack(int containerId, String filter) {
+    public C2SFilterChannelPack(int containerId, String filter) {
         this.containerId = containerId;
         this.filter = filter;
     }
@@ -42,7 +42,7 @@ public class C2SChannelFilterPack {
                 if (!player.containerMenu.stillValid(player)) {
                     Static.LOGGER.debug("Player {} interacted with invalid menu {}", player, player.containerMenu);
                 } else {
-                    ((WipChestMenu) player.containerMenu).filter = filter;
+                    ((ChannelMenu) player.containerMenu).filter = filter;
                     player.containerMenu.broadcastChanges();
                 }
             }

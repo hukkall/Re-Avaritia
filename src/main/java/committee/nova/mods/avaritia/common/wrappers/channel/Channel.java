@@ -27,9 +27,9 @@ import java.util.List;
  */
 public abstract class Channel implements IItemHandler, IFluidHandler, IEnergyStorage {
     private String channelName = "UnName";
-    //TODO:以后想兼容mek气体和其他能量，顺便试试改成HashMap<Item, Long>.
     public final HashMap<Item, Long> storageItems = new HashMap<>();
     public final HashMap<Fluid, Long> storageFluids = new HashMap<>();
+    public final HashMap<String, Long> storageGas = new HashMap<>();//todo 兼容气体
     public final HashMap<String, Long> storageEnergies = new HashMap<>();
     @Getter
     private String[] itemKeys = new String[]{};

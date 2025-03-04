@@ -1,38 +1,35 @@
 package committee.nova.mods.avaritia.common.block.chest;
 
-import com.google.common.collect.ImmutableMap;
 import committee.nova.mods.avaritia.api.common.block.BaseTileEntityBlock;
-import committee.nova.mods.avaritia.common.menu.WipChestMenuProvider;
-import committee.nova.mods.avaritia.common.sync.ClientChannelManager;
-import committee.nova.mods.avaritia.common.tile.WipChestTile;
-import committee.nova.mods.avaritia.init.registry.ModTileEntities;
+import committee.nova.mods.avaritia.common.tile.BlackHoleTile;
+import committee.nova.mods.avaritia.common.tile.InfinityChestTile;
+import committee.nova.mods.avaritia.common.wrappers.StorageItem;
+import committee.nova.mods.avaritia.util.StorageUtils;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityTicker;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.*;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.material.MapColor;
@@ -46,7 +43,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.UUID;
 
 /**
  * @Project: Avaritia
@@ -56,98 +52,56 @@ import java.util.UUID;
  */
 public class InfinityChestBlock extends BaseTileEntityBlock implements SimpleWaterloggedBlock {
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
-    public static final BooleanProperty NORTH = BlockStateProperties.NORTH;
-    public static final BooleanProperty SOUTH = BlockStateProperties.SOUTH;
-    public static final BooleanProperty WEST = BlockStateProperties.WEST;
-    public static final BooleanProperty EAST = BlockStateProperties.EAST;
-    public static final BooleanProperty UP = BlockStateProperties.UP;
-    public static final BooleanProperty DOWN = BlockStateProperties.DOWN;
-    private final ImmutableMap<BlockState, VoxelShape> shapesCache;
+    public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+
     public InfinityChestBlock() {
         super(Properties.of()
                 .mapColor(MapColor.GOLD)
                 .instrument(NoteBlockInstrument.BASS)
                 .strength(30.0F, 1200.0F)
                 .sound(SoundType.GLASS)
-                .lightLevel(InfinityChestBlock::getLightLevel)
+                .lightLevel((b) -> 15)
                 .isValidSpawn((state, getter, pos, entityType) -> false)
                 .isSuffocating((state, getter, pos) -> false)
                 .ignitedByLava());
         this.registerDefaultState(this.stateDefinition.any()
-                .setValue(NORTH, Boolean.TRUE)
-                .setValue(SOUTH, Boolean.TRUE)
-                .setValue(WEST, Boolean.TRUE)
-                .setValue(EAST, Boolean.TRUE)
-                .setValue(UP, Boolean.TRUE)
-                .setValue(DOWN, Boolean.TRUE)
+                .setValue(FACING, Direction.NORTH)
                 .setValue(WATERLOGGED, Boolean.FALSE)
         );
-        this.shapesCache = this.getShapeForEachState(InfinityChestBlock::calculateShape);
-    }
-
-    private static VoxelShape calculateShape(BlockState state) {
-        VoxelShape voxelshape = Shapes.or(
-                Block.box(0, 0, 0, 16, 3, 3),
-                Block.box(0, 0, 13, 16, 3, 16),
-                Block.box(0, 0, 3, 3, 3, 13),
-                Block.box(13, 0, 3, 16, 3, 13),
-                Block.box(0, 13, 0, 16, 16, 3),
-                Block.box(0, 13, 13, 16, 16, 16),
-                Block.box(0, 13, 3, 3, 16, 13),
-                Block.box(13, 13, 3, 16, 16, 13),
-                Block.box(0, 3, 0, 3, 13, 3),
-                Block.box(13, 3, 0, 16, 13, 3),
-                Block.box(13, 3, 13, 16, 13, 16),
-                Block.box(0, 3, 13, 3, 13, 16)
-        );
-        if (!state.getValue(NORTH)) voxelshape = Shapes.or(voxelshape, Block.box(3, 3, 0, 13, 13, 1));
-        if (!state.getValue(SOUTH)) voxelshape = Shapes.or(voxelshape, Block.box(3, 3, 14, 13, 13, 16));
-        if (!state.getValue(WEST)) voxelshape = Shapes.or(voxelshape, Block.box(0, 3, 3, 1, 13, 13));
-        if (!state.getValue(EAST)) voxelshape = Shapes.or(voxelshape, Block.box(14, 3, 3, 16, 13, 13));
-        if (!state.getValue(DOWN)) voxelshape = Shapes.or(voxelshape, Block.box(3, 0, 3, 13, 1, 13));
-        if (!state.getValue(UP)) voxelshape = Shapes.or(voxelshape, Block.box(3, 14, 3, 13, 16, 13));
-        return voxelshape;
-    }
-
-    private static int getLightLevel(BlockState value) {
-        if (value.getValue(NORTH)
-                || value.getValue(SOUTH)
-                || value.getValue(WEST)
-                || value.getValue(EAST)
-                || value.getValue(DOWN)
-                || value.getValue(UP)) return 15;
-        return 0;
-    }
-
-    @Override
-    protected <T extends BlockEntity> BlockEntityTicker<T> getServerTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return createTicker(type, ModTileEntities.infinity_chest_tile.get(), WipChestTile::tick);
-    }
-
-    @Override
-    protected <T extends BlockEntity> BlockEntityTicker<T> getClientTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return createTicker(type, ModTileEntities.infinity_chest_tile.get(), WipChestTile::tick);
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(NORTH, SOUTH, WEST, EAST, UP, DOWN, WATERLOGGED);
+        builder.add(FACING, WATERLOGGED);
     }
 
     @Override
-    public void appendHoverText(ItemStack pStack, @Nullable BlockGetter pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
+    public void appendHoverText(@NotNull ItemStack pStack, @Nullable BlockGetter pLevel, @NotNull List<Component> pTooltip, TooltipFlag pFlag) {
         if (Minecraft.getInstance().player == null) return;
         if (!pStack.hasTag()) return;
         if (pStack.getTag().contains("BlockEntityTag")) {
             CompoundTag nbt = pStack.getTag().getCompound("BlockEntityTag");
-            if (nbt.contains("owner")) {
-                UUID selfUUID = Minecraft.getInstance().player.getUUID();
-                UUID ownerUUID = nbt.getUUID("owner");
-                String ownerName = ClientChannelManager.getInstance().getUserName(nbt.getUUID("owner"));
-                boolean lock = nbt.getBoolean("locked");
-                if (selfUUID.equals(ownerUUID)) pTooltip.add(Component.translatable("gui.avaritia.owner", "§a" + ownerName));
-                else if (lock) pTooltip.add(Component.translatable("gui.avaritia.owner", "§c" + ownerName));
-                else pTooltip.add(Component.translatable("gui.avaritia.owner", ownerName));
+            if (nbt.contains("Items", 9)) {
+                Int2ObjectMap<StorageItem> containers = StorageUtils.newContainers();
+                StorageUtils.loadAllItems(nbt, containers);
+                int i = 0;
+                int j = 0;
+
+                for (StorageItem next : containers.values()) {
+                    if (!next.isEmpty()) {
+                        ++j;
+                        if (i <= 4) {
+                            ++i;
+                            MutableComponent textComponent = next.getStack().getHoverName().copy();
+                            textComponent.append(" x").append(String.format("%,d", next.getCount()));
+                            pTooltip.add(textComponent);
+                        }
+                    }
+                }
+
+                if (j - i > 0) {
+                    pTooltip.add((Component.translatable("container.shulkerBox.more", j - i)).withStyle(ChatFormatting.ITALIC));
+                }
             }
         }
     }
@@ -157,34 +111,8 @@ public class InfinityChestBlock extends BaseTileEntityBlock implements SimpleWat
         if (!level.isClientSide() && !player.isSpectator()) {
             var tile = level.getBlockEntity(pos);
 
-            if (tile instanceof WipChestTile chestTile) {
-                if (chestTile.getOwner() == null) {
-                    chestTile.setOwner(player.getUUID());
-                    chestTile.setLocked(false);
-                }
-
-                if (chestTile.getChannelOwner() == null || chestTile.getChannelID() < 0) {
-                    chestTile.setChannelOwner(player.getUUID());
-                    chestTile.setChannelId(0);
-                }
-
-                if (chestTile.getChannelInfo() == null)
-                    NetworkHooks.openScreen((ServerPlayer) player, new WipChestMenuProvider(chestTile), buf -> {
-                    });
-                else {
-                    NetworkHooks.openScreen((ServerPlayer) player, new WipChestMenuProvider(chestTile), buf -> {
-                        buf.writeBlockPos(pos);
-                        buf.writeInt(-2);
-                        buf.writeUUID(chestTile.getOwner());
-                        buf.writeBoolean(chestTile.isLocked());
-                        buf.writeBoolean(chestTile.isCraftingMode());
-                        buf.writeUtf(chestTile.getFilter(), 64);
-                        buf.writeByte(chestTile.getSortType());
-                        buf.writeByte(chestTile.getViewType());
-                        buf.writeUUID(chestTile.getChannelOwner());
-                        buf.writeInt(chestTile.getChannelID());
-                    });
-                }
+            if (tile instanceof InfinityChestTile chestTile) {
+                NetworkHooks.openScreen((ServerPlayer) player, chestTile);
             }
         }
 
@@ -199,46 +127,33 @@ public class InfinityChestBlock extends BaseTileEntityBlock implements SimpleWat
     }
 
     @Override
-    public @NotNull BlockEntity newBlockEntity(@NotNull BlockPos pPos, @NotNull BlockState pState) {
-        return new WipChestTile(pPos, pState);
-    }
+    public void playerWillDestroy(@NotNull Level pLevel, @NotNull BlockPos pPos, @NotNull BlockState pState, @NotNull Player pPlayer) {
+        if (!pLevel.isClientSide() && pPlayer.isCreative() && pLevel.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS)) {
+            BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
+            if (blockEntity instanceof InfinityChestTile infinityChestTile) {
+                ItemStack stack = new ItemStack(this);
+                CompoundTag compound = infinityChestTile.saveToTag(new CompoundTag());
+                if (!compound.isEmpty()) {
+                    stack.addTagElement("BlockEntityTag", compound);
+                }
 
-    @Override
-    public void setPlacedBy(@NotNull Level pLevel, @NotNull BlockPos pPos, @NotNull BlockState pState, @Nullable LivingEntity pPlacer, @NotNull ItemStack pStack) {
-        if (pPlacer instanceof ServerPlayer player && !pStack.getOrCreateTag().contains("BlockEntityTag")) {
-            WipChestTile blockEntity = (WipChestTile) pLevel.getBlockEntity(pPos);
-            if (blockEntity != null) {
-                blockEntity.setOwner(pPlacer.getUUID());
+                if (infinityChestTile.hasCustomName()) {
+                    stack.setHoverName(infinityChestTile.getCustomName());
+                }
+
+                popResource(pLevel, pPos, stack);
             }
         }
+        super.playerWillDestroy(pLevel, pPos, pState, pPlayer);
     }
 
     @Override
-    public void entityInside(@NotNull BlockState pState, Level pLevel, @NotNull BlockPos pPos, @NotNull Entity pEntity) {
-        if (pLevel.isClientSide) return;
-        BlockEntity blockentity = pLevel.getBlockEntity(pPos);
-        if (blockentity instanceof WipChestTile wipChestTile && pEntity instanceof ItemEntity itemEntity) {
-            wipChestTile.inhaleItem(itemEntity);
-        }
+    public @NotNull BlockEntity newBlockEntity(@NotNull BlockPos pPos, @NotNull BlockState pState) {
+        return new InfinityChestTile(pPos, pState);
     }
-
 
     @Override
     public @NotNull VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
-        return Shapes.block();
-    }
-
-    @Override
-    public @NotNull VoxelShape getCollisionShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
-        VoxelShape shape = shapesCache.get(pState);
-        if (shape != null) return shape;
-        return Shapes.block();
-    }
-
-    @Override
-    public @NotNull VoxelShape getOcclusionShape(BlockState pState, BlockGetter pLevel, BlockPos pPos) {
-        VoxelShape shape = shapesCache.get(pState);
-        if (shape != null) return shape;
         return Shapes.block();
     }
 
@@ -277,7 +192,7 @@ public class InfinityChestBlock extends BaseTileEntityBlock implements SimpleWat
 
     @Override
     public void onBlockStateChange(LevelReader level, BlockPos pos, BlockState oldState, BlockState newState) {
-        WipChestTile blockEntity = (WipChestTile) level.getBlockEntity(pos);
+        BlackHoleTile blockEntity = (BlackHoleTile) level.getBlockEntity(pos);
         if (blockEntity != null) blockEntity.onBlockStateChange();
     }
 

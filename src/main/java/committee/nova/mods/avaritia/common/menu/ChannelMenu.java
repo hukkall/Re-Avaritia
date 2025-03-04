@@ -7,8 +7,9 @@ import committee.nova.mods.avaritia.api.utils.math.InvItemCounter;
 import committee.nova.mods.avaritia.common.container.DummyContainer;
 import committee.nova.mods.avaritia.common.net.C2SWipChestActionPack;
 import committee.nova.mods.avaritia.common.sync.ClientChannelManager;
+import committee.nova.mods.avaritia.common.sync.ItemChannelTerminal;
 import committee.nova.mods.avaritia.common.sync.ServerChannelManager;
-import committee.nova.mods.avaritia.common.tile.WipChestTile;
+import committee.nova.mods.avaritia.common.tile.BlackHoleTile;
 import committee.nova.mods.avaritia.common.wrappers.channel.Channel;
 import committee.nova.mods.avaritia.common.wrappers.channel.ServerChannel;
 import committee.nova.mods.avaritia.init.handler.NetworkHandler;
@@ -53,7 +54,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * @CreateTime: 2025/2/4 14:41
  * @Description:
  */
-public class WipChestMenu extends AbstractContainerMenu {
+public class ChannelMenu extends AbstractContainerMenu {
 
     public final Channel channel;
     public final UUID owner;
@@ -67,7 +68,7 @@ public class WipChestMenu extends AbstractContainerMenu {
     private final ItemStack panelItem;
     private final TransientCraftingContainer craftSlots = new TransientCraftingContainer(this, 3, 3);
     private final ResultContainer resultSlots = new ResultContainer();
-    public WipChestTile wipChestTile;
+    public BlackHoleTile blackHoleTile;
     public DummyContainer dummyContainer;
     public boolean locked;
     public UUID channelOwner;
@@ -83,8 +84,8 @@ public class WipChestMenu extends AbstractContainerMenu {
 
 
     //客户端调用这个
-    public WipChestMenu(int containerId, Inventory playerInv, FriendlyByteBuf extraData) {
-        super(ModMenus.infinity_chest.get(), containerId);
+    public ChannelMenu(int containerId, Inventory playerInv, FriendlyByteBuf extraData) {
+        super(ModMenus.channel_menu.get(), containerId);
         this.level = playerInv.player.level();
         this.player = playerInv.player;
 
@@ -110,12 +111,12 @@ public class WipChestMenu extends AbstractContainerMenu {
         //虚拟储存物品格51 ~ 149
         for (int i = 0; i < 7; i++) {
             for (int j = 0; j < 11; j++) {
-                this.addSlot(new FakeSlot(dummyContainer, i * 11 + j, 6 + j * 17, 6 + i * 17));
+                this.addSlot(new FakeSlot(dummyContainer, i * 11 + j, 7 + j * 17, 17 + i * 17));
             }
         }
         for (int i = 0; i < 2; i++) {
             for (int j = 0; j < 11; j++) {
-                this.addSlot(new FakeSlot(dummyContainer, 77 + i * 11 + j, 6 + j * 17, 125 + i * 17) {
+                this.addSlot(new FakeSlot(dummyContainer, 77 + i * 11 + j, 7 + j * 17, 136 + i * 17) {
                     @Override
                     public boolean isActive() {
                         return !craftingMode;
@@ -126,15 +127,15 @@ public class WipChestMenu extends AbstractContainerMenu {
     }
 
     //服务端用这个
-    public WipChestMenu(int containerId, Player player, WipChestTile blockEntity, int panelItemSlotIndex) {
-        super(ModMenus.infinity_chest.get(), containerId);
+    public ChannelMenu(int containerId, Player player, BlackHoleTile blockEntity, int panelItemSlotIndex) {
+        super(ModMenus.channel_menu.get(), containerId);
         this.level = player.level();
         this.player = player;
         this.panelItemSlotIndex = panelItemSlotIndex;
 
         if (panelItemSlotIndex >= 0) {
             this.blockPos = BlockPos.ZERO;
-            this.wipChestTile = null;
+            this.blackHoleTile = null;
             this.panelItem = player.getInventory().getItem(panelItemSlotIndex);
             CompoundTag nbt = panelItem.getTag();
             this.owner = nbt.contains("owner") ? nbt.getUUID("owner") : player.getUUID();
@@ -151,7 +152,7 @@ public class WipChestMenu extends AbstractContainerMenu {
         }
         else {
             this.blockPos = blockEntity.getBlockPos();
-            this.wipChestTile = blockEntity;
+            this.blackHoleTile = blockEntity;
             this.owner = blockEntity.getOwner() == null ? player.getUUID() : blockEntity.getOwner();
             this.locked = blockEntity.isLocked();
             this.craftingMode = blockEntity.isCraftingMode();
@@ -189,7 +190,7 @@ public class WipChestMenu extends AbstractContainerMenu {
                         panelItem.setTag(nbt);
                     }
                     else {
-                        wipChestTile.setLocked(locked);
+                        blackHoleTile.setLocked(locked);
                         if (locked) saveBlock();
                     }
                 }
@@ -266,10 +267,6 @@ public class WipChestMenu extends AbstractContainerMenu {
                 setCarried(fluidBucket);
             }
             else {
-//                if (Config.INCOMPATIBLE_MODID.get().contains(ForgeRegistries.ITEMS.getKey(carried.getItem()).getNamespace())) {
-//                    channel.addItem(carried);
-//                    return;
-//                }
                 //其他容器
                 AtomicBoolean canal = new AtomicBoolean(false);
                 if (type.equals("fluid")) carried.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM).ifPresent(iFluidHandlerItem -> {
@@ -745,22 +742,22 @@ public class WipChestMenu extends AbstractContainerMenu {
     private void addSlots(Player player, Inventory playerInv) {
         //快捷栏0~8
         for (int l = 0; l < 9; ++l) {
-            this.addSlot(new Slot(playerInv, l, 23 + l * 17, 227));
+            this.addSlot(new Slot(playerInv, l, 23 + l * 17, 230));
         }
 
         //背包9~35
         for (int k = 0; k < 3; ++k) {
             for (int i1 = 0; i1 < 9; ++i1) {
-                this.addSlot(new Slot(playerInv, i1 + k * 9 + 9, 23 + i1 * 17, 176 + k * 17));
+                this.addSlot(new Slot(playerInv, i1 + k * 9 + 9, 23 + i1 * 17, 173 + k * 17));
             }
         }
 
         //护甲36~40
-        this.addSlot(getArmorSlot(player, playerInv, EquipmentSlot.HEAD, 39, 142, 125));
-        this.addSlot(getArmorSlot(player, playerInv, EquipmentSlot.CHEST, 38, 159, 125));
-        this.addSlot(getArmorSlot(player, playerInv, EquipmentSlot.LEGS, 37, 159, 142));
-        this.addSlot(getArmorSlot(player, playerInv, EquipmentSlot.FEET, 36, 142, 142));
-        this.addSlot(new Slot(playerInv, 40, 159, 159) {
+        this.addSlot(getArmorSlot(player, playerInv, EquipmentSlot.HEAD, 39, 7, 71));
+        this.addSlot(getArmorSlot(player, playerInv, EquipmentSlot.CHEST, 38, 7, 89));
+        this.addSlot(getArmorSlot(player, playerInv, EquipmentSlot.LEGS, 37, 58, 71));
+        this.addSlot(getArmorSlot(player, playerInv, EquipmentSlot.FEET, 36, 58, 89));
+        this.addSlot(new Slot(playerInv, 40, 58, 106) {
             @Override
             public boolean isActive() {
                 return craftingMode;
@@ -770,7 +767,7 @@ public class WipChestMenu extends AbstractContainerMenu {
         //合成格41~50
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 3; ++j) {
-                this.addSlot(new Slot(this.craftSlots, j + i * 3, 23 + j * 17, 125 + i * 17) {
+                this.addSlot(new Slot(this.craftSlots, j + i * 3, 90 + j * 17, 80 + i * 17) {
                     @Override
                     public boolean isActive() {
                         return craftingMode;
@@ -778,7 +775,7 @@ public class WipChestMenu extends AbstractContainerMenu {
                 });
             }
         }
-        this.addSlot(new ResultSlot(player, this.craftSlots, this.resultSlots, 0, 74, 142) {
+        this.addSlot(new ResultSlot(player, this.craftSlots, this.resultSlots, 0, 163, 96) {
             @Override
             public boolean isActive() {
                 return craftingMode;
@@ -848,10 +845,10 @@ public class WipChestMenu extends AbstractContainerMenu {
     }
 
     private void saveBlock() {
-        wipChestTile.setCraftingMode(craftingMode);
-        wipChestTile.setFilter(filter);
-        wipChestTile.setSortType(sortType);
-        wipChestTile.setViewType(viewType);
+        blackHoleTile.setCraftingMode(craftingMode);
+        blackHoleTile.setFilter(filter);
+        blackHoleTile.setSortType(sortType);
+        blackHoleTile.setViewType(viewType);
     }
 
     @Override
@@ -1024,11 +1021,11 @@ public class WipChestMenu extends AbstractContainerMenu {
                 nbt.remove("channel");
                 panelItem.setTag(nbt);
             }
-            else wipChestTile.setChannel(null, -1);
+            else blackHoleTile.setChannel(null, -1);
             openChannelScreen();
         }
         if (panelItemSlotIndex >= 0) return panelItem == player.getInventory().getItem(panelItemSlotIndex);
-        else return !wipChestTile.isRemoved() &&
+        else return !blackHoleTile.isRemoved() &&
                 player.distanceToSqr(blockPos.getX() + 0.5D, blockPos.getY() + 0.5D, blockPos.getZ() + 0.5D) <= 32.0D;
     }
 
@@ -1056,18 +1053,19 @@ public class WipChestMenu extends AbstractContainerMenu {
             }
         }
         else {
-            if (!wipChestTile.isLocked()) saveBlock();
+            if (!blackHoleTile.isLocked()) saveBlock();
         }
     }
 
     private void openChannelScreen() {
         if (locked) return;
         if (panelItemSlotIndex >= 0){
-            //            NetworkHooks.openScreen((ServerPlayer) player,
-//                    new ChannelSelectMenuProvider(new ItemChannelTerminal(player.getInventory(), panelItem, panelItemSlotIndex)), buf -> {
-//                    });
+            NetworkHooks.openScreen((ServerPlayer) player,
+                    new ChannelSelectMenuProvider(new ItemChannelTerminal(player.getInventory(), panelItem, panelItemSlotIndex)),
+                    buf -> {}
+            );
         }
-        else NetworkHooks.openScreen((ServerPlayer) player, new ChannelSelectMenuProvider(wipChestTile), buf -> {
+        else NetworkHooks.openScreen((ServerPlayer) player, new ChannelSelectMenuProvider(blackHoleTile), buf -> {
         });
     }
 

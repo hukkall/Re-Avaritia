@@ -5,6 +5,7 @@ import committee.nova.mods.avaritia.api.utils.java.ArrayUtils;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -15,44 +16,44 @@ import java.util.Objects;
  * @CreateTime: 2024/6/11 下午11:46
  * @Description:
  */
-public class SimpleContainer implements Container {
+public class NoMenuContainer implements Container {
 
     public ItemStack[] items;
     public int limit;
     public String name;
 
-    public SimpleContainer(ItemStack[] items, int limit, String name) {
+    public NoMenuContainer(ItemStack[] items, int limit, String name) {
         this.items = items;
         ArrayUtils.fillArray(items, ItemStack.EMPTY, (Objects::isNull));
         this.limit = limit;
         this.name = name;
     }
 
-    public SimpleContainer(ItemStack[] items, String name) {
+    public NoMenuContainer(ItemStack[] items, String name) {
         this(items, 64, name);
     }
 
-    public SimpleContainer(ItemStack[] items, int limit) {
+    public NoMenuContainer(ItemStack[] items, int limit) {
         this(items, limit, "inv");
     }
 
-    public SimpleContainer(ItemStack[] items) {
+    public NoMenuContainer(ItemStack[] items) {
         this(items, 64, "inv");
     }
 
-    public SimpleContainer(int size, int limit, String name) {
+    public NoMenuContainer(int size, int limit, String name) {
         this(new ItemStack[size], limit, name);
     }
 
-    public SimpleContainer(int size, int limit) {
+    public NoMenuContainer(int size, int limit) {
         this(size, limit, "inv");
     }
 
-    public SimpleContainer(int size, String name) {
+    public NoMenuContainer(int size, String name) {
         this(size, 64, name);
     }
 
-    public SimpleContainer(int size) {
+    public NoMenuContainer(int size) {
         this(size, 64, "inv");
     }
 
@@ -85,7 +86,7 @@ public class SimpleContainer implements Container {
     }
 
     @Override
-    public void setItem(int slot, ItemStack stack) {
+    public void setItem(int slot, @NotNull ItemStack stack) {
         items[slot] = stack;
         setChanged();
     }
@@ -96,12 +97,12 @@ public class SimpleContainer implements Container {
     }
 
     @Override
-    public boolean stillValid(Player player) {
+    public boolean stillValid(@NotNull Player player) {
         return true;
     }
 
     @Override
-    public boolean canPlaceItem(int i, ItemStack itemstack) {
+    public boolean canPlaceItem(int i, @NotNull ItemStack itemstack) {
         return true;
     }
 
@@ -110,11 +111,11 @@ public class SimpleContainer implements Container {
     }
 
     @Override
-    public void startOpen(Player player) {
+    public void startOpen(@NotNull Player player) {
     }
 
     @Override
-    public void stopOpen(Player player) {
+    public void stopOpen(@NotNull Player player) {
     }
 
     @Override

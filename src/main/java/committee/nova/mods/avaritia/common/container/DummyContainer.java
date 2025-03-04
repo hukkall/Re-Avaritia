@@ -1,6 +1,7 @@
 package committee.nova.mods.avaritia.common.container;
 
-import committee.nova.mods.avaritia.common.menu.WipChestMenu;
+import committee.nova.mods.avaritia.common.menu.ChannelMenu;
+import committee.nova.mods.avaritia.util.SortUtils;
 import committee.nova.mods.avaritia.util.StorageUtils;
 import committee.nova.mods.avaritia.util.StorageUtils.*;
 import net.minecraft.world.SimpleContainer;
@@ -25,13 +26,13 @@ public class DummyContainer extends SimpleContainer {
     public final ArrayList<String[]> viewingObject = new ArrayList<>();
     public final HashMap<Integer, FluidStack> fluidStacks = new HashMap<>();
     public final ArrayList<String> formatCount = new ArrayList<>();
-    private final WipChestMenu menu;
+    private final ChannelMenu menu;
     protected ArrayList<Item> sortedItems = new ArrayList<>();
     protected ArrayList<Fluid> sortedFluids = new ArrayList<>();
     protected ArrayList<String> sortedEnergies = new ArrayList<>();
     private double scrollTo = 0.0D;
 
-    public DummyContainer(WipChestMenu menu) {
+    public DummyContainer(ChannelMenu menu) {
         super(99);
         this.menu = menu;
     }
@@ -147,45 +148,45 @@ public class DummyContainer extends SimpleContainer {
                 sortedEnergies = temp2;
             }
             switch (this.menu.sortType) {
-                case Sort.ID_ASCENDING -> {
-                    sortedItems.sort((a, b) -> StorageUtils.sortFromRightID(StorageUtils.getItemId(a), StorageUtils.getItemId(b)));
-                    sortedFluids.sort((a, b) -> StorageUtils.sortFromRightID(StorageUtils.getFluidId(a), StorageUtils.getFluidId(b)));
-                    sortedEnergies.sort(StorageUtils::sortFromRightID);
+                case SortUtils.Sort.ID_ASCENDING -> {
+                    sortedItems.sort((a, b) -> SortUtils.sortFromRightID(StorageUtils.getItemId(a), StorageUtils.getItemId(b)));
+                    sortedFluids.sort((a, b) -> SortUtils.sortFromRightID(StorageUtils.getFluidId(a), StorageUtils.getFluidId(b)));
+                    sortedEnergies.sort(SortUtils::sortFromRightID);
                 }
-                case Sort.ID_DESCENDING -> {
-                    sortedItems.sort(Collections.reverseOrder((a, b) -> StorageUtils.sortFromRightID(StorageUtils.getItemId(a), StorageUtils.getItemId(b))));
-                    sortedFluids.sort(Collections.reverseOrder((a, b) -> StorageUtils.sortFromRightID(StorageUtils.getFluidId(a), StorageUtils.getFluidId(b))));
-                    sortedEnergies.sort(Collections.reverseOrder(StorageUtils::sortFromRightID));
+                case SortUtils.Sort.ID_DESCENDING -> {
+                    sortedItems.sort(Collections.reverseOrder((a, b) -> SortUtils.sortFromRightID(StorageUtils.getItemId(a), StorageUtils.getItemId(b))));
+                    sortedFluids.sort(Collections.reverseOrder((a, b) -> SortUtils.sortFromRightID(StorageUtils.getFluidId(a), StorageUtils.getFluidId(b))));
+                    sortedEnergies.sort(Collections.reverseOrder(SortUtils::sortFromRightID));
                 }
-                case Sort.NAMESPACE_ID_ASCENDING -> {
+                case SortUtils.Sort.NAMESPACE_ID_ASCENDING -> {
                     sortedItems.sort(Comparator.comparing(StorageUtils::getItemId));
                     sortedFluids.sort(Comparator.comparing(StorageUtils::getFluidId));
                     sortedEnergies.sort(String::compareTo);
                 }
-                case Sort.NAMESPACE_ID_DESCENDING -> {
+                case SortUtils.Sort.NAMESPACE_ID_DESCENDING -> {
                     sortedItems.sort(Collections.reverseOrder(Comparator.comparing(StorageUtils::getItemId)));
                     sortedFluids.sort(Collections.reverseOrder(Comparator.comparing(StorageUtils::getFluidId)));
                     sortedEnergies.sort(Collections.reverseOrder(String::compareTo));
                 }
-                case Sort.MIRROR_ID_ASCENDING -> {
-                    sortedItems.sort((a, b) -> StorageUtils.sortFromMirrorID(StorageUtils.getItemId(a), StorageUtils.getItemId(b)));
-                    sortedFluids.sort((a, b) -> StorageUtils.sortFromMirrorID(StorageUtils.getFluidId(a), StorageUtils.getFluidId(b)));
-                    sortedEnergies.sort(StorageUtils::sortFromMirrorID);
+                case SortUtils.Sort.MIRROR_ID_ASCENDING -> {
+                    sortedItems.sort((a, b) -> SortUtils.sortFromMirrorID(StorageUtils.getItemId(a), StorageUtils.getItemId(b)));
+                    sortedFluids.sort((a, b) -> SortUtils.sortFromMirrorID(StorageUtils.getFluidId(a), StorageUtils.getFluidId(b)));
+                    sortedEnergies.sort(SortUtils::sortFromMirrorID);
                 }
-                case Sort.MIRROR_ID_DESCENDING -> {
-                    sortedItems.sort(Collections.reverseOrder((a, b) -> StorageUtils.sortFromMirrorID(StorageUtils.getItemId(a), StorageUtils.getItemId(b))));
-                    sortedFluids.sort(Collections.reverseOrder((a, b) -> StorageUtils.sortFromMirrorID(StorageUtils.getFluidId(a), StorageUtils.getFluidId(b))));
-                    sortedEnergies.sort(Collections.reverseOrder(StorageUtils::sortFromMirrorID));
+                case SortUtils.Sort.MIRROR_ID_DESCENDING -> {
+                    sortedItems.sort(Collections.reverseOrder((a, b) -> SortUtils.sortFromMirrorID(StorageUtils.getItemId(a), StorageUtils.getItemId(b))));
+                    sortedFluids.sort(Collections.reverseOrder((a, b) -> SortUtils.sortFromMirrorID(StorageUtils.getFluidId(a), StorageUtils.getFluidId(b))));
+                    sortedEnergies.sort(Collections.reverseOrder(SortUtils::sortFromMirrorID));
                 }
-                case Sort.COUNT_ASCENDING -> {
-                    sortedItems.sort(Collections.reverseOrder((a, b) -> StorageUtils.sortFromCount(StorageUtils.getItemId(a), StorageUtils.getItemId(b), StorageUtils.convertKeys(this.menu.channel.storageItems, StorageUtils::getItemId), false)));
-                    sortedFluids.sort((s1, s2) -> StorageUtils.sortFromCount(StorageUtils.getFluidId(s1), StorageUtils.getFluidId(s2), StorageUtils.convertKeys(this.menu.channel.storageFluids, StorageUtils::getFluidId), false));
-                    sortedEnergies.sort((s1, s2) -> StorageUtils.sortFromCount(s1, s2, this.menu.channel.storageEnergies, false));
+                case SortUtils.Sort.COUNT_ASCENDING -> {
+                    sortedItems.sort(Collections.reverseOrder((a, b) -> SortUtils.sortFromCount(StorageUtils.getItemId(a), StorageUtils.getItemId(b), SortUtils.convertKeys(this.menu.channel.storageItems, StorageUtils::getItemId), false)));
+                    sortedFluids.sort((s1, s2) -> SortUtils.sortFromCount(StorageUtils.getFluidId(s1), StorageUtils.getFluidId(s2), SortUtils.convertKeys(this.menu.channel.storageFluids, StorageUtils::getFluidId), false));
+                    sortedEnergies.sort((s1, s2) -> SortUtils.sortFromCount(s1, s2, this.menu.channel.storageEnergies, false));
                 }
-                case Sort.COUNT_DESCENDING -> {
-                    sortedItems.sort(Collections.reverseOrder((a, b) -> StorageUtils.sortFromCount(StorageUtils.getItemId(a), StorageUtils.getItemId(b), StorageUtils.convertKeys(this.menu.channel.storageItems, StorageUtils::getItemId), true)));
-                    sortedFluids.sort((s1, s2) -> StorageUtils.sortFromCount(StorageUtils.getFluidId(s1), StorageUtils.getFluidId(s2), StorageUtils.convertKeys(this.menu.channel.storageFluids, StorageUtils::getFluidId), true));
-                    sortedEnergies.sort((s1, s2) -> StorageUtils.sortFromCount(s1, s2, this.menu.channel.storageEnergies, true));
+                case SortUtils.Sort.COUNT_DESCENDING -> {
+                    sortedItems.sort(Collections.reverseOrder((a, b) -> SortUtils.sortFromCount(StorageUtils.getItemId(a), StorageUtils.getItemId(b), SortUtils.convertKeys(this.menu.channel.storageItems, StorageUtils::getItemId), true)));
+                    sortedFluids.sort((s1, s2) -> SortUtils.sortFromCount(StorageUtils.getFluidId(s1), StorageUtils.getFluidId(s2), SortUtils.convertKeys(this.menu.channel.storageFluids, StorageUtils::getFluidId), true));
+                    sortedEnergies.sort((s1, s2) -> SortUtils.sortFromCount(s1, s2, this.menu.channel.storageEnergies, true));
                 }
             }
             onChangeViewType();

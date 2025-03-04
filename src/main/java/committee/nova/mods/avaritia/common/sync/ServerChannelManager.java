@@ -263,9 +263,8 @@ public class ServerChannelManager {
         for (int i = 0; i < playerChannels.size() + 1; i++) {
             if (playerChannels.containsKey(i)) continue;
             playerChannels.put(i, new ServerChannel(name));
-            //player.getInventory().getItem(slotId).shrink(1);
             sendChannelAdd(uuid, name, i);
-            Static.LOGGER.info("添加了频道： " + uuid + "——" + i + "——" + name);
+            Static.LOGGER.info("添加了频道： {}——{}——{}", uuid, i, name);
             break;
         }
     }

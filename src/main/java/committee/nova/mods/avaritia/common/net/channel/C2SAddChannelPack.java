@@ -13,17 +13,17 @@ import java.util.function.Supplier;
  * @CreateTime: 2025/3/1 15:05
  * @Description:
  */
-public class ChannelAddPack {
+public class C2SAddChannelPack {
 
     private final String name;
     private final boolean pub;
 
-    public ChannelAddPack(FriendlyByteBuf buf) {
+    public C2SAddChannelPack(FriendlyByteBuf buf) {
         this.name = buf.readUtf(64);
         this.pub = buf.readBoolean();
     }
 
-    public ChannelAddPack(String name, boolean pub) {
+    public C2SAddChannelPack(String name, boolean pub) {
         this.name = name;
         this.pub = pub;
     }

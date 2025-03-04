@@ -5,7 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import committee.nova.mods.avaritia.Static;
 import committee.nova.mods.avaritia.api.client.screen.BaseContainerScreen;
 import committee.nova.mods.avaritia.client.AvaritiaForgeClient;
-import committee.nova.mods.avaritia.common.menu.OffsetChestMenu;
+import committee.nova.mods.avaritia.common.menu.InfinityChestMenu;
 import committee.nova.mods.avaritia.common.net.C2SChangePagePack;
 import committee.nova.mods.avaritia.init.config.ModConfig;
 import committee.nova.mods.avaritia.init.handler.NetworkHandler;
@@ -30,14 +30,14 @@ import java.util.stream.Stream;
  * @CreateTime: 2024/11/17 02:50
  * @Description:
  */
-public class OffsetChestScreen extends BaseContainerScreen<OffsetChestMenu> {
+public class InfinityChestScreen extends BaseContainerScreen<InfinityChestMenu> {
     private static final KeyMapping[] SORT_KEYS = new KeyMapping[]{AvaritiaForgeClient.SORT_0, AvaritiaForgeClient.SORT_1, AvaritiaForgeClient.SORT_2, AvaritiaForgeClient.SORT_3, AvaritiaForgeClient.SORT_4, AvaritiaForgeClient.SORT_5, AvaritiaForgeClient.SORT_6, AvaritiaForgeClient.SORT_7, AvaritiaForgeClient.SORT_8, AvaritiaForgeClient.SORT_9};
     private static final ResourceLocation MULTI_PAGE_TEXTURE = Static.rl("textures/gui/infinity_chest.png");
     public static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat(",###");
 
     private final int inventoryRows;
 
-    public OffsetChestScreen(OffsetChestMenu container, Inventory inventory, Component title) {
+    public InfinityChestScreen(InfinityChestMenu container, Inventory inventory, Component title) {
         super(container, inventory, title, MULTI_PAGE_TEXTURE);
         this.inventoryRows = ModConfig.inventoryRows.get();
         this.imageHeight = 132 + this.inventoryRows * 18;
@@ -102,7 +102,6 @@ public class OffsetChestScreen extends BaseContainerScreen<OffsetChestMenu> {
 
     @Override
     protected void renderFg(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-        super.renderFg(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
         this.renderSlotCount(pGuiGraphics);
     }
 
@@ -137,7 +136,6 @@ public class OffsetChestScreen extends BaseContainerScreen<OffsetChestMenu> {
             }
         }
     }
-
     @Override
     protected void slotClicked(@Nullable Slot slotIn, int slotId, int mouseButton, @NotNull ClickType type) {
         if (type == ClickType.CLONE) {

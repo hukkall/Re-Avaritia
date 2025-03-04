@@ -2,19 +2,17 @@ package committee.nova.mods.avaritia.common.tile;
 
 import committee.nova.mods.avaritia.Static;
 import committee.nova.mods.avaritia.api.common.tile.BaseTileEntity;
-import committee.nova.mods.avaritia.common.menu.WipChestMenu;
+import committee.nova.mods.avaritia.common.menu.ChannelMenu;
 import committee.nova.mods.avaritia.common.net.channel.ChannelAction;
 import committee.nova.mods.avaritia.common.net.channel.S2CChannelActionPack;
 import committee.nova.mods.avaritia.common.sync.ChannelInfo;
 import committee.nova.mods.avaritia.common.sync.IChannelTerminal;
 import committee.nova.mods.avaritia.common.sync.ServerChannelManager;
-import committee.nova.mods.avaritia.common.wrappers.channel.Channel;
 import committee.nova.mods.avaritia.common.wrappers.channel.NullChannel;
 import committee.nova.mods.avaritia.common.wrappers.channel.ServerChannel;
 import committee.nova.mods.avaritia.init.handler.NetworkHandler;
 import committee.nova.mods.avaritia.init.registry.ModTileEntities;
 import lombok.Getter;
-import lombok.Setter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -49,7 +47,7 @@ import java.util.UUID;
  * @CreateTime: 2025/1/31 15:28
  * @Description:
  */
-public class WipChestTile extends BaseTileEntity implements IChannelTerminal {
+public class BlackHoleTile extends BaseTileEntity implements IChannelTerminal {
     private static final Component CONTAINER_NAME = Component.translatable("container.infinity_chest");
     private final int slotIndex;
     @Getter private UUID owner;
@@ -74,13 +72,13 @@ public class WipChestTile extends BaseTileEntity implements IChannelTerminal {
     @Getter private LazyOptional<?> capability = LazyOptional.of(() -> channel);
 
 
-    public WipChestTile(BlockPos pos, BlockState state) {
-        super(ModTileEntities.infinity_chest_tile.get(), pos, state);
+    public BlackHoleTile(BlockPos pos, BlockState state) {
+        super(ModTileEntities.hole_tile.get(), pos, state);
         this.slotIndex = -2;
         onBlockStateChange();
     }
 
-    public static void tick(Level level, BlockPos pos, BlockState state, WipChestTile blockEntity) {
+    public static void tick(Level level, BlockPos pos, BlockState state, BlackHoleTile blockEntity) {
         if (level.isClientSide) return;
         if (blockEntity.channel.isRemoved()) {
             if (blockEntity.channelID >= 0) blockEntity.setChannel(null, -1);
@@ -138,7 +136,7 @@ public class WipChestTile extends BaseTileEntity implements IChannelTerminal {
 
     @Override
     public @NotNull AbstractContainerMenu createMenu(int pContainerId, @NotNull Inventory pInventory, @NotNull Player pPlayer) {
-        return new WipChestMenu(pContainerId, pInventory.player, this, slotIndex);
+        return new ChannelMenu(pContainerId, pInventory.player, this, slotIndex);
     }
 
     @Override

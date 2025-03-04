@@ -2,7 +2,6 @@ package committee.nova.mods.avaritia.common.wrappers;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 /**
@@ -76,12 +75,12 @@ public class StorageItem{
         this.updateEmptyState();
     }
 
-    public void growCount(long count) {
+    public void grow(long count) {
         this.setCount(this.count + count);
     }
 
-    public void shrinkCount(long count) {
-        this.growCount(-count);
+    public void shrink(long count) {
+        this.grow(-count);
     }
 
     public CompoundTag serializeNBT() {

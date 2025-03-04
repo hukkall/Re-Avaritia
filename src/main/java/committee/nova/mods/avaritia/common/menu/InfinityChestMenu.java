@@ -3,10 +3,11 @@ package committee.nova.mods.avaritia.common.menu;
 import committee.nova.mods.avaritia.api.common.container.OffsetContainer;
 import committee.nova.mods.avaritia.api.common.menu.BaseTileMenu;
 import committee.nova.mods.avaritia.api.common.wrapper.OffsetItemStackWrapper;
-import committee.nova.mods.avaritia.common.tile.OffsetChestTile;
+import committee.nova.mods.avaritia.common.tile.InfinityChestTile;
 import committee.nova.mods.avaritia.common.wrappers.StorageItem;
 import committee.nova.mods.avaritia.init.config.ModConfig;
 import committee.nova.mods.avaritia.init.registry.ModMenus;
+import committee.nova.mods.avaritia.util.SortUtils;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.ints.IntListIterator;
@@ -33,7 +34,7 @@ import java.util.stream.IntStream;
  * @CreateTime: 2025/1/31 15:38
  * @Description:
  */
-public class OffsetChestMenu extends BaseTileMenu<OffsetChestTile> {
+public class InfinityChestMenu extends BaseTileMenu<InfinityChestTile> {
     private final Inventory playerInventory;
     private final OffsetContainer container;
     private final ContainerData chestData;
@@ -41,16 +42,16 @@ public class OffsetChestMenu extends BaseTileMenu<OffsetChestTile> {
     private final int mainInventorySize;
     private int swapIndex;
     
-    public OffsetChestMenu(int id, Inventory playerInventory, FriendlyByteBuf extraData) {
+    public InfinityChestMenu(int id, Inventory playerInventory, FriendlyByteBuf extraData) {
         this(id, playerInventory, extraData.readBlockPos(), OffsetContainer.dummy(54), new SimpleContainerData(1));
     }
 
-    public OffsetChestMenu(int id, Inventory playerInventory, @NotNull BlockPos pos, OffsetContainer container, final ContainerData chestData) {
-        super(ModMenus.offset_chest.get(), id, playerInventory, pos);
+    public InfinityChestMenu(int id, Inventory playerInventory, @NotNull BlockPos pos, OffsetContainer container, final ContainerData chestData) {
+        super(ModMenus.infinity_chest.get(), id, playerInventory, pos);
         this.playerInventory = playerInventory;
         this.container = container;
         this.chestData = chestData;
-        this.itemCounts = container.getItemCountAccessor();
+        this.itemCounts = container.getItemCount();
         this.mainInventorySize = playerInventory.items.size() + container.getContainerSize();
         this.swapIndex = -1;
         int rows = ModConfig.inventoryRows.get();
@@ -62,32 +63,32 @@ public class OffsetChestMenu extends BaseTileMenu<OffsetChestTile> {
         }
         createInventorySlots(playerInventory, 0, 38 + offset);
         this.addDataSlots(this.chestData);
-//        for(int i = 0; i < this.itemCounts.getCount(); ++i) {
-//            int finalI = i;
-//            this.addDataSlot(new DataSlot() {
-//                private int lastKnownPage = -1;
-//
-//                @Override public int get() {
-//                    return OffsetChestMenu.this.itemCounts.get(finalI);
-//                }
-//
-//                @Override public void set(int value) {
-//                    OffsetChestMenu.this.itemCounts.set(finalI, value);
-//                }
-//
-//                @Override
-//                public boolean checkAndClearUpdateFlag() {
-//                    if (super.checkAndClearUpdateFlag()) {
-//                        return true;
-//                    } else {
-//                        int page = chestData.get(0);
-//                        boolean flag = page != this.lastKnownPage;
-//                        this.lastKnownPage = page;
-//                        return flag;
-//                    }
-//                }
-//            });
-//        }
+        for(int i = 0; i < this.itemCounts.getCount(); ++i) {
+            int finalI = i;
+            this.addDataSlot(new DataSlot() {
+                private int lastKnownPage = -1;
+
+                @Override public int get() {
+                    return InfinityChestMenu.this.itemCounts.get(finalI);
+                }
+
+                @Override public void set(int value) {
+                    InfinityChestMenu.this.itemCounts.set(finalI, value);
+                }
+
+                @Override
+                public boolean checkAndClearUpdateFlag() {
+                    if (super.checkAndClearUpdateFlag()) {
+                        return true;
+                    } else {
+                        int page = chestData.get(0);
+                        boolean flag = page != this.lastKnownPage;
+                        this.lastKnownPage = page;
+                        return flag;
+                    }
+                }
+            });
+        }
     }
 
     public void changePage(int page) {
@@ -131,14 +132,14 @@ public class OffsetChestMenu extends BaseTileMenu<OffsetChestTile> {
 
     private void swap(int index1, int index2) {
         OffsetItemStackWrapper itemHandler = this.container.getItemHandler();
-        StorageItem container1 = itemHandler.removeItemInSlot(index1);
-        StorageItem container2 = itemHandler.removeItemInSlot(index2);
+        StorageItem container1 = itemHandler.removeContainerInSlot(index1);
+        StorageItem container2 = itemHandler.removeContainerInSlot(index2);
         if (!container2.isEmpty()) {
-            itemHandler.setItemInSlot(index1, container2);
+            itemHandler.setContainerInSlot(index1, container2);
         }
 
         if (!container1.isEmpty()) {
-            itemHandler.setItemInSlot(index2, container1);
+            itemHandler.setContainerInSlot(index2, container1);
         }
 
     }
@@ -160,16 +161,16 @@ public class OffsetChestMenu extends BaseTileMenu<OffsetChestTile> {
                 for(int i = 0; i < length - h; ++i) {
                     int j = index1 + i;
                     int k = j + h;
-                    StorageItem container1 = itemHandler.getItemInSlot(j);
-                    StorageItem container2 = itemHandler.getItemInSlot(k);
+                    StorageItem container1 = itemHandler.getContainerInSlot(j);
+                    StorageItem container2 = itemHandler.getContainerInSlot(k);
                     boolean swap = container1.isEmpty() && !container2.isEmpty();
                     if (!container1.isEmpty() && !container2.isEmpty()) {
                         if (ItemHandlerHelper.canItemStacksStack(container1.getStack(), container2.getStack())) {
                             long freeSpace = itemHandler.getSlotFreeSpace(j);
                             if (freeSpace > 0L) {
                                 long size = Math.min(container2.getCount(), freeSpace);
-                                container1.growCount(size);
-                                container2.shrinkCount(size);
+                                container1.grow(size);
+                                container2.shrink(size);
                                 loop = true;
                             }
                         }
@@ -210,7 +211,7 @@ public class OffsetChestMenu extends BaseTileMenu<OffsetChestTile> {
                     long freeSpace = this.container.getItemHandler().getSlotFreeSpace(index);
                     if (freeSpace > 0L) {
                         size = (int)Math.min(stack.getCount(), freeSpace);
-                        this.container.getItemInSlot(index).growCount(size);
+                        this.container.getItemInSlot(index).grow(size);
                         stack.shrink(size);
                         result = true;
                     }
@@ -296,7 +297,7 @@ public class OffsetChestMenu extends BaseTileMenu<OffsetChestTile> {
 
                             if (ItemHandlerHelper.canItemStacksStack(grabbedStack, stackInSlot) && this.container.getItemHandler().getSlotFreeSpace(slotId) > 0L) {
                                 grabbedStack.shrink(1);
-                                this.container.getItemInSlot(slotId).growCount(1L);
+                                this.container.getItemInSlot(slotId).grow(1L);
                                 setCarried(grabbedStack);
                             }
                         }
@@ -310,7 +311,7 @@ public class OffsetChestMenu extends BaseTileMenu<OffsetChestTile> {
                     } else if (dragType == 3 && !stackInSlot.isEmpty()) {
                         copy = ItemHandlerHelper.copyStackWithSize(stackInSlot, 1);
                         if (this.moveItemStackTo(copy, this.container.getContainerSize(), this.mainInventorySize, true)) {
-                            this.container.getItemInSlot(slotId).shrinkCount(1L);
+                            this.container.getItemInSlot(slotId).shrink(1L);
                             if (this.container.getItemInSlot(slotId).isEmpty()) {
                                 slot.set(ItemStack.EMPTY);
                             }
@@ -325,7 +326,7 @@ public class OffsetChestMenu extends BaseTileMenu<OffsetChestTile> {
                             int stackSize = dragType == 1 ? stackInSlot.getMaxStackSize() : 1;
                             size = (int)Math.min(stackSize, container.getCount());
                             player.drop(ItemHandlerHelper.copyStackWithSize(stackInSlot, size), false);
-                            container.shrinkCount(size);
+                            container.shrink(size);
                             if (container.isEmpty()) {
                                 slot.set(ItemStack.EMPTY);
                             }
@@ -347,14 +348,14 @@ public class OffsetChestMenu extends BaseTileMenu<OffsetChestTile> {
                         this.quickMoveStack(player, slotId);
                     }
                 } else if (clickTypeIn == ClickType.CLONE) {
-//                    Comparator<StorageItem> comparator = StorageUtils.DEFAULT_1;
-//                    if (dragType == 2) {
-//                        comparator = StorageUtils.DEFAULT_2;
-//                    } else if (dragType == 3) {
-//                        comparator = StorageUtils.DEFAULT_3;
-//                    }
-//
-//                    this.sort(comparator, 0, this.container.getContainerSize());
+                    Comparator<StorageItem> comparator = SortUtils.DEFAULT_1;
+                    if (dragType == 2) {
+                        comparator = SortUtils.DEFAULT_2;
+                    } else if (dragType == 3) {
+                        comparator = SortUtils.DEFAULT_3;
+                    }
+
+                    this.sort(comparator, 0, this.container.getContainerSize());
                 }
             } else {
                 this.swapIndex = -1;

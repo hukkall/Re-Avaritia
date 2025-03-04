@@ -1,6 +1,6 @@
 package committee.nova.mods.avaritia.common.menu;
 
-import committee.nova.mods.avaritia.common.tile.WipChestTile;
+import committee.nova.mods.avaritia.common.tile.BlackHoleTile;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -18,10 +18,10 @@ import javax.annotation.ParametersAreNonnullByDefault;
  */
 public class WipChestMenuProvider implements MenuProvider {
 
-    private final WipChestTile blockEntity;
+    private final BlackHoleTile blockEntity;
     private final int slotIndex;
 
-    public WipChestMenuProvider(WipChestTile blockEntity) {
+    public WipChestMenuProvider(BlackHoleTile blockEntity) {
         this.blockEntity = blockEntity;
         this.slotIndex = -2;
     }
@@ -39,6 +39,6 @@ public class WipChestMenuProvider implements MenuProvider {
     @Override
     @ParametersAreNonnullByDefault
     public AbstractContainerMenu createMenu(int pContainerId, Inventory pPlayerInventory, Player pPlayer) {
-        return new WipChestMenu(pContainerId, pPlayer, blockEntity, slotIndex);
+        return new ChannelMenu(pContainerId, pPlayer, blockEntity, slotIndex);
     }
 }

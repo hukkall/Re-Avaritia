@@ -1,7 +1,7 @@
 package committee.nova.mods.avaritia.common.net;
 
 import committee.nova.mods.avaritia.Static;
-import committee.nova.mods.avaritia.common.menu.WipChestMenu;
+import committee.nova.mods.avaritia.common.menu.ChannelMenu;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkEvent;
@@ -49,7 +49,7 @@ public class C2SWipChestActionPack {
             if (!player.containerMenu.stillValid(player)) {
                 Static.LOGGER.debug("Player {} interacted with invalid menu {}", player, player.containerMenu);
             } else {
-                ((WipChestMenu) player.containerMenu).action(actionId, type, id);
+                ((ChannelMenu) player.containerMenu).action(actionId, type, id);
                 player.containerMenu.broadcastChanges();
             }
         });

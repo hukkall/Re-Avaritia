@@ -2,7 +2,6 @@ package committee.nova.mods.avaritia.client.screen;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import committee.nova.mods.avaritia.Static;
 import committee.nova.mods.avaritia.client.widget.SimpleScrollBar;
 import committee.nova.mods.avaritia.common.menu.ChannelSelectMenu;
@@ -109,10 +108,6 @@ public class ChannelSelectScreen extends AbstractContainerScreen<ChannelSelectMe
         this.blit(poseStack, this.leftPos, this.topPos, 0, 0, imageWidth, 98);
         this.blit(poseStack, this.leftPos, this.topPos + 98, 0, 7, imageWidth, 151);
     }
-
-//    private void renderToolTip(GuiGraphics pPoseStack, List<? extends FormattedCharSequence> pTooltips, int pMouseX, int pMouseY) {
-//        super.renderTooltip(pPoseStack, pTooltips, pMouseX, pMouseY);
-//    }
 
     public void updateChannelList() {
         filterChannels.clear();
@@ -225,7 +220,7 @@ public class ChannelSelectScreen extends AbstractContainerScreen<ChannelSelectMe
         public ChannelButton(int pX, int pY, int id) {
             super(pX, pY, 156, 16, 0, 158, GUI_IMG, button -> {
                 int[] a = filterChannels.get(id + scrollAt);
-                NetworkHandler.CHANNEL.send(PacketDistributor.SERVER.noArg(), new ChannelSetPack(menu.containerId, (byte) a[0], a[1]));
+                NetworkHandler.CHANNEL.send(PacketDistributor.SERVER.noArg(), new C2SSetChannelPack(menu.containerId, (byte) a[0], a[1]));
             });
             this.buttonID = id;
         }
@@ -260,7 +255,7 @@ public class ChannelSelectScreen extends AbstractContainerScreen<ChannelSelectMe
             super(pX, pY, 18, 18, 202, 0, GUI_IMG, pButton -> {
                 String channelName = nameBox.getValue();
                 if (channelName.isEmpty()) return;
-                NetworkHandler.CHANNEL.send(PacketDistributor.SERVER.noArg(), new ChannelAddPack(channelName, lShifting));
+                NetworkHandler.CHANNEL.send(PacketDistributor.SERVER.noArg(), new C2SAddChannelPack(channelName, lShifting));
             });
         }
 
@@ -284,7 +279,7 @@ public class ChannelSelectScreen extends AbstractContainerScreen<ChannelSelectMe
             super(pX, pY, 16, 16, 202, 34, GUI_IMG, pButton -> {
                 String name = nameBox.getValue();
                 if (name.isEmpty()) return;
-                NetworkHandler.CHANNEL.send(PacketDistributor.SERVER.noArg(), new ChannelRenamePack(menu.containerId, name));
+                NetworkHandler.CHANNEL.send(PacketDistributor.SERVER.noArg(), new C2SRenameChannelPack(menu.containerId, name));
             });
         }
 

@@ -7,11 +7,12 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import committee.nova.mods.avaritia.Static;
 import committee.nova.mods.avaritia.api.client.render.FluidItemRender;
 import committee.nova.mods.avaritia.client.widget.SimpleScrollBar;
-import committee.nova.mods.avaritia.common.menu.WipChestMenu;
-import committee.nova.mods.avaritia.common.net.channel.C2SChannelFilterPack;
+import committee.nova.mods.avaritia.common.menu.ChannelMenu;
+import committee.nova.mods.avaritia.common.net.channel.C2SFilterChannelPack;
 import committee.nova.mods.avaritia.common.sync.ClientChannelManager;
 import committee.nova.mods.avaritia.common.wrappers.channel.ClientChannel;
 import committee.nova.mods.avaritia.init.handler.NetworkHandler;
+import committee.nova.mods.avaritia.util.SortUtils;
 import committee.nova.mods.avaritia.util.StorageUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,7 +22,6 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -30,9 +30,6 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.network.PacketDistributor;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
@@ -45,12 +42,12 @@ import java.util.List;
  * @CreateTime: 2025/2/24 00:39
  * @Description:
  */
-public class WipChestScreen extends AbstractContainerScreen<WipChestMenu> {
+public class WipChestScreen extends AbstractContainerScreen<ChannelMenu> {
     @Setter
     @Getter
     private int blitOffset;
 
-    private static final ResourceLocation GUI_IMG = Static.rl("textures/gui/control_panel.png");
+    private static final ResourceLocation GUI_IMG = Static.rl("textures/gui/crafting_panel.png");
     private final String ownerName;
     private String[] lastHoveredObject = new String[2];
     private long lastCount = 0;
@@ -58,15 +55,14 @@ public class WipChestScreen extends AbstractContainerScreen<WipChestMenu> {
     private SortButton sortButton;
     private ItemScrollBar scrollBar;
     private EditBox shortSearchBox;
-    private EditBox longSearchBox;
     private CraftToChannelButton craftToChannelButton;
     private CraftToInventoryButton craftToInventoryButton;
     private CraftAndDropButton craftAndDropButton;
 
-    public WipChestScreen(WipChestMenu menu, Inventory inventory, Component title) {
+    public WipChestScreen(ChannelMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
         this.imageWidth = 202;
-        this.imageHeight = 249;
+        this.imageHeight = 236;
         this.ownerName = ClientChannelManager.getInstance().getUserName(this.getMenu().owner);
     }
 
@@ -84,27 +80,20 @@ public class WipChestScreen extends AbstractContainerScreen<WipChestMenu> {
         super.init();
         this.leftPos = (this.width - imageWidth + 4) / 2;
         this.topPos = (this.height - imageHeight) / 2;
-        this.scrollBar = new ItemScrollBar(leftPos + 193, topPos + 6, 4, menu.craftingMode ? 118 : 152);
+        this.scrollBar = new ItemScrollBar(leftPos + 198, topPos + 17, 14, menu.craftingMode ? 118 : 152);
         this.scrollBar.setScrolledOn(menu.dummyContainer.getScrollOn());
         this.addRenderableWidget(scrollBar);
-        this.addRenderableWidget(new ToggleCraftingButton(this.leftPos + 142, this.topPos + 163));
-        this.addRenderableWidget(new ToggleLockButton(this.leftPos + 177, this.topPos + 210));
-        this.addRenderableWidget(new ChannelButton(this.leftPos +177, this.topPos + 193));
-        this.sortButton = new SortButton(this.leftPos + 177, this.topPos + 176);
+        this.addRenderableWidget(new ToggleCraftingButton(this.leftPos + 201, this.topPos + 160));
+        this.addRenderableWidget(new ToggleLockButton(this.leftPos + 201, this.topPos + 176));
+        this.addRenderableWidget(new ChannelButton(this.leftPos + 201, this.topPos + 192));
+        this.sortButton = new SortButton(this.leftPos + 201, this.topPos + 128);
         this.addRenderableWidget(sortButton);
-        this.addRenderableWidget(new ViewTypeButton(this.leftPos + 177, this.topPos + 159));
-        this.shortSearchBox = new EditBox(this.font, leftPos + 75, topPos + 126, 59, 9, Component.translatable("gui.avaritia.search"));
+        this.addRenderableWidget(new ViewTypeButton(this.leftPos + 201, this.topPos + 144));
+        this.shortSearchBox = new EditBox(this.font, leftPos + 79, topPos + 4, 90, 12, Component.translatable("gui.avaritia.search"));
         this.shortSearchBox.setMaxLength(64);
         this.shortSearchBox.setBordered(false);
-        this.shortSearchBox.setVisible(menu.craftingMode);
         this.shortSearchBox.setValue(menu.filter);
-        this.longSearchBox = new EditBox(this.font, leftPos + 41, topPos + 163, 77, 9, Component.translatable("gui.avaritia.search"));
-        this.longSearchBox.setMaxLength(64);
-        this.longSearchBox.setBordered(false);
-        this.longSearchBox.setVisible(!menu.craftingMode);
-        this.longSearchBox.setValue(menu.filter);
         this.addRenderableWidget(shortSearchBox);
-        this.addRenderableWidget(longSearchBox);
         this.craftToChannelButton = new CraftToChannelButton(leftPos + 91, topPos + 142);
         this.craftToInventoryButton = new CraftToInventoryButton(leftPos + 108, topPos + 142);
         this.craftAndDropButton = new CraftAndDropButton(leftPos + 125, topPos + 142);
@@ -138,37 +127,37 @@ public class WipChestScreen extends AbstractContainerScreen<WipChestMenu> {
     protected void renderBg(GuiGraphics stack, float partialTick, int mouseX, int mouseY) {
         this.blit(stack, this.leftPos, this.topPos, 0, 0, imageWidth, 6);
         if (this.menu.craftingMode) {
-            this.blit(stack, this.leftPos, this.topPos, 0, 0, imageWidth, 56);
-            this.blit(stack, this.leftPos, this.topPos + 56, 0, 22, imageWidth, 34);
-            this.blit(stack, this.leftPos, this.topPos + 90, 0, 22, imageWidth, 159);
+            this.blit(stack, this.leftPos, this.topPos, 0, 0, imageWidth, 68);
+            this.blit(stack, this.leftPos, this.topPos + 68, 0, 17, imageWidth, 51);
+            this.blit(stack, this.leftPos, this.topPos + 119, 0, 17, imageWidth, 17);
+            this.blit(stack, this.leftPos, this.topPos + 136, 0, 69, imageWidth, 141);
 
-            Slot helmetSlot = this.menu.slots.get(36);
-            if (helmetSlot.isActive() && helmetSlot.getItem().isEmpty()) {
-                this.blit(stack, this.leftPos + helmetSlot.x, this.topPos + helmetSlot.y, 0, 199, 16, 16);
-            }
-            Slot chestplateSlot = this.menu.slots.get(37);
-            if (chestplateSlot.isActive() && chestplateSlot.getItem().isEmpty()) {
-                this.blit(stack, this.leftPos + chestplateSlot.x, this.topPos + chestplateSlot.y, 16, 199, 16, 16);
-            }
-            Slot leggingsSlot = this.menu.slots.get(38);
-            if (leggingsSlot.isActive() && leggingsSlot.getItem().isEmpty()) {
-                this.blit(stack, this.leftPos + leggingsSlot.x, this.topPos + leggingsSlot.y, 32, 199, 16, 16);
-            }
-            Slot bootsSlot = this.menu.slots.get(39);
-            if (bootsSlot.isActive() && bootsSlot.getItem().isEmpty()) {
-                this.blit(stack, this.leftPos + bootsSlot.x, this.topPos + bootsSlot.y, 48, 199, 16, 16);
-            }
-            Slot lhandSlot = this.menu.slots.get(40);
-            if (lhandSlot.isActive() && lhandSlot.getItem().isEmpty()) {
-                this.blit(stack, this.leftPos + lhandSlot.x, this.topPos + lhandSlot.y, 64, 199, 16, 16);
-            }
+//            Slot helmetSlot = this.menu.slots.get(36);
+//            if (helmetSlot.isActive() && helmetSlot.getItem().isEmpty()) {
+//                this.blit(stack, this.leftPos + helmetSlot.x, this.topPos + helmetSlot.y, 0, 199, 16, 16);
+//            }
+//            Slot chestplateSlot = this.menu.slots.get(37);
+//            if (chestplateSlot.isActive() && chestplateSlot.getItem().isEmpty()) {
+//                this.blit(stack, this.leftPos + chestplateSlot.x, this.topPos + chestplateSlot.y, 16, 199, 16, 16);
+//            }
+//            Slot leggingsSlot = this.menu.slots.get(38);
+//            if (leggingsSlot.isActive() && leggingsSlot.getItem().isEmpty()) {
+//                this.blit(stack, this.leftPos + leggingsSlot.x, this.topPos + leggingsSlot.y, 32, 199, 16, 16);
+//            }
+//            Slot bootsSlot = this.menu.slots.get(39);
+//            if (bootsSlot.isActive() && bootsSlot.getItem().isEmpty()) {
+//                this.blit(stack, this.leftPos + bootsSlot.x, this.topPos + bootsSlot.y, 48, 199, 16, 16);
+//            }
+//            Slot lhandSlot = this.menu.slots.get(40);
+//            if (lhandSlot.isActive() && lhandSlot.getItem().isEmpty()) {
+//                this.blit(stack, this.leftPos + lhandSlot.x, this.topPos + lhandSlot.y, 64, 199, 16, 16);
+//            }
 
         } else {
-            this.blit(stack, this.leftPos, this.topPos, 0, 0, imageWidth, 57);
-            this.blit(stack, this.leftPos, this.topPos + 57, 0, 6, imageWidth, 51);
-            this.blit(stack, this.leftPos, this.topPos + 108, 0, 6, imageWidth, 50);
-            this.blit(stack, this.leftPos, this.topPos + 158, 0, 181, imageWidth, 17);
-            this.blit(stack, this.leftPos, this.topPos + 175, 0, 107, imageWidth, 74);
+            this.blit(stack, this.leftPos, this.topPos, 0, 0, imageWidth, 68);
+            this.blit(stack, this.leftPos, this.topPos + 68, 0, 17, imageWidth, 51);
+            this.blit(stack, this.leftPos, this.topPos + 119, 0, 17, imageWidth, 51);
+            this.blit(stack, this.leftPos, this.topPos + 170, 0, 125, imageWidth, 85);
         }
     }
 
@@ -208,9 +197,7 @@ public class WipChestScreen extends AbstractContainerScreen<WipChestMenu> {
     protected void renderTooltip(GuiGraphics pPoseStack, int pX, int pY) {
         if (this.hoveredSlot != null) {
             if (hoveredSlot.index >= 51) {
-                if (menu.getCarried().getCount() == 1
-                       // && !Config.INCOMPATIBLE_MODID.get().contains(ForgeRegistries.ITEMS.getKey(menu.getCarried().getItem()).getNamespace())
-                )
+                if (menu.getCarried().getCount() == 1)
                     renderObjectStorageTooltip(pPoseStack, pX, pY);
                 else
                     renderCounterTooltip(pPoseStack, pX, pY);
@@ -290,12 +277,11 @@ public class WipChestScreen extends AbstractContainerScreen<WipChestMenu> {
     public void containerTick() {
         super.containerTick();
         if (shortSearchBox.isFocused()) shortSearchBox.tick();
-        if (longSearchBox.isFocused()) longSearchBox.tick();
     }
 
     @Override
     public void onClose() {
-        NetworkHandler.CHANNEL.send(PacketDistributor.SERVER.noArg(), new C2SChannelFilterPack(menu.containerId, menu.filter));
+        NetworkHandler.CHANNEL.sendToServer(new C2SFilterChannelPack(menu.containerId, menu.filter));
         ((ClientChannel) menu.channel).removeListener();
         super.onClose();
     }
@@ -308,19 +294,9 @@ public class WipChestScreen extends AbstractContainerScreen<WipChestMenu> {
             if (shortSearchBox.isMouseOver(pMouseX, pMouseY)) {
                 menu.filter = "";
                 shortSearchBox.setValue("");
-                longSearchBox.setValue("");
                 menu.dummyContainer.refreshContainer(true);
                 shortSearchBox.setFocused(true);
                 shortSearchBox.setEditable(true);
-            }
-            //长搜索框
-            else if (longSearchBox.isMouseOver(pMouseX, pMouseY)) {
-                menu.filter = "";
-                shortSearchBox.setValue("");
-                longSearchBox.setValue("");
-                menu.dummyContainer.refreshContainer(true);
-                longSearchBox.setFocused(true);
-                longSearchBox.setEditable(true);
             }
             else if (craftToChannelButton.isMouseOver(pMouseX, pMouseY)) {
                 if (lshift) minecraft.gameMode.handleInventoryButtonClick(this.menu.containerId, 6);
@@ -361,7 +337,7 @@ public class WipChestScreen extends AbstractContainerScreen<WipChestMenu> {
 
     @Override
     public boolean keyPressed(int pKeyCode, int pScanCode, int pModifiers) {
-        if (shortSearchBox.isFocused() || longSearchBox.isFocused()) {
+        if (shortSearchBox.isFocused()) {
             if (pKeyCode >= InputConstants.KEY_0 && pKeyCode <= InputConstants.KEY_Z) return true;
         }
         if (pKeyCode == InputConstants.KEY_LSHIFT) menu.LShifting = true;
@@ -374,14 +350,6 @@ public class WipChestScreen extends AbstractContainerScreen<WipChestMenu> {
             String s = shortSearchBox.getValue().toLowerCase();
             if (!s.equals(menu.filter)) {
                 menu.filter = s;
-                longSearchBox.setValue(s);
-                menu.dummyContainer.refreshContainer(true);
-            }
-        } else if (longSearchBox.isFocused()) {
-            String s = longSearchBox.getValue().toLowerCase();
-            if (!s.equals(menu.filter)) {
-                menu.filter = s;
-                shortSearchBox.setValue(s);
                 menu.dummyContainer.refreshContainer(true);
             }
         }
@@ -419,7 +387,7 @@ public class WipChestScreen extends AbstractContainerScreen<WipChestMenu> {
         if (menu.owner.equals(menu.player.getUUID()) || menu.owner.equals(Static.AVARITIA_FAKE_PLAYER.getId())) {
             this.menu.locked = !this.menu.locked;
             this.shortSearchBox.setFocused(false);
-            NetworkHandler.CHANNEL.send(PacketDistributor.SERVER.noArg(), new C2SChannelFilterPack(menu.containerId, menu.filter));
+            NetworkHandler.CHANNEL.sendToServer(new C2SFilterChannelPack(menu.containerId, menu.filter));
             this.minecraft.gameMode.handleInventoryButtonClick(this.menu.containerId, 0);
         }
     }
@@ -428,9 +396,6 @@ public class WipChestScreen extends AbstractContainerScreen<WipChestMenu> {
         this.menu.craftingMode = !this.menu.craftingMode;
         this.menu.dummyContainer.refreshContainer(true);
         this.shortSearchBox.setFocused(false);
-        this.shortSearchBox.setVisible(menu.craftingMode);
-        this.longSearchBox.setFocused(false);
-        this.longSearchBox.setVisible(!menu.craftingMode);
         this.craftToChannelButton.active = menu.craftingMode;
         this.craftToChannelButton.visible = menu.craftingMode;
         this.craftToInventoryButton.active = menu.craftingMode;
@@ -459,10 +424,10 @@ public class WipChestScreen extends AbstractContainerScreen<WipChestMenu> {
 
     private String getSortKey(int sortType) {
         return switch (sortType) {
-            case StorageUtils.Sort.ID_ASCENDING, StorageUtils.Sort.ID_DESCENDING -> "gui.avaritia.sort.id";
-            case StorageUtils.Sort.NAMESPACE_ID_ASCENDING, StorageUtils.Sort.NAMESPACE_ID_DESCENDING -> "gui.avaritia.sort.nid";
-            case StorageUtils.Sort.MIRROR_ID_ASCENDING, StorageUtils.Sort.MIRROR_ID_DESCENDING -> "gui.avaritia.sort.mirror_id";
-            case StorageUtils.Sort.COUNT_ASCENDING, StorageUtils.Sort.COUNT_DESCENDING -> "gui.avaritia.sort.count";
+            case SortUtils.Sort.ID_ASCENDING, SortUtils.Sort.ID_DESCENDING -> "gui.avaritia.sort.id";
+            case SortUtils.Sort.NAMESPACE_ID_ASCENDING, SortUtils.Sort.NAMESPACE_ID_DESCENDING -> "gui.avaritia.sort.nid";
+            case SortUtils.Sort.MIRROR_ID_ASCENDING, SortUtils.Sort.MIRROR_ID_DESCENDING -> "gui.avaritia.sort.mirror_id";
+            case SortUtils.Sort.COUNT_ASCENDING, SortUtils.Sort.COUNT_DESCENDING -> "gui.avaritia.sort.count";
             default -> "";
         };
     }
@@ -503,22 +468,22 @@ public class WipChestScreen extends AbstractContainerScreen<WipChestMenu> {
     private class ToggleCraftingButton extends ImageButton {
 
         public ToggleCraftingButton(int pX, int pY) {
-            super(pX, pY, 16, 8, 80, 199, GUI_IMG, pButton -> toggleCraftingMode());
+            super(pX, pY, 16, 16, 219, 0, GUI_IMG, pButton -> toggleCraftingMode());
         }
 
         @Override
         @ParametersAreNonnullByDefault
         public void renderWidget(GuiGraphics pPoseStack, int pMouseX, int pMouseY, float pPartialTick) {
-            int uOffset = menu.craftingMode ? 96 : 80;
-            int vOffset = this.isHoveredOrFocused() ? 207 : 199;
-            this.renderTexture(pPoseStack, GUI_IMG, this.getX(), this.getY(),  uOffset, vOffset, this.yDiffTex, this.width, this.height, 256, 256);
+            int uOffset = menu.craftingMode ? 219 : 85;
+            //int vOffset = this.isHoveredOrFocused() ? 207 : 199;
+            this.renderTexture(pPoseStack, GUI_IMG, this.getX(), this.getY(),  uOffset, 0, this.yDiffTex, this.width, this.height, 256, 256);
         }
     }
 
     private class ToggleLockButton extends ImageButton {
 
         public ToggleLockButton(int pX, int pY) {
-            super(pX, pY, 19, 16, 67, 215, GUI_IMG, pButton -> toggleLock());
+            super(pX, pY, 16, 16, 67, 215, GUI_IMG, pButton -> toggleLock());
             MutableComponent componentA = Component.translatable("gui.avaritia.owner", "§a" + menu.player.getGameProfile().getName());
             MutableComponent componentB = Component.translatable("gui.avaritia.owner", "§c" + ownerName);
             MutableComponent componentC = Component.translatable("gui.avaritia.owner", ownerName);
@@ -540,15 +505,14 @@ public class WipChestScreen extends AbstractContainerScreen<WipChestMenu> {
     private class SortButton extends ImageButton {
 
         public SortButton(int pX, int pY) {
-            super(pX, pY, 19, 16, 202, 0, GUI_IMG, pButton -> cycleSort());
+            super(pX, pY, 16, 16, 202, 0, GUI_IMG, pButton -> cycleSort());
         }
 
         @Override
         @ParametersAreNonnullByDefault
         public void renderWidget(GuiGraphics pPoseStack, int pMouseX, int pMouseY, float pPartialTick) {
-            int uOffset = this.isHoveredOrFocused() ? 221 : 202;
-            int vOffset = menu.sortType * 16;
-            pPoseStack.blit(GUI_IMG, this.getX(), this.getY(), uOffset, vOffset, this.width, this.height, 256, 256);
+            int uOffset = menu.sortType * 16;
+            pPoseStack.blit(GUI_IMG, this.getX(), this.getY(), uOffset, 210, this.width, this.height, 256, 256);
             List<FormattedCharSequence> list = new ArrayList<>();
             list.add(Component.translatable(getSortKey(menu.sortType)).getVisualOrderText());
             if (menu.sortType % 2 == 0) list.add(Component.translatable("gui.avaritia.sort.ascending").getVisualOrderText());
@@ -563,22 +527,21 @@ public class WipChestScreen extends AbstractContainerScreen<WipChestMenu> {
     private class ViewTypeButton extends ImageButton {
 
         public ViewTypeButton(int pX, int pY) {
-            super(pX, pY, 19, 16, 105, 215, GUI_IMG, pButton -> changeViewType());
+            super(pX, pY, 16, 16, 105, 215, GUI_IMG, pButton -> changeViewType());
         }
 
         @Override
         @ParametersAreNonnullByDefault
         public void renderWidget(GuiGraphics pPoseStack, int pMouseX, int pMouseY, float pPartialTick) {
-            int uOffset = 105 + 19 * menu.viewType;
-            int vOffset = this.isHoveredOrFocused() ? 231 : 215;
-            pPoseStack.blit(GUI_IMG, this.getX(), this.getY(), uOffset, vOffset, this.width, this.height, 256, 256);
+            int uOffset = 16 * menu.viewType;
+            pPoseStack.blit(GUI_IMG, this.getX(), this.getY(), uOffset, 226, this.width, this.height, 256, 256);
         }
     }
 
     private class ChannelButton extends ImageButton {
         private final List<FormattedCharSequence> tips = new ArrayList<>();
         public ChannelButton(int pX, int pY) {
-            super(pX, pY, 19, 16, 48, 215, GUI_IMG, pButton -> channelButtonPress());
+            super(pX, pY, 16, 16, 48, 215, GUI_IMG, pButton -> channelButtonPress());
             if (menu.channelOwner.equals(menu.player.getUUID())) {
                 tips.add(Component.translatable("gui.avaritia.channel.tip1", "§a" + menu.channel.getName()).getVisualOrderText());
                 tips.add(Component.translatable("gui.avaritia.channel.tip2", "§a" + ClientChannelManager.getInstance().getUserName(menu.channelOwner)).getVisualOrderText());

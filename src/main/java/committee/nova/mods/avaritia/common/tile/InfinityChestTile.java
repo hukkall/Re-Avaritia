@@ -2,7 +2,7 @@ package committee.nova.mods.avaritia.common.tile;
 
 import committee.nova.mods.avaritia.api.common.container.OffsetContainer;
 import committee.nova.mods.avaritia.api.common.wrapper.OffsetItemStackWrapper;
-import committee.nova.mods.avaritia.common.menu.OffsetChestMenu;
+import committee.nova.mods.avaritia.common.menu.InfinityChestMenu;
 import committee.nova.mods.avaritia.common.wrappers.StorageItem;
 import committee.nova.mods.avaritia.init.config.ModConfig;
 import committee.nova.mods.avaritia.init.registry.ModTileEntities;
@@ -25,12 +25,12 @@ import org.jetbrains.annotations.NotNull;
  * @CreateTime: 2025/1/31 15:28
  * @Description:
  */
-public class OffsetChestTile extends BaseContainerBlockEntity implements OffsetContainer {
+public class InfinityChestTile extends BaseContainerBlockEntity implements OffsetContainer {
     public Int2ObjectMap<StorageItem> containers = StorageUtils.newContainers();
     private static final Component CONTAINER_NAME = Component.translatable("container.infinity_chest");
     private int page = 0;
-    public OffsetChestTile(BlockPos pos, BlockState state) {
-        super(ModTileEntities.offset_chest_tile.get(), pos, state);
+    public InfinityChestTile(BlockPos pos, BlockState state) {
+        super(ModTileEntities.infinity_chest_tile.get(), pos, state);
     }
 
     @Override
@@ -40,31 +40,41 @@ public class OffsetChestTile extends BaseContainerBlockEntity implements OffsetC
 
     @Override
     protected @NotNull AbstractContainerMenu createMenu(int pContainerId, @NotNull Inventory pInventory) {
-        return new OffsetChestMenu(pContainerId, pInventory, this.getBlockPos(), this, this.chestData);
+        return new InfinityChestMenu(pContainerId, pInventory, this.getBlockPos(), this, this.chestData);
+    }
+
+    public void loadFromTag(CompoundTag compound) {
+        this.containers.clear();
+        StorageUtils.loadAllItems(compound, this.containers);
+        this.page = compound.getInt("Page");
+    }
+
+    public CompoundTag saveToTag(CompoundTag compound) {
+        StorageUtils.saveAllItems(compound, this.containers);
+        compound.putInt("Page", this.page);
+        return compound;
     }
 
     @Override
     public void load(@NotNull CompoundTag pTag) {
         super.load(pTag);
-        StorageUtils.loadAllItems(pTag, this.containers, true);
-        this.page = pTag.getInt("Page");
+        this.loadFromTag(pTag);
     }
 
     @Override
     public void saveAdditional(@NotNull CompoundTag pTag) {
         super.saveAdditional(pTag);
-        StorageUtils.saveAllItems(pTag, this.containers);
-        pTag.putInt("Page", this.page);
+        this.saveToTag(pTag);
     }
 
     private final ContainerData chestData = new ContainerData() {
         @Override
         public int get(int index) {
-            return index == 0 ? OffsetChestTile.this.page : 0;
+            return index == 0 ? InfinityChestTile.this.page : 0;
         }
         @Override
         public void set(int index, int value) {
-            if (index == 0) OffsetChestTile.this.page = value;
+            if (index == 0) InfinityChestTile.this.page = value;
 
         }
         @Override
@@ -76,7 +86,7 @@ public class OffsetChestTile extends BaseContainerBlockEntity implements OffsetC
     @Override
     public OffsetItemStackWrapper getItemHandler() {
         int slots = ModConfig.inventoryRows.get() * 9;
-        return new OffsetItemStackWrapper(this.containers, this.page, slots);
+        return OffsetItemStackWrapper.create(this.containers, () -> this.page * slots, () -> slots);
     }
 
     @Override

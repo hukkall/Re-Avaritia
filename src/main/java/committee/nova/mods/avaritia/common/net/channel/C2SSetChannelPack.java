@@ -14,19 +14,19 @@ import java.util.function.Supplier;
  * @CreateTime: 2025/2/28 20:27
  * @Description:
  */
-public class ChannelSetPack {
+public class C2SSetChannelPack {
 
     private final int containerId;
     private final byte type;
     private final int id;
 
-    public ChannelSetPack(FriendlyByteBuf buf) {
+    public C2SSetChannelPack(FriendlyByteBuf buf) {
         this.containerId = buf.readInt();
         this.type = buf.readByte();
         this.id = buf.readInt();
     }
 
-    public ChannelSetPack(int containerId, byte type, int id) {
+    public C2SSetChannelPack(int containerId, byte type, int id) {
         this.containerId = containerId;
         this.type = type;
         this.id = id;
