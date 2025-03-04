@@ -1,5 +1,6 @@
 package committee.nova.mods.avaritia.api.common.wrapper;
 
+import committee.nova.mods.avaritia.Static;
 import committee.nova.mods.avaritia.common.wrappers.StorageItem;
 import committee.nova.mods.avaritia.init.config.ModConfig;
 import committee.nova.mods.avaritia.util.StorageUtils;
@@ -66,6 +67,18 @@ public abstract class OffsetItemStackWrapper implements IItemHandlerModifiable {
         return create(containers, 0, slots + 1);
     }
 
+    public static OffsetItemStackWrapper create(Int2ObjectMap<StorageItem> containers, final int offset) {
+        IntIterator it = containers.keySet().iterator();
+
+        int slots;
+        for(slots = -1; it.hasNext(); slots = Math.max(slots, it.nextInt())) {
+        }
+
+        int page = slots / 54 + 1;
+
+        return create(containers, 0, slots + 1);
+    }
+
     public static OffsetItemStackWrapper dummy(final int length) {
         final Int2ObjectMap<StorageItem> containers = StorageUtils.newContainers();
         return new OffsetItemStackWrapper() {
@@ -125,7 +138,7 @@ public abstract class OffsetItemStackWrapper implements IItemHandlerModifiable {
         StorageItem container = this.getContainerInSlot(slot);
         ItemStack stack = container.getStack();
         int size = (int)Math.min(container.getCount(), stack.getMaxStackSize());
-        return ItemHandlerHelper.copyStackWithSize(stack, size);
+        return ItemHandlerHelper.copyStackWithSize(stack, container.getCount() > 64 ? (int) container.getCount() : size);
     }
 
     @Override

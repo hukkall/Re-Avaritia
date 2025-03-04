@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 public interface OffsetContainer extends Container {
 
     static OffsetContainer dummy(int length) {
-        final OffsetItemStackWrapper itemHandler = new OffsetItemStackWrapper(length);
+        final OffsetItemStackWrapper itemHandler = OffsetItemStackWrapper.dummy(length);
         return new OffsetContainer() {
             @Override
             public OffsetItemStackWrapper getItemHandler() {
@@ -37,7 +37,7 @@ public interface OffsetContainer extends Container {
 
     OffsetItemStackWrapper getItemHandler();
     default StorageItem getItemInSlot(int index) {
-        return this.getItemHandler().getItemInSlot(index);
+        return this.getItemHandler().getContainerInSlot(index);
     }
 
     default ContainerData getItemCount() {
@@ -83,7 +83,7 @@ public interface OffsetContainer extends Container {
 
     @Override
     default @NotNull ItemStack removeItemNoUpdate(int index) {
-        StorageItem container = this.getItemHandler().removeItemInSlot(index);
+        StorageItem container = this.getItemHandler().removeContainerInSlot(index);
         if (container.isEmpty()) {
             return ItemStack.EMPTY;
         } else {
@@ -106,7 +106,7 @@ public interface OffsetContainer extends Container {
     @Override
     default void clearContent() {
         for(int i = 0; i < this.getContainerSize(); ++i) {
-            this.getItemHandler().removeItemInSlot(i);
+            this.getItemHandler().removeContainerInSlot(i);
         }
     }
 

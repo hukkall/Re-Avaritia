@@ -112,7 +112,7 @@ public class InfinityChestBlock extends BaseTileEntityBlock implements SimpleWat
             var tile = level.getBlockEntity(pos);
 
             if (tile instanceof InfinityChestTile chestTile) {
-                NetworkHooks.openScreen((ServerPlayer) player, chestTile);
+                NetworkHooks.openScreen((ServerPlayer) player, chestTile, buf -> {buf.writeBlockPos(pos);});
             }
         }
 
@@ -191,16 +191,9 @@ public class InfinityChestBlock extends BaseTileEntityBlock implements SimpleWat
     }
 
     @Override
-    public void onBlockStateChange(LevelReader level, BlockPos pos, BlockState oldState, BlockState newState) {
-        BlackHoleTile blockEntity = (BlackHoleTile) level.getBlockEntity(pos);
-        if (blockEntity != null) blockEntity.onBlockStateChange();
-    }
-
-    @Override
     public @NotNull RenderShape getRenderShape(@NotNull BlockState pState) {
         return RenderShape.MODEL;
     }
-
 
     @Override
     public boolean isPathfindable(@NotNull BlockState pState, @NotNull BlockGetter pLevel, @NotNull BlockPos pPos, @NotNull PathComputationType pType) {

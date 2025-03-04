@@ -85,8 +85,7 @@ public class InfinityChestTile extends BaseContainerBlockEntity implements Offse
 
     @Override
     public OffsetItemStackWrapper getItemHandler() {
-        int slots = ModConfig.inventoryRows.get() * 9;
-        return OffsetItemStackWrapper.create(this.containers, () -> this.page * slots, () -> slots);
+        return OffsetItemStackWrapper.create(this.containers);
     }
 
     @Override

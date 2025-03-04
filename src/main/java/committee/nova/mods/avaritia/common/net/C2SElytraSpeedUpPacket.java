@@ -17,10 +17,10 @@ public class C2SElytraSpeedUpPacket {
     public C2SElytraSpeedUpPacket() {
     }
 
-    public static void write(C2SElytraSpeedUpPacket msg, FriendlyByteBuf buf) {
+    public void write(FriendlyByteBuf buf) {
     }
 
-    public static void run(C2SElytraSpeedUpPacket msg, Supplier<NetworkEvent.Context> ctx) {
+    public void run(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             ServerPlayer player = ctx.get().getSender();
             if (player == null) return;
