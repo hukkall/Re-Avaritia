@@ -4,6 +4,7 @@ import committee.nova.mods.avaritia.Static;
 import committee.nova.mods.avaritia.api.common.item.BaseItem;
 import committee.nova.mods.avaritia.common.item.EndestPearlItem;
 import committee.nova.mods.avaritia.common.item.InfinityArmorItem;
+import committee.nova.mods.avaritia.common.item.InfinityElytraItem;
 import committee.nova.mods.avaritia.common.item.MatterClusterItem;
 import committee.nova.mods.avaritia.common.item.misc.*;
 import committee.nova.mods.avaritia.common.item.resources.*;
@@ -68,6 +69,7 @@ public class ModItems {
     public static RegistryObject<Item> infinity_pants = item("infinity_pants", () -> new InfinityArmorItem(ArmorItem.Type.LEGGINGS));
     public static RegistryObject<Item> infinity_boots = item("infinity_boots", () -> new InfinityArmorItem(ArmorItem.Type.BOOTS));
     public static RegistryObject<Item> neutron_horse_armor = item("neutron_horse_armor", NeutronHorseArmorItem::new);
+    public static RegistryObject<Item> infinity_elytra = item("infinity_elytra", InfinityElytraItem::new);
 
     /**
      * Resource
