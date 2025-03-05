@@ -1,6 +1,8 @@
 package committee.nova.mods.avaritia.api.common.wrapper;
 
 
+import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -27,9 +29,9 @@ public class ItemStackWrapper implements BaseItemWrapper {
 
     private final Runnable onContentsChanged;
     private final Map<Integer, Integer> slotSizeMap;
-    private BiFunction<Integer, ItemStack, Boolean> slotValidator;
+    @Setter private BiFunction<Integer, ItemStack, Boolean> slotValidator;
     private int maxStackSize;
-    private int[] outputSlots;
+    @Getter private int[] outputSlots;
 
     public ItemStackWrapper(int size) {
         this(size, null);
@@ -41,6 +43,10 @@ public class ItemStackWrapper implements BaseItemWrapper {
 
     public ItemStackWrapper(int size, Runnable onContentsChanged) {
         this(size, 64, onContentsChanged);
+    }
+
+    public ItemStackWrapper(int size, int maxStackSize) {
+        this(size, maxStackSize, null);
     }
 
     public ItemStackWrapper(int size, int maxStackSize, Runnable onContentsChanged) {
@@ -83,7 +89,9 @@ public class ItemStackWrapper implements BaseItemWrapper {
 
     @Override
     public void setStackInSlot(int slot, @NotNull ItemStack stack) {
-
+        this.validateSlotIndex(slot);
+        this.stacks.set(slot, stack);
+        this.onContentsChanged(slot);
     }
 
     @Override
@@ -152,10 +160,6 @@ public class ItemStackWrapper implements BaseItemWrapper {
         return this.stacks;
     }
 
-    public int[] getOutputSlots() {
-        return this.outputSlots;
-    }
-
     public void setOutputSlots(int... slots) {
         this.outputSlots = slots;
     }
@@ -166,10 +170,6 @@ public class ItemStackWrapper implements BaseItemWrapper {
 
     public void addSlotLimit(int slot, int size) {
         this.slotSizeMap.put(slot, size);
-    }
-
-    public void setSlotValidator(BiFunction<Integer, ItemStack, Boolean> validator) {
-        this.slotValidator = validator;
     }
 
     public Container toIInventory() {
@@ -195,21 +195,14 @@ public class ItemStackWrapper implements BaseItemWrapper {
     public ItemStack insertItemSuper(int slot, ItemStack stack, boolean simulate) {
         if (stack.isEmpty())
             return ItemStack.EMPTY;
-
         if (!isItemValid(slot, stack))
             return stack;
-
         validateSlotIndex(slot);
-
         ItemStack existing = this.stacks.get(slot);
-
         int limit = getStackLimit(slot, stack);
-
-        if (!existing.isEmpty())
-        {
+        if (!existing.isEmpty()) {
             if (!ItemHandlerHelper.canItemStacksStack(stack, existing))
                 return stack;
-
             limit -= existing.getCount();
         }
 
@@ -218,19 +211,15 @@ public class ItemStackWrapper implements BaseItemWrapper {
 
         boolean reachedLimit = stack.getCount() > limit;
 
-        if (!simulate)
-        {
-            if (existing.isEmpty())
-            {
+        if (!simulate) {
+            if (existing.isEmpty()) {
                 this.stacks.set(slot, reachedLimit ? ItemHandlerHelper.copyStackWithSize(stack, limit) : stack);
             }
-            else
-            {
+            else {
                 existing.grow(reachedLimit ? limit : stack.getCount());
             }
             onContentsChanged(slot);
         }
-
         return reachedLimit ? ItemHandlerHelper.copyStackWithSize(stack, stack.getCount()- limit) : ItemStack.EMPTY;
     }
 
@@ -238,37 +227,26 @@ public class ItemStackWrapper implements BaseItemWrapper {
     {
         if (amount == 0)
             return ItemStack.EMPTY;
-
         validateSlotIndex(slot);
-
         ItemStack existing = this.stacks.get(slot);
-
         if (existing.isEmpty())
             return ItemStack.EMPTY;
-
         int toExtract = Math.min(amount, existing.getMaxStackSize());
-
-        if (existing.getCount() <= toExtract)
-        {
-            if (!simulate)
-            {
+        if (existing.getCount() <= toExtract) {
+            if (!simulate) {
                 this.stacks.set(slot, ItemStack.EMPTY);
                 onContentsChanged(slot);
                 return existing;
             }
-            else
-            {
+            else {
                 return existing.copy();
             }
         }
-        else
-        {
-            if (!simulate)
-            {
+        else {
+            if (!simulate) {
                 this.stacks.set(slot, ItemHandlerHelper.copyStackWithSize(existing, existing.getCount() - toExtract));
                 onContentsChanged(slot);
             }
-
             return ItemHandlerHelper.copyStackWithSize(existing, toExtract);
         }
     }

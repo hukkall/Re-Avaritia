@@ -1,7 +1,6 @@
 package committee.nova.mods.avaritia.api.common.tile;
 
 import committee.nova.mods.avaritia.api.common.wrapper.BaseItemWrapper;
-import committee.nova.mods.avaritia.api.common.wrapper.ItemStackWrapper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -9,7 +8,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.LockCode;
-import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;

@@ -37,7 +37,7 @@ public class BaseNeutronCollectorTile extends BaseInventoryTileEntity {
 
     public BaseNeutronCollectorTile(BlockPos pos, BlockState state) {
         super(ModTileEntities.neutron_collector_tile.get(), pos, state);
-        this.inventory = createInventoryHandler(null);
+        this.inventory = createInventoryHandler();
         if (state.is(ModBlocks.neutron_collector.get())) {
             tier = CollectorTier.DEFAULT;
         } else if (state.is(ModBlocks.dense_neutron_collector.get())) {
@@ -72,8 +72,8 @@ public class BaseNeutronCollectorTile extends BaseInventoryTileEntity {
 
     }
 
-    public static ItemStackWrapper createInventoryHandler(Runnable onContentsChanged) {
-        var inventory = new ItemStackWrapper(1, onContentsChanged);
+    public static ItemStackWrapper createInventoryHandler() {
+        var inventory = new ItemStackWrapper(1, Integer.MAX_VALUE);
         inventory.setOutputSlots(0);
         return inventory;
     }

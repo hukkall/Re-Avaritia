@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class CompressorMenu extends BaseTileMenu<CompressorTile> {
     public CompressorMenu(int id, Inventory playerInventory, FriendlyByteBuf buffer) {
-        this(id, playerInventory, CompressorTile.createInventoryHandler(null), buffer.readBlockPos());
+        this(id, playerInventory, CompressorTile.createInventoryHandler(), buffer.readBlockPos());
     }
 
     public CompressorMenu(int id, Inventory playerInventory, ItemStackWrapper inventory, BlockPos pos) {

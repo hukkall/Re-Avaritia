@@ -38,12 +38,12 @@ public class CompressorTile extends BaseInventoryTileEntity {
 
     public CompressorTile(BlockPos pos, BlockState state) {
         super(ModTileEntities.compressor_tile.get(), pos, state);
-        this.inventory = createInventoryHandler(null);
+        this.inventory = createInventoryHandler();
         this.recipeInventory = new ItemStackWrapper(1);
     }
 
-    public static ItemStackWrapper createInventoryHandler(Runnable onContentsChanged) {
-        var inventory = new ItemStackWrapper(2, onContentsChanged);
+    public static ItemStackWrapper createInventoryHandler() {
+        var inventory = new ItemStackWrapper(2);
 
         inventory.setOutputSlots(0);
         inventory.setSlotValidator((slot, stack) -> slot == 1);
