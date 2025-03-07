@@ -25,7 +25,7 @@ public abstract class OffsetItemStackWrapper implements IItemHandlerModifiable {
     public OffsetItemStackWrapper() {
     }
 
-    public static OffsetItemStackWrapper create(final Int2ObjectMap<StorageItem> containers, final IntSupplier offset, final IntSupplier length) {
+    public static OffsetItemStackWrapper create(Int2ObjectMap<StorageItem> containers, IntSupplier offset, IntSupplier length) {
         return new OffsetItemStackWrapper() {
             protected Int2ObjectMap<StorageItem> getContainers() {
                 return containers;
@@ -41,7 +41,7 @@ public abstract class OffsetItemStackWrapper implements IItemHandlerModifiable {
         };
     }
 
-    public static OffsetItemStackWrapper create(final Int2ObjectMap<StorageItem> containers, final int offset, final int length) {
+    public static OffsetItemStackWrapper create(Int2ObjectMap<StorageItem> containers, int offset, int length) {
         return new OffsetItemStackWrapper() {
             protected Int2ObjectMap<StorageItem> getContainers() {
                 return containers;
@@ -67,7 +67,7 @@ public abstract class OffsetItemStackWrapper implements IItemHandlerModifiable {
         return create(containers, 0, slots + 1);
     }
 
-    public static OffsetItemStackWrapper create(Int2ObjectMap<StorageItem> containers, final int offset) {
+    public static OffsetItemStackWrapper create(Int2ObjectMap<StorageItem> containers, int offset) {
         IntIterator it = containers.keySet().iterator();
 
         int slots;
@@ -103,7 +103,9 @@ public abstract class OffsetItemStackWrapper implements IItemHandlerModifiable {
     public abstract int getSlots();
 
     public StorageItem getContainerInSlot(int slot) {
-        return this.getContainers().get(this.getOffset() + slot);
+        // Ensure the container is retrieved based on the latest offset
+        int adjustedSlot = this.getOffset() + slot;
+        return this.getContainers().get(adjustedSlot);
     }
 
     public void setContainerInSlot(int slot, StorageItem container) {

@@ -3,6 +3,7 @@ package committee.nova.mods.avaritia.api.common.container;
 import committee.nova.mods.avaritia.api.common.wrapper.OffsetItemStackWrapper;
 import committee.nova.mods.avaritia.common.wrappers.StorageItem;
 import committee.nova.mods.avaritia.init.config.ModConfig;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerData;
@@ -20,6 +21,23 @@ public interface OffsetContainer extends Container {
 
     static OffsetContainer dummy(int length) {
         final OffsetItemStackWrapper itemHandler = OffsetItemStackWrapper.dummy(length);
+        return new OffsetContainer() {
+            @Override
+            public OffsetItemStackWrapper getItemHandler() {
+                return itemHandler;
+            }
+            @Override
+            public void setChanged() {
+            }
+            @Override
+            public boolean stillValid(@NotNull Player pPlayer) {
+                return OffsetContainer.super.stillValid(pPlayer);
+            }
+        };
+    }
+
+    static OffsetContainer create(Int2ObjectMap<StorageItem> containers, int offset, int length) {
+        final OffsetItemStackWrapper itemHandler = OffsetItemStackWrapper.create(containers, offset, length);
         return new OffsetContainer() {
             @Override
             public OffsetItemStackWrapper getItemHandler() {

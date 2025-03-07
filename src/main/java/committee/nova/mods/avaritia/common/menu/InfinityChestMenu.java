@@ -3,6 +3,7 @@ package committee.nova.mods.avaritia.common.menu;
 import committee.nova.mods.avaritia.api.common.container.OffsetContainer;
 import committee.nova.mods.avaritia.api.common.menu.BaseTileMenu;
 import committee.nova.mods.avaritia.api.common.wrapper.OffsetItemStackWrapper;
+import committee.nova.mods.avaritia.api.iface.IChangePage;
 import committee.nova.mods.avaritia.common.tile.InfinityChestTile;
 import committee.nova.mods.avaritia.common.wrappers.StorageItem;
 import committee.nova.mods.avaritia.init.config.ModConfig;
@@ -34,7 +35,7 @@ import java.util.stream.IntStream;
  * @CreateTime: 2025/1/31 15:38
  * @Description:
  */
-public class InfinityChestMenu extends BaseTileMenu<InfinityChestTile> {
+public class InfinityChestMenu extends BaseTileMenu<InfinityChestTile> implements IChangePage {
     private final Inventory playerInventory;
     private final OffsetContainer container;
     private final ContainerData chestData;
@@ -91,6 +92,7 @@ public class InfinityChestMenu extends BaseTileMenu<InfinityChestTile> {
         }
     }
 
+    @Override
     public void changePage(int page) {
         int currentPage = this.chestData.get(0);
         int nextPage = Mth.clamp(page, 0,  ModConfig.maxPageLimit.get() - 1);

@@ -1,8 +1,11 @@
 package committee.nova.mods.avaritia.common.item.misc;
 
+import committee.nova.mods.avaritia.api.common.container.OffsetContainer;
+import committee.nova.mods.avaritia.api.common.wrapper.OffsetItemStackWrapper;
 import committee.nova.mods.avaritia.common.capability.RingStorageProvider;
 import committee.nova.mods.avaritia.common.item.resources.ResourceItem;
 import committee.nova.mods.avaritia.common.menu.NeutronRingMenu;
+import committee.nova.mods.avaritia.common.wrappers.RingStorageWrapper;
 import committee.nova.mods.avaritia.init.registry.ModRarities;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -26,18 +29,9 @@ import org.jetbrains.annotations.Nullable;
  * @CreateTime: 2024/8/2 上午12:32
  * @Description:
  */
-public class NeutronRingItem extends ResourceItem {
-
-
+public class NeutronRingItem extends ResourceItem implements OffsetContainer{
     public NeutronRingItem() {
         super(ModRarities.EPIC, "neutron_ring", true, new Properties().stacksTo(1));
-    }
-
-    private static ItemStackHandler getInventory(ItemStack bag) {
-        if (bag.getCapability(ForgeCapabilities.ITEM_HANDLER).isPresent()) {
-            return (ItemStackHandler) bag.getCapability(ForgeCapabilities.ITEM_HANDLER).resolve().orElseThrow();
-        }
-        return null;
     }
 
     @Override
@@ -45,7 +39,7 @@ public class NeutronRingItem extends ResourceItem {
         if (!worldIn.isClientSide && !playerIn.isCrouching()) {
             int slot = handIn == InteractionHand.MAIN_HAND ? playerIn.getInventory().selected : 40;
             NetworkHooks.openScreen((ServerPlayer) playerIn,
-                    new SimpleMenuProvider((id, playerInventory, player) -> new NeutronRingMenu(id, playerInventory, slot), Component.translatable("item.avaritia.neutron_ring")),
+                    new SimpleMenuProvider((id, playerInventory, player) -> new NeutronRingMenu(id, playerInventory, slot, this), Component.translatable("item.avaritia.neutron_ring")),
                     buf -> buf.writeInt(slot));
         }
         return super.use(worldIn, playerIn, handIn);
@@ -53,6 +47,16 @@ public class NeutronRingItem extends ResourceItem {
 
     @Override
     public @Nullable ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
-        return new RingStorageProvider(stack, nbt);
+        return new RingStorageProvider(getItemHandler());
+    }
+
+    @Override
+    public RingStorageWrapper getItemHandler() {
+        return new RingStorageWrapper(6);
+    }
+
+    @Override
+    public void setChanged() {
+
     }
 }

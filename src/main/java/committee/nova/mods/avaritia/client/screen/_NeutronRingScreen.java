@@ -1,0 +1,29 @@
+package committee.nova.mods.avaritia.client.screen;
+
+import committee.nova.mods.avaritia.Static;
+import committee.nova.mods.avaritia.api.client.screen.BaseContainerScreen;
+import committee.nova.mods.avaritia.common.menu.NeutronRingMenu;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
+
+/**
+ * @Project: Avaritia
+ * @Author: cnlimiter
+ * @CreateTime: 2024/8/6 下午1:39
+ * @Description:
+ */
+public class _NeutronRingScreen extends BaseContainerScreen<NeutronRingMenu> {
+    private static final ResourceLocation BACKGROUND = new ResourceLocation(Static.MOD_ID, "textures/gui/neutron_ring.png");
+
+    public _NeutronRingScreen(NeutronRingMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
+        super(pMenu, pPlayerInventory, pTitle, BACKGROUND, 256, 276, 256, 276);
+        this.inventoryLabelY = this.imageHeight - 94;
+    }
+
+    @Override
+    protected void renderBgOthers(GuiGraphics pGuiGraphics, int pX, int pY) {
+
+    }
+}
