@@ -4,17 +4,23 @@ import com.mojang.blaze3d.platform.InputConstants;
 import committee.nova.mods.avaritia.Static;
 import committee.nova.mods.avaritia.api.iface.IFilterItem;
 import committee.nova.mods.avaritia.client.screen.ItemFilterScreen;
+import committee.nova.mods.avaritia.common.menu.NeutronRingMenu;
 import committee.nova.mods.avaritia.common.net.C2SElytraSpeedUpPacket;
+import committee.nova.mods.avaritia.common.net.C2SOpenRingPack;
 import committee.nova.mods.avaritia.init.handler.NetworkHandler;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.SimpleMenuProvider;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.network.NetworkHooks;
 
 import java.util.Collections;
 
@@ -32,6 +38,7 @@ public class AvaritiaForgeClient {
     // 定义按键绑定
     public static final KeyMapping FILTER_KEY = new KeyMapping("key.avaritia.filter",
             InputConstants.KEY_H, CATEGORIES);
+    public static final KeyMapping RING_KEY = new KeyMapping("key.avaritia.neutron_ring", InputConstants.KEY_N, CATEGORIES);
 
     public static final KeyMapping SORT_0 = new KeyMapping("key.avaritia.infinity_chest.sort0", InputConstants.KEY_0, CATEGORIES);
     public static final KeyMapping SORT_1 = new KeyMapping("key.avaritia.infinity_chest.sort1", InputConstants.KEY_1, CATEGORIES);
@@ -53,13 +60,16 @@ public class AvaritiaForgeClient {
      */
     @SubscribeEvent
     public static void onClientTick(TickEvent.ClientTickEvent event) {
+        LocalPlayer player = Minecraft.getInstance().player;
         // 检测并消费点击事件
-        if (FILTER_KEY.consumeClick()) {
+        while (FILTER_KEY.consumeClick() && player != null) {
             // 打开界面
-            LocalPlayer player = Minecraft.getInstance().player;
-            if (player != null && !player.getMainHandItem().isEmpty() && player.getMainHandItem().getItem() instanceof IFilterItem) {
+            if (!player.getMainHandItem().isEmpty() && player.getMainHandItem().getItem() instanceof IFilterItem) {
                 Minecraft.getInstance().setScreen(new ItemFilterScreen());
             }
+        }
+        while (RING_KEY.consumeClick() && player != null) {
+            NetworkHandler.CHANNEL.sendToServer(new C2SOpenRingPack());
         }
 
         infinityElytraCooldown = Math.max(infinityElytraCooldown - 1, 0);
@@ -69,6 +79,9 @@ public class AvaritiaForgeClient {
         }
     }
 
+
+
+    // region tooltipExt
     private static Component[] tooltipExt = new Component[0];
 
     public static void setTooltip(Component... string) {
@@ -79,5 +92,7 @@ public class AvaritiaForgeClient {
     public static void getTooltip(ItemTooltipEvent evt) {
         Collections.addAll(evt.getToolTip(), tooltipExt);
     }
+
+    // endregion
 
 }

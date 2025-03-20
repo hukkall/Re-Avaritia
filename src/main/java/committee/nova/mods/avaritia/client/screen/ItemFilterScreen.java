@@ -1,6 +1,7 @@
 package committee.nova.mods.avaritia.client.screen;
 
 import com.google.common.collect.Lists;
+import com.mojang.blaze3d.platform.InputConstants;
 import committee.nova.mods.avaritia.api.client.screen.ItemSelectScreen;
 import committee.nova.mods.avaritia.api.client.screen.component.OperationButton;
 import committee.nova.mods.avaritia.api.client.screen.component.Text;
@@ -25,6 +26,9 @@ import org.lwjgl.glfw.GLFW;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import static committee.nova.mods.avaritia.client.AvaritiaForgeClient.FILTER_KEY;
+import static committee.nova.mods.avaritia.client.AvaritiaForgeClient.RING_KEY;
 
 /**
  * @Project: Avaritia
@@ -365,8 +369,12 @@ public class ItemFilterScreen extends Screen {
     }
 
 
-
-
-
-
+    @Override
+    public boolean keyPressed(int pKeyCode, int pScanCode, int pModifiers) {
+        InputConstants.Key mouseKey = InputConstants.getKey(pKeyCode, pScanCode);
+        if (FILTER_KEY.isActiveAndMatches(mouseKey)) {
+            this.onClose();
+            return true;
+        } else return super.keyPressed(pKeyCode, pScanCode, pModifiers);
+    }
 }

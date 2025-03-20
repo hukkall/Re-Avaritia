@@ -21,6 +21,7 @@ import java.util.List;
  */
 public class ModCreativeModeTabs {
     public static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, Static.MOD_ID);
+    public static final List<RegistryObject<Item>> ACCEPT_ITEM = new ArrayList<>();
     public static final RegistryObject<CreativeModeTab> CREATIVE_TAB = TABS.register("avaritia_group", () -> CreativeModeTab.builder()
             .title(Component.translatable("itemGroup.tab.Infinity"))
             .icon(() -> ModItems.infinity_catalyst.get().getDefaultInstance())
@@ -30,9 +31,10 @@ public class ModCreativeModeTabs {
                         output.accept(SingularityUtils.getItemForSingularity(singularity));
                     }
                 }
-                ModItems.ITEMS.getEntries().forEach(itemRegistryObject -> {
-                    output.accept(itemRegistryObject.get());
-                });
+                for (var item : ACCEPT_ITEM){
+                    output.accept(item.get());
+                }
+
             })
             .build());
 

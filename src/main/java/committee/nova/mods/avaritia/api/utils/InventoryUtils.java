@@ -121,22 +121,19 @@ public class InventoryUtils {
      * 有优先级 主手 > 副手 > 背包
      *
      * @param player 玩家
-     * @param item 匹配值
+     * @param is 匹配值
      * @return 找到的值
      */
 
-    public static ItemStack findItemInInv(Player player, Item item) {
-        if (player.getMainHandItem().getItem() == item) {
-            return player.getMainHandItem();
-        } else if (player.getOffhandItem().getItem() == item) {
-            return player.getOffhandItem();
-        } else {
-            Inventory inv = player.getInventory();
-            for (int x = 0; x < inv.getContainerSize(); x++) {
-                ItemStack stack = inv.getItem(x);
-                if (stack.getItem() == item) {
-                    return stack;
-                }
+    public static ItemStack findItemInInv(Player player, Predicate<ItemStack> is) {
+        if(is.test(player.getMainHandItem())) return player.getMainHandItem();
+        if(is.test(player.getOffhandItem()))return player.getOffhandItem();
+        Inventory inv = player.getInventory();
+        int size = inv.getContainerSize();
+        for(int i = 0;i<size;i++) {
+            ItemStack s = inv.getItem(i);
+            if(is.test(s)) {
+                return s;
             }
         }
         return ItemStack.EMPTY;
@@ -144,7 +141,7 @@ public class InventoryUtils {
 
     /**
      * 在玩家身上寻找物品并返回（兼容curios）
-     * 有优先级 主手 > 副手 > 背包 > 饰品栏
+     * 有优先级 饰品栏 > 主手 > 副手 > 背包
      *
      * @param player 玩家
      * @param is 匹配值
@@ -153,6 +150,7 @@ public class InventoryUtils {
      * @return 找到的值
      */
     public static <T> T findItemInInv(Player player, Predicate<ItemStack> is, T def, Function<ItemStack, T> map) {
+        if(Static.curios) return Static.checkExtraSlots(player, is, def, map);//从饰品栏中获取
         if(is.test(player.getMainHandItem()))return map.apply(player.getMainHandItem());
         if(is.test(player.getOffhandItem()))return map.apply(player.getOffhandItem());
         Inventory inv = player.getInventory();
@@ -163,6 +161,6 @@ public class InventoryUtils {
                 return map.apply(s);
             }
         }
-        return Static.checkExtraSlots(player, is, def, map);//从饰品栏中获取
+        return map.apply(ItemStack.EMPTY);
     }
 }

@@ -101,17 +101,31 @@ public class ModItems {
     //food
     public static RegistryObject<Item> ultimate_stew = item("ultimate_stew", () -> new BaseItem(pro -> pro.rarity(ModRarities.EPIC).food(ModFoods.ultimate_stew)));
     public static RegistryObject<Item> cosmic_meatballs = item("cosmic_meatballs", () -> new BaseItem(pro -> pro.rarity(ModRarities.EPIC).food(ModFoods.cosmic_meatballs)));
-    public static RegistryObject<Item> forge_energy = item("forge_energy");
+    public static RegistryObject<Item> forge_energy = item("forge_energy", false);
     public static RegistryObject<Item> item(String name) {
-        return item(name, (e) -> new BaseItem());
+        return item(name, true);
+    }
+
+    public static RegistryObject<Item> item(String name, boolean exist) {
+        return item(name, (e) -> new BaseItem(), exist);
     }
 
     public static RegistryObject<Item> item(String name, Function<String, Item> item) {
-        return item(name, () -> item.apply(name));
+        return item(name, item, true);
+    }
+
+    public static RegistryObject<Item> item(String name, Function<String, Item> item, boolean exist) {
+        return item(name, () -> item.apply(name), exist);
     }
 
     public static RegistryObject<Item> item(String name, Supplier<Item> item) {
-        return ITEMS.register(name, item);
+        return item(name, item, true);
+    }
+
+    public static RegistryObject<Item> item(String name, Supplier<Item> item, boolean exist) {
+        var regItem = ITEMS.register(name, item);
+        if (exist) ModCreativeModeTabs.ACCEPT_ITEM.add(regItem);
+        return regItem;
     }
 
 }
