@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class ModApi {
     @ApiStatus.Experimental
-    public static ShapelessTableCraftingRecipe addExtremeShapelessRecipe(ItemStack result, List<ItemStack> ingredients, int tier) {
+    public static ShapelessTableCraftingRecipe addModShapelessRecipe(ItemStack result, List<ItemStack> ingredients, int tier) {
         List<ItemStack> arraylist = new ArrayList<>();
 
         for (ItemStack stack : ingredients) {

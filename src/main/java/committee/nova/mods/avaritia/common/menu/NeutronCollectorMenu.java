@@ -24,7 +24,7 @@ public class NeutronCollectorMenu extends BaseTileMenu<BaseNeutronCollectorTile>
 
 
     public NeutronCollectorMenu(int id, Inventory playerInventory, FriendlyByteBuf buffer) {
-        this(id, playerInventory, buffer.readBlockPos(), new SimpleContainerData(10));
+        this(id, playerInventory, buffer.readBlockPos(), new SimpleContainerData(1));
     }
 
     public NeutronCollectorMenu(int id, Inventory playerInventory, BlockPos pos, ContainerData data) {

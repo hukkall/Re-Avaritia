@@ -10,7 +10,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -20,13 +24,14 @@ import org.jetbrains.annotations.NotNull;
  * Version: 1.0
  */
 public class CompressorMenu extends BaseTileMenu<CompressorTile> {
+    private final ContainerData progressData;
     public CompressorMenu(int id, Inventory playerInventory, FriendlyByteBuf buffer) {
-        this(id, playerInventory, CompressorTile.createInventoryHandler(), buffer.readBlockPos());
+        this(id, playerInventory, CompressorTile.createInventoryHandler(), buffer.readBlockPos(), new SimpleContainerData(1));
     }
 
-    public CompressorMenu(int id, Inventory playerInventory, ItemStackWrapper inventory, BlockPos pos) {
+    public CompressorMenu(int id, Inventory playerInventory, ItemStackWrapper inventory, BlockPos pos, ContainerData data) {
         super(ModMenus.compressor.get(), id, playerInventory, pos);
-
+        this.progressData = data;
         this.addSlot(new OutputSlot(inventory, 0, 120, 35));
         this.addSlot(new BaseItemStackHandlerSlot(inventory, 1, 39, 35));
         createInventorySlots(playerInventory);
@@ -75,4 +80,10 @@ public class CompressorMenu extends BaseTileMenu<CompressorTile> {
 
         return itemstack;
     }
+
+    @OnlyIn(Dist.CLIENT)
+    public int getProgress() {
+        return this.progressData.get(0);
+    }
+
 }

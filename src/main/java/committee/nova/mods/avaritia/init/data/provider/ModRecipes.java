@@ -354,6 +354,15 @@ public class ModRecipes extends RecipeProvider implements IConditionBuilder {
                 .unlockedBy("has_item", has(ModItems.upgrade_smithing_template.get()))
                 .save(consumer);
 
+        ModExtremeSmithingRecipeBuilder.smithing(
+                        Ingredient.of(ModItems.upgrade_smithing_template.get()),
+                        Ingredient.of(Items.ELYTRA),
+                        CompoundIngredient.of(Ingredient.of(ModBlocks.crystal_matrix.get()), Ingredient.of(ModBlocks.neutron.get()), Ingredient.of(ModItems.enhancement_core.get())),
+                        RecipeCategory.MISC,
+                        ModItems.infinity_elytra.get().asItem())
+                .unlockedBy("has_item", has(ModItems.upgrade_smithing_template.get()))
+                .save(consumer);
+
         ModShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.upgrade_smithing_template.get())
                 .pattern(" aaabaaa ")
                 .pattern(" accecca ")

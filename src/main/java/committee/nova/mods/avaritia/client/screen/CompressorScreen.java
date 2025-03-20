@@ -141,7 +141,7 @@ public class CompressorScreen extends BaseContainerScreen<CompressorMenu> {
         if (this.tile == null)
             return 0;
 
-        return this.tile.getProgress();
+        return this.menu.getProgress();
     }
 
     public int getMaterialCount() {

@@ -1,7 +1,6 @@
 package committee.nova.mods.avaritia.common.item.misc;
 
 import committee.nova.mods.avaritia.api.common.container.OffsetContainer;
-import committee.nova.mods.avaritia.api.common.wrapper.OffsetItemStackWrapper;
 import committee.nova.mods.avaritia.common.capability.RingStorageProvider;
 import committee.nova.mods.avaritia.common.item.resources.ResourceItem;
 import committee.nova.mods.avaritia.common.menu.NeutronRingMenu;
@@ -16,9 +15,7 @@ import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,7 +36,7 @@ public class NeutronRingItem extends ResourceItem implements OffsetContainer{
         if (!worldIn.isClientSide && !playerIn.isCrouching()) {
             int slot = handIn == InteractionHand.MAIN_HAND ? playerIn.getInventory().selected : 40;
             NetworkHooks.openScreen((ServerPlayer) playerIn,
-                    new SimpleMenuProvider((id, playerInventory, player) -> new NeutronRingMenu(id, playerInventory, slot, this), Component.translatable("item.avaritia.neutron_ring")),
+                    new SimpleMenuProvider((id, playerInventory, player) -> new NeutronRingMenu(id, playerInventory, slot), Component.translatable("item.avaritia.neutron_ring")),
                     buf -> buf.writeInt(slot));
         }
         return super.use(worldIn, playerIn, handIn);
@@ -47,7 +44,7 @@ public class NeutronRingItem extends ResourceItem implements OffsetContainer{
 
     @Override
     public @Nullable ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
-        return new RingStorageProvider(getItemHandler());
+        return new RingStorageProvider(stack, nbt);
     }
 
     @Override

@@ -638,7 +638,7 @@ public class ToolUtils {
      * @return 图腾
      */
     public static ItemStack getPlayerTotemItem(Player player) {
-        return InventoryUtils.findItemInPlayer(player, stack -> stack.is(ModItems.infinity_totem.get()), ItemStack.EMPTY, stack -> stack);
+        return InventoryUtils.findItemInInv(player, stack -> stack.is(ModItems.infinity_totem.get()), ItemStack.EMPTY, stack -> stack);
     }
 
     /**

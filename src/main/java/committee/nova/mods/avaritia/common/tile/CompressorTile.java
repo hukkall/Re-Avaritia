@@ -13,6 +13,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -165,7 +166,7 @@ public class CompressorTile extends BaseInventoryTileEntity {
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(int windowId, @NotNull Inventory playerInventory) {
-        return new CompressorMenu(windowId, playerInventory, this.inventory, this.getBlockPos());
+        return new CompressorMenu(windowId, playerInventory, this.inventory, this.getBlockPos(), this.data);
     }
 
     public ItemStack getMaterialStack() {
@@ -189,10 +190,6 @@ public class CompressorTile extends BaseInventoryTileEntity {
             this.ejecting = !this.ejecting;
             this.setChangedAndDispatch();
         }
-    }
-
-    public int getProgress() {
-        return this.progress;
     }
 
     public boolean hasRecipe() {

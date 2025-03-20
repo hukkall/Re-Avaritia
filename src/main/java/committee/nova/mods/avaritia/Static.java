@@ -38,7 +38,7 @@ public class Static {
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().enableComplexMapKeySerialization().create();
     public static final GameProfile AVARITIA_FAKE_PLAYER = new GameProfile(UUID.fromString("32283731-bbef-487c-bb69-c7e32f84ed27"), "[Avaritia]");
     public static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat(",###");
-    private static boolean curios = ModList.get().isLoaded("curios");
+    private static final boolean curios = ModList.get().isLoaded("curios");
 
 
     public static ResourceLocation rl(String path) {

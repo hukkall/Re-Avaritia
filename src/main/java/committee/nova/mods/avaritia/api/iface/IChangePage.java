@@ -1,8 +1,5 @@
 package committee.nova.mods.avaritia.api.iface;
 
-import committee.nova.mods.avaritia.init.config.ModConfig;
-import net.minecraft.util.Mth;
-
 /**
  * @Project: Avaritia
  * @Author: cnlimiter

@@ -1,5 +1,6 @@
 package committee.nova.mods.avaritia.common.capability;
 
+import committee.nova.mods.avaritia.common.item.misc.NeutronRingItem;
 import committee.nova.mods.avaritia.common.wrappers.RingStorageWrapper;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -8,6 +9,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -17,12 +19,20 @@ import org.jetbrains.annotations.NotNull;
  * @Description:
  */
 public class RingStorageProvider implements ICapabilitySerializable<CompoundTag> {
-    private final RingStorageWrapper inv;
-    private final LazyOptional<RingStorageWrapper> inventoryCap;
+    ItemStackHandler inv = new ItemStackHandler(81) {
+        @Override
+        public int getSlotLimit(int slot) {
+            return Integer.MAX_VALUE;
+        }
 
-    public RingStorageProvider(RingStorageWrapper inv) {
-        this.inv = inv;
-        this.inventoryCap = LazyOptional.of(() -> inv);
+        @Override
+        public boolean isItemValid(int slot, ItemStack stack) {
+            return !(stack.getItem() instanceof NeutronRingItem) && super.isItemValid(slot, stack);
+        }
+    };
+    private final LazyOptional<ItemStackHandler> inventoryCap = LazyOptional.of(() -> inv);
+
+    public RingStorageProvider(ItemStack stack, CompoundTag nbt) {
     }
 
     @Override

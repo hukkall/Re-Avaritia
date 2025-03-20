@@ -125,7 +125,7 @@ public class InventoryUtils {
      * @return 找到的值
      */
 
-    public static ItemStack findInInv(Player player, Item item) {
+    public static ItemStack findItemInInv(Player player, Item item) {
         if (player.getMainHandItem().getItem() == item) {
             return player.getMainHandItem();
         } else if (player.getOffhandItem().getItem() == item) {
@@ -152,7 +152,7 @@ public class InventoryUtils {
      * @param map 初始值操作函数
      * @return 找到的值
      */
-    public static <T> T findItemInPlayer(Player player, Predicate<ItemStack> is, T def, Function<ItemStack, T> map) {
+    public static <T> T findItemInInv(Player player, Predicate<ItemStack> is, T def, Function<ItemStack, T> map) {
         if(is.test(player.getMainHandItem()))return map.apply(player.getMainHandItem());
         if(is.test(player.getOffhandItem()))return map.apply(player.getOffhandItem());
         Inventory inv = player.getInventory();
