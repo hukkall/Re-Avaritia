@@ -7,6 +7,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.ItemHandlerHelper;
+import top.theillusivec4.curios.api.CuriosApi;
+import top.theillusivec4.curios.api.SlotResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +17,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.function.Predicate;
+
+import static committee.nova.mods.avaritia.Static.curios;
 
 /**
  * @Project: Avaritia
@@ -145,12 +149,17 @@ public class InventoryUtils {
      *
      * @param player 玩家
      * @param is 匹配值
-     * @param def 初始值
-     * @param map 初始值操作函数
+     * @param map 操作函数
      * @return 找到的值
      */
-    public static <T> T findItemInInv(Player player, Predicate<ItemStack> is, T def, Function<ItemStack, T> map) {
-        if(Static.curios) return Static.checkExtraSlots(player, is, def, map);//从饰品栏中获取
+    public static ItemStack findItemInInv(Player player, Predicate<ItemStack> is, Function<ItemStack, ItemStack> map) {
+        if(curios) {
+            AtomicReference<List<SlotResult>> s = new AtomicReference<>(new ArrayList<>());
+            CuriosApi.getCuriosInventory(player).ifPresent(curiosInventory -> {
+                s.set(curiosInventory.findCurios(is));
+            });
+            if(!s.get().isEmpty())return map.apply(s.get().get(0).stack());
+        }//从饰品栏中获取
         if(is.test(player.getMainHandItem()))return map.apply(player.getMainHandItem());
         if(is.test(player.getOffhandItem()))return map.apply(player.getOffhandItem());
         Inventory inv = player.getInventory();
@@ -161,6 +170,6 @@ public class InventoryUtils {
                 return map.apply(s);
             }
         }
-        return map.apply(ItemStack.EMPTY);
+        return ItemStack.EMPTY;
     }
 }

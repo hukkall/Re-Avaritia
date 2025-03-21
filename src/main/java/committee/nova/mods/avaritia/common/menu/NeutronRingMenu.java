@@ -36,7 +36,7 @@ public class NeutronRingMenu extends BaseMenu {
             this.ring = playerInventory.getItem(slot);
         }
         if (ring.isEmpty()) {
-            this.ring = InventoryUtils.findItemInInv(playerInventory.player, stack -> stack.is(ModItems.neutron_ring.get()), ItemStack.EMPTY, stack -> stack);
+            this.ring = InventoryUtils.findItemInInv(playerInventory.player, stack -> stack.is(ModItems.neutron_ring.get()), stack -> stack);
         }
         ring.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(h -> {
             for (int j = 0; j < h.getSlots(); j++) {

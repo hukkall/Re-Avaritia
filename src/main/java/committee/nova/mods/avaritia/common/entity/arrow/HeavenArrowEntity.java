@@ -9,6 +9,8 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -20,17 +22,25 @@ import org.jetbrains.annotations.NotNull;
 
 public class HeavenArrowEntity extends Arrow {
 
-    private Entity shooter;
-
     public HeavenArrowEntity(EntityType<? extends Arrow> entityType, Level level) {
         super(entityType, level);
-        this.shooter = null; // 显式初始化为 null
     }
 
-    public static HeavenArrowEntity create(Level level, LivingEntity shooter) {
-        HeavenArrowEntity entity = new HeavenArrowEntity(ModEntities.HEAVEN_ARROW.get(), level);
-        entity.shooter = shooter;
-        return entity;
+    public HeavenArrowEntity(Level world, Entity pShooter, double xPos, double yPos, double zPos) {
+        this(ModEntities.HEAVEN_ARROW.get(), world);
+        this.setOwner(pShooter);
+        this.setPos(xPos, yPos, zPos);
+    }
+
+    public HeavenArrowEntity(Level world, Entity pShooter) {
+        this(world, pShooter, pShooter.getX(), pShooter.getEyeY() - (double)0.1F, pShooter.getZ());
+        if (pShooter instanceof Player) {
+            this.pickup = AbstractArrow.Pickup.ALLOWED;
+        }
+    }
+
+    public HeavenArrowEntity(Entity pShooter) {
+        this(pShooter.level(), pShooter);
     }
 
     @Override
@@ -38,8 +48,8 @@ public class HeavenArrowEntity extends Arrow {
         super.onHitBlock(result);
         var pos = result.getBlockPos();
         var randy = level().random;
-        if (shooter != null) {
-            ToolUtils.arrowBarrage(this.shooter, level(), piercedAndKilledEntities, pickup, randy, pos);
+        if (getOwner() != null) {
+            ToolUtils.arrowBarrage(this.getOwner(), level(), piercedAndKilledEntities, pickup, randy, pos);
         } else {
             // 记录日志
             System.out.println("HeavenArrowEntity: shooter is null!");
@@ -51,8 +61,8 @@ public class HeavenArrowEntity extends Arrow {
     protected void onHitEntity(@NotNull EntityHitResult result) {
         Entity entity = result.getEntity();
         final float HEAVEN_ARROW_DAMAGE = 500f;
-        if (shooter != null && shooter != entity) {
-            entity.hurt(ModDamageTypes.causeRandomDamage(this.shooter), HEAVEN_ARROW_DAMAGE);
+        if (getOwner() != null) {
+            entity.hurt(ModDamageTypes.causeRandomDamage(this.getOwner()), HEAVEN_ARROW_DAMAGE);
         }
     }
 

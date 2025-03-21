@@ -60,17 +60,21 @@ public class TraceArrowEntity extends Arrow {
         this.homingTime = 0;
     }
 
-    public TraceArrowEntity(Level world, double xPos, double yPos, double zPos) {
+    public TraceArrowEntity(Level world, Entity pShooter, double xPos, double yPos, double zPos) {
         this(ModEntities.TRACE_ARROW.get(), world);
+        this.setOwner(pShooter);
         this.setPos(xPos, yPos, zPos);
     }
 
-    public TraceArrowEntity(Level world, LivingEntity pShooter) {
-        this(world, pShooter.getX(), pShooter.getEyeY() - (double)0.1F, pShooter.getZ());
-        this.setOwner(pShooter);
+    public TraceArrowEntity(Level world, Entity pShooter) {
+        this(world, pShooter,  pShooter.getX(), pShooter.getEyeY() - (double)0.1F, pShooter.getZ());
         if (pShooter instanceof Player) {
             this.pickup = AbstractArrow.Pickup.ALLOWED;
         }
+    }
+
+    public TraceArrowEntity(Entity pShooter) {
+        this(pShooter.level(), pShooter);
     }
 
     public void setSpectral(int spectralTime) {

@@ -8,6 +8,8 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -24,24 +26,26 @@ import org.jetbrains.annotations.NotNull;
  */
 public class HeavenSubArrowEntity extends Arrow {
 
-    private Entity shooter;
 
     public HeavenSubArrowEntity(EntityType<? extends Arrow> entityType, Level level) {
         super(entityType, level);
     }
 
-    public static HeavenSubArrowEntity create(Level level, Entity shooter) {
-        HeavenSubArrowEntity entity = new HeavenSubArrowEntity(ModEntities.HEAVEN_SUB_ARROW.get(), level);
-        entity.setPos(shooter.getX(), shooter.getY() + 1.2, shooter.getZ());
-        entity.shooter = shooter;
-        return entity;
+    public HeavenSubArrowEntity(Level world, Entity pShooter, double xPos, double yPos, double zPos) {
+        this(ModEntities.HEAVEN_SUB_ARROW.get(), world);
+        this.setOwner(pShooter);
+        this.setPos(xPos, yPos, zPos);
     }
 
-    public static HeavenSubArrowEntity create(Level level, Entity shooter, double x, double y, double z) {
-        HeavenSubArrowEntity entity = new HeavenSubArrowEntity(ModEntities.HEAVEN_SUB_ARROW.get(), level);
-        entity.setPos(x, y, z);
-        entity.shooter = shooter;
-        return entity;
+    public HeavenSubArrowEntity(Level world, Entity pShooter) {
+        this(world, pShooter, pShooter.getX(), pShooter.getEyeY() - (double)0.1F, pShooter.getZ());
+        if (pShooter instanceof Player) {
+            this.pickup = AbstractArrow.Pickup.ALLOWED;
+        }
+    }
+
+    public HeavenSubArrowEntity(Entity pShooter) {
+        this(pShooter.level(), pShooter);
     }
 
     @Override
@@ -70,13 +74,9 @@ public class HeavenSubArrowEntity extends Arrow {
     @Override
     protected void onHitEntity(@NotNull EntityHitResult result) {
         Entity entity = result.getEntity();
-        // if (shooter != null) entity.hurt(ModDamageTypes.causeRandomDamage(shooter), 2000F);
         final float HEAVEN_ARROW_DAMAGE = 200f;
-        if (shooter != null && shooter != entity) {
-            entity.hurt(ModDamageTypes.causeRandomDamage(this.shooter), HEAVEN_ARROW_DAMAGE);
-        } else {
-            //   entity.hurt(ModDamageTypes.causeRandomDamage(entity), Float.MAX_VALUE); // 使用被击中的实体作为默认值
-            System.out.println("无尽弓 - SubArrow: 射手为空或射到了自己, 无伤害。");
+        if (getOwner() != null) {
+            entity.hurt(ModDamageTypes.causeRandomDamage(this.getOwner()), HEAVEN_ARROW_DAMAGE);
         }
     }
 }

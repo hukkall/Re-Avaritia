@@ -144,45 +144,22 @@ public class InfinityBowItem extends BowItem implements ITooltip, InitEnchantIte
                 float draw = getPowerForTime(drawTime);//蓄力时间
                 float powerForTime = draw * VELOCITY_MULTIPLIER;
 
-                ItemStack ammoStack = player.getProjectile(stack).isEmpty() ? new ItemStack(Items.ARROW) : player.getProjectile(stack);//无限箭矢
-
-                AbstractArrow arrowEntity;
+                AbstractArrow arrowEntity = this.customArrow(new HeavenArrowEntity(player));
 
                 if (stack.getOrCreateTag().getBoolean("tracer")) {//追踪模式
                     if ((double) powerForTime >= 0.1D) {
-                        ArrowItem arrowitem = (ammoStack.getItem() instanceof ArrowItem arrowItem ? arrowItem : (ArrowItem) Items.ARROW);
-                        arrowEntity = this.customTraceArrow(arrowitem.createArrow(level, ammoStack, player));
-                        if (arrowEntity instanceof Arrow arrow2) {
-                            arrow2.setEffectsFromItem(ammoStack);
-                        } else if (arrowEntity instanceof TraceArrowEntity infinityArrow) {
-                            infinityArrow.setEffectsFromItem(ammoStack);
-                        }
-
-                        arrowEntity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, powerForTime * 3.0F, 0.01F);
-
-                        if (draw == 1.0F) {
-                            arrowEntity.setCritArrow(true);//蓄力满必暴击
-                        }
-
-                        arrowEntity.setBaseDamage(arrowEntity.getBaseDamage() * (double) DAMAGE_MULTIPLIER);
-                        addEnchant(stack, level, player, arrowEntity, powerForTime);
-
+                        arrowEntity = this.customArrow(new TraceArrowEntity(player));
                     }
-
-                } else {
-                    arrowEntity = this.customArrow(HeavenArrowEntity.create(level, player));
-                    arrowEntity.setPos(player.getX() + 0.2, player.getEyeY() - 0.1, player.getZ());
-                    arrowEntity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, powerForTime * 3.0F, 0.01F);
-                    if (draw == 1.0F) {
-                        arrowEntity.setCritArrow(true);//蓄力满必暴击
-                    }
-                    arrowEntity.setBaseDamage(arrowEntity.getBaseDamage() * (double) DAMAGE_MULTIPLIER);
-                    addEnchant(stack, level, player, arrowEntity, powerForTime);
                 }
 
+                arrowEntity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, powerForTime * 3.0F, 0.01F);
+                if (draw == 1.0F) {
+                    arrowEntity.setCritArrow(true);//蓄力满必暴击
+                }
+                arrowEntity.setBaseDamage(arrowEntity.getBaseDamage() * (double) DAMAGE_MULTIPLIER);
+                addEnchant(stack, level, player, arrowEntity, powerForTime);
                 level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ARROW_SHOOT, SoundSource.PLAYERS, 1.0F, 1.0F / (level.random.nextFloat() * 0.4F + 1.2F) + powerForTime * 0.5F);
                 player.awardStat(Stats.ITEM_USED.get(this));
-
             }
         }
     }
@@ -205,21 +182,4 @@ public class InfinityBowItem extends BowItem implements ITooltip, InitEnchantIte
         arrowEntity.pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
         level.addFreshEntity(arrowEntity);
     }
-
-    public @NotNull AbstractArrow customTraceArrow(AbstractArrow arrow) {
-        if (arrow.getType() != EntityType.ARROW && arrow.getType() != EntityType.SPECTRAL_ARROW) {
-            return arrow;
-        } else {
-            if (arrow.getOwner() != null && arrow.getOwner() instanceof LivingEntity livingEntity) {
-                TraceArrowEntity newArrow = new TraceArrowEntity(arrow.level(), livingEntity);
-                if (arrow instanceof SpectralArrow spectralArrow) {
-                    newArrow.setSpectral(spectralArrow.duration);
-                }
-                return newArrow;
-            } else {
-                return new TraceArrowEntity(ModEntities.TRACE_ARROW.get(), arrow.level());
-            }
-        }
-    }
-
 }

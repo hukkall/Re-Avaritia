@@ -247,6 +247,21 @@ public class ModRecipes extends RecipeProvider implements IConditionBuilder {
                 .define('k', Items.HEART_OF_THE_SEA)
                 .unlockedBy("has_block", has(ModBlocks.end_crafting_table.get())).save(consumer);
 
+        ModShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.neutron_ring.get(), 3)
+                .pattern("  aaa  ")
+                .pattern(" cbbbc ")
+                .pattern("ab d ba")
+                .pattern("abdedba")
+                .pattern("ab d ba")
+                .pattern(" cbbbc ")
+                .pattern("  aaa  ")
+                .define('a', ModItems.neutron_ingot.get())
+                .define('b', ModItems.crystal_matrix_ingot.get())
+                .define('c', ModBlocks.crystal_matrix.get())
+                .define('d', ModItems.endest_pearl.get())
+                .define('e', ModItems.infinity_catalyst.get())
+                .unlockedBy("has_block", has(ModBlocks.end_crafting_table.get())).save(consumer);
+
         ModShapedRecipeBuilder.shaped(RecipeCategory.MISC, Blocks.END_PORTAL_FRAME, 2)
                 .pattern("     ")
                 .pattern("fghgf")
@@ -360,6 +375,15 @@ public class ModRecipes extends RecipeProvider implements IConditionBuilder {
                         CompoundIngredient.of(Ingredient.of(ModBlocks.crystal_matrix.get()), Ingredient.of(ModBlocks.neutron.get()), Ingredient.of(ModItems.enhancement_core.get())),
                         RecipeCategory.MISC,
                         ModItems.infinity_elytra.get().asItem())
+                .unlockedBy("has_item", has(ModItems.upgrade_smithing_template.get()))
+                .save(consumer);
+
+        ModExtremeSmithingRecipeBuilder.smithing(
+                        Ingredient.of(ModItems.upgrade_smithing_template.get()),
+                        Ingredient.of(ModBlocks.compressed_chest.get()),
+                        CompoundIngredient.of(Ingredient.of(ModBlocks.neutron.get()), Ingredient.of(ModBlocks.infinity.get()), Ingredient.of(ModItems.enhancement_core.get())),
+                        RecipeCategory.MISC,
+                        ModBlocks.infinity_chest.get().asItem())
                 .unlockedBy("has_item", has(ModItems.upgrade_smithing_template.get()))
                 .save(consumer);
 

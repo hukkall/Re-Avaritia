@@ -229,11 +229,11 @@ public class InfinityCrossBowItem extends CrossbowItem implements ITooltip {
             ItemStack stack = new ItemStack(Items.ARROW);
             ArrowItem arrowitem = (ArrowItem) (stack.getItem() instanceof ArrowItem ? stack.getItem() : Items.ARROW);
             arrow = arrowitem.createArrow(worldIn, ammo, shooter);
+            arrow.setOwner(shooter);
             arrow.setBaseDamage(20);
             arrow.setPierceLevel((byte) 2);
         } else {
-            arrow = HeavenSubArrowEntity.create(worldIn, shooter);
-            arrow.setOwner(shooter);
+            arrow = new HeavenSubArrowEntity(shooter);
             arrow.setPierceLevel((byte) 5);
         }
         if (shooter instanceof Player) {

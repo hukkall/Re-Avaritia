@@ -123,7 +123,8 @@ public class InfinityChestBlock extends BaseTileEntityBlock implements SimpleWat
     public BlockState getStateForPlacement(BlockPlaceContext placeContext) {
         BlockPos blockpos = placeContext.getClickedPos();
         FluidState fluidstate = placeContext.getLevel().getFluidState(blockpos);
-        return this.defaultBlockState().setValue(WATERLOGGED, fluidstate.getType() == Fluids.WATER);
+        return this.defaultBlockState().setValue(WATERLOGGED, fluidstate.getType() == Fluids.WATER)
+                .setValue(FACING, placeContext.getHorizontalDirection().getOpposite());
     }
 
     @Override
@@ -200,4 +201,13 @@ public class InfinityChestBlock extends BaseTileEntityBlock implements SimpleWat
         return false;
     }
 
+    @Override
+    public BlockState rotate(BlockState pState, Rotation pRotation) {
+        return pState.setValue(FACING, pRotation.rotate(pState.getValue(FACING)));
+    }
+
+    @Override
+    public @NotNull BlockState mirror(BlockState pState, Mirror pMirror) {
+        return pState.rotate(pMirror.getRotation(pState.getValue(FACING)));
+    }
 }

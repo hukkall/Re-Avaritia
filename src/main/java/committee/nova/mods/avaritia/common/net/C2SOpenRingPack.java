@@ -1,12 +1,13 @@
 package committee.nova.mods.avaritia.common.net;
 
-import committee.nova.mods.avaritia.common.menu.ExtremeAnvilMenu;
+import committee.nova.mods.avaritia.api.utils.InventoryUtils;
 import committee.nova.mods.avaritia.common.menu.NeutronRingMenu;
+import committee.nova.mods.avaritia.init.registry.ModItems;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleMenuProvider;
-import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.NetworkHooks;
 
@@ -37,7 +38,8 @@ public class C2SOpenRingPack {
     public void run(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             ServerPlayer player = ctx.get().getSender();
-            if (player != null) {
+            var ring = InventoryUtils.findItemInInv(player, stack -> stack.is(ModItems.neutron_ring.get()), stack -> stack);
+            if (player != null && !ring.isEmpty()) {
                 NetworkHooks.openScreen(player,
                         new SimpleMenuProvider((id, playerInventory, player1) -> new NeutronRingMenu(id, playerInventory, -1), Component.translatable("item.avaritia.neutron_ring")),
                         buf -> buf.writeInt(-1));

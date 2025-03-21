@@ -13,12 +13,13 @@
 //import net.minecraft.world.phys.Vec3;
 //import org.jetbrains.annotations.NotNull;
 //
-/// **
+///**
 // * @Project: Avaritia
 // * @Author: cnlimiter
 // * @CreateTime: 2024/11/9 17:21
 // * @Description: <a href="https://github.com/yuoft/Endless/blob/master/src/main/java/com/yuo/endless/Entity/InfinityFireWorkEntity.java">...</a>
 // */
+//
 //public class InfinityFireWorkEntity extends FireworkRocketEntity {
 //
 //

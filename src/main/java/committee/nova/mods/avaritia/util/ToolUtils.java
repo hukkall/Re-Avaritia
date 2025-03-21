@@ -266,7 +266,7 @@ public class ToolUtils {
             double dx = Math.sin(dangle) * dDist;
             double dz = Math.cos(dangle) * dDist;
 
-            HeavenSubArrowEntity subArrow = HeavenSubArrowEntity.create(level, shooter, x, y, z);
+            HeavenSubArrowEntity subArrow = new HeavenSubArrowEntity(level, shooter, x, y, z);
             subArrow.piercedAndKilledEntities = piercedAndKilledEntities;
             subArrow.push(dx, -(randy.nextDouble() * 1.85 + 0.15), dz);
             subArrow.setCritArrow(true);//子箭必定暴击
@@ -414,7 +414,7 @@ public class ToolUtils {
                     livingentity.knockback(0.6F, Mth.sin(player.getYRot() * ((float) Math.PI / 180F)), -Mth.cos(player.getYRot() * ((float) Math.PI / 180F)));
                 }
             }
-            level.playSound(null, livingEntity.getX(), livingEntity.getY(), livingEntity.getZ(), SoundEvents.PLAYER_ATTACK_SWEEP, livingEntity.getSoundSource(), 1.0F, 1.0F);
+            level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.PLAYER_ATTACK_SWEEP, player.getSoundSource(), 1.0F, 1.0F);
             double d0 = -Mth.sin(player.getYRot() * ((float) Math.PI / 180F));
             double d1 = Mth.cos(player.getYRot() * ((float) Math.PI / 180F));
             if (level instanceof ServerLevel serverLevel) {
@@ -638,7 +638,7 @@ public class ToolUtils {
      * @return 图腾
      */
     public static ItemStack getPlayerTotemItem(Player player) {
-        return InventoryUtils.findItemInInv(player, stack -> stack.is(ModItems.infinity_totem.get()), ItemStack.EMPTY, stack -> stack);
+        return InventoryUtils.findItemInInv(player, stack -> stack.is(ModItems.infinity_totem.get()), stack -> stack);
     }
 
     /**
