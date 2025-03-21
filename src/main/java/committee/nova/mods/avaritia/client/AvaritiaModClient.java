@@ -26,6 +26,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 import static committee.nova.mods.avaritia.Static.LOGGER;
 import static committee.nova.mods.avaritia.client.AvaritiaForgeClient.FILTER_KEY;
+import static committee.nova.mods.avaritia.client.AvaritiaForgeClient.RING_KEY;
 
 /**
  * Author cnlimiter
@@ -48,6 +49,7 @@ public class AvaritiaModClient {
     public static void registerKeyMappings(RegisterKeyMappingsEvent event) {
         LOGGER.debug("Registering key bindings");
         event.register(FILTER_KEY);
+        event.register(RING_KEY);
     }
 
     @SubscribeEvent
