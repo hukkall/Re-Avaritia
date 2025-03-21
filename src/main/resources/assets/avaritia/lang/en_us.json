@@ -267,6 +267,7 @@
   "config.jade.plugin_avaritia.crafting_table":"Avaritia Crafting",
   "rarity.legend.name": "Legend",
   "rarity.cosmic.name": "Cosmic",
+  "key.avaritia.categories": "Avaritia KeyBindings",
   "key.avaritia.filter": "Open filter screen",
   "key.avaritia.neutron_ring": "Open Neutron Ring",
   "key.avaritia.infinity_chest.sort0": "sort 0",
