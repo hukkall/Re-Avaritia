@@ -6,7 +6,7 @@ import committee.nova.mods.avaritia.Static;
 import committee.nova.mods.avaritia.api.client.model.PerspectiveModelState;
 import committee.nova.mods.avaritia.api.client.model.bakedmodels.WrappedItemModel;
 import committee.nova.mods.avaritia.client.shader.AvaritiaShaders;
-import committee.nova.mods.avaritia.common.item.MatterClusterItem;
+import committee.nova.mods.avaritia.common.item.resources.MatterClusterItem;
 import committee.nova.mods.avaritia.init.registry.ModItems;
 import committee.nova.mods.avaritia.api.client.util.TransformUtils;
 import net.minecraft.client.Minecraft;

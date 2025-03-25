@@ -14,6 +14,7 @@ import committee.nova.mods.avaritia.common.block.craft.TierCraftTableBlock;
 import committee.nova.mods.avaritia.common.block.extreme.ExtremeAnvilBlock;
 import committee.nova.mods.avaritia.common.block.misc.SoulFarmLandBlock;
 import committee.nova.mods.avaritia.common.block.extreme.ExtremeSmithingTableBlock;
+import committee.nova.mods.avaritia.common.item.resources.RefinedCoalItem;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -65,6 +66,12 @@ public class ModBlocks {
                     .sound(SoundType.STONE)
             ),  true,
             new Item.Properties().rarity(ModRarities.RARE), Integer.MAX_VALUE);
+
+    public static RegistryObject<Block> refined_coal_block = itemBurnBlock("refined_coal_block", () -> new BaseBlock(BlockBehaviour.Properties.of()
+                    .strength(50F, 50F)
+                    .sound(SoundType.STONE)
+            ),  true,
+            new Item.Properties().rarity(ModRarities.UNCOMMON), RefinedCoalItem.BURN_TIME * 9);
 
     //MACHINE
     public static RegistryObject<Block> sculk_crafting_table = itemBlock("sculk_crafting_table", () -> new TierCraftTableBlock(ModCraftTier.SCULK), ModRarities.COMMON);

@@ -2,10 +2,10 @@ package committee.nova.mods.avaritia.init.registry;
 
 import committee.nova.mods.avaritia.Static;
 import committee.nova.mods.avaritia.api.common.item.BaseItem;
-import committee.nova.mods.avaritia.common.item.EndestPearlItem;
-import committee.nova.mods.avaritia.common.item.InfinityArmorItem;
-import committee.nova.mods.avaritia.common.item.InfinityElytraItem;
-import committee.nova.mods.avaritia.common.item.MatterClusterItem;
+import committee.nova.mods.avaritia.common.item.resources.EndestPearlItem;
+import committee.nova.mods.avaritia.common.item.tools.InfinityArmorItem;
+import committee.nova.mods.avaritia.common.item.misc.InfinityElytraItem;
+import committee.nova.mods.avaritia.common.item.resources.MatterClusterItem;
 import committee.nova.mods.avaritia.common.item.misc.*;
 import committee.nova.mods.avaritia.common.item.resources.*;
 import committee.nova.mods.avaritia.common.item.singularity.EternalSingularityItem;
@@ -89,15 +89,17 @@ public class ModItems {
     public static RegistryObject<Item> infinity_catalyst = item("infinity_catalyst", (s) -> new ResourceItem(ModRarities.LEGEND, s, true));
     public static RegistryObject<Item> infinity_ingot = item("infinity_ingot", (s) -> new ResourceItem(ModRarities.COSMIC, s, true));
     //singularity
-    public static RegistryObject<Item> singularity = item("singularity", () -> new SingularityItem(properties -> properties));
-    public static RegistryObject<Item> eternal_singularity = item("eternal_singularity", () -> new EternalSingularityItem(properties -> properties));
+    public static RegistryObject<Item> singularity = item("singularity", SingularityItem::new);
+    public static RegistryObject<Item> eternal_singularity = item("eternal_singularity", EternalSingularityItem::new);
     //misc
     public static RegistryObject<Item> record_fragment = item("record_fragment", (s) -> new ResourceItem(ModRarities.RARE, s, true));
     public static RegistryObject<Item> star_fuel = item("star_fuel", StarFuelItem::new);
+    public static RegistryObject<Item> refined_coal = item("refined_coal", RefinedCoalItem::new);
     public static RegistryObject<Item> endest_pearl = item("endest_pearl", EndestPearlItem::new);
     public static RegistryObject<Item> matter_cluster = item("matter_cluster", MatterClusterItem::new);
     public static RegistryObject<Item> enhancement_core = item("enhancement_core", EnhancementCoreItem::new);
     public static RegistryObject<Item> upgrade_smithing_template = item("upgrade_smithing_template", UpgradeSmithingTemplateItem::new);
+    public static RegistryObject<Item> machine_upgrade = item("machine_upgrade", MachineUpgradeItem::new);
     //food
     public static RegistryObject<Item> ultimate_stew = item("ultimate_stew", () -> new BaseItem(pro -> pro.rarity(ModRarities.EPIC).food(ModFoods.ultimate_stew)));
     public static RegistryObject<Item> cosmic_meatballs = item("cosmic_meatballs", () -> new BaseItem(pro -> pro.rarity(ModRarities.EPIC).food(ModFoods.cosmic_meatballs)));

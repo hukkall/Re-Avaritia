@@ -1,4 +1,4 @@
-package committee.nova.mods.avaritia.common.item;
+package committee.nova.mods.avaritia.common.item.misc;
 
 import committee.nova.mods.avaritia.init.registry.ModRarities;
 import net.minecraft.world.entity.LivingEntity;

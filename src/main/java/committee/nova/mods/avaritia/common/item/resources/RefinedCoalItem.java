@@ -6,23 +6,20 @@ import net.minecraft.world.item.crafting.RecipeType;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Description:
- * Author: cnlimiter
- * Date: 2022/5/18 17:30
- * Version: 1.0
+ * @Project: Avaritia
+ * @Author: cnlimiter
+ * @CreateTime: 2025/3/25 19:29
+ * @Description:
  */
-public class StarFuelItem extends ResourceItem {
-
-
-    public static final int BURN_TIME = Integer.MAX_VALUE;
-
-    public StarFuelItem() {
-        super(ModRarities.RARE, "star_fuel", true, new Properties().stacksTo(16));
+public class RefinedCoalItem extends ResourceItem{
+    public RefinedCoalItem(String registryName) {
+        super(ModRarities.UNCOMMON, registryName, true, new Properties().stacksTo(32));
     }
+
+    public static final int BURN_TIME = 16000 * 2;
 
     @Override
     public int getBurnTime(ItemStack stack, @Nullable RecipeType<?> recipeType) {
         return BURN_TIME;
     }
-
 }

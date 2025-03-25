@@ -1,10 +1,8 @@
 package committee.nova.mods.avaritia.common.item.misc;
 
-import committee.nova.mods.avaritia.api.common.container.OffsetContainer;
 import committee.nova.mods.avaritia.common.capability.RingStorageProvider;
 import committee.nova.mods.avaritia.common.item.resources.ResourceItem;
 import committee.nova.mods.avaritia.common.menu.NeutronRingMenu;
-import committee.nova.mods.avaritia.common.wrappers.RingStorageWrapper;
 import committee.nova.mods.avaritia.init.registry.ModRarities;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -26,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
  * @CreateTime: 2024/8/2 上午12:32
  * @Description:
  */
-public class NeutronRingItem extends ResourceItem implements OffsetContainer{
+public class NeutronRingItem extends ResourceItem{
     public NeutronRingItem() {
         super(ModRarities.EPIC, "neutron_ring", true, new Properties().stacksTo(1));
     }
@@ -45,15 +43,5 @@ public class NeutronRingItem extends ResourceItem implements OffsetContainer{
     @Override
     public @Nullable ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
         return new RingStorageProvider(stack, nbt);
-    }
-
-    @Override
-    public RingStorageWrapper getItemHandler() {
-        return new RingStorageWrapper(6);
-    }
-
-    @Override
-    public void setChanged() {
-
     }
 }

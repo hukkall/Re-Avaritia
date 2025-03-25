@@ -1,4 +1,4 @@
-package committee.nova.mods.avaritia.common.item;
+package committee.nova.mods.avaritia.common.item.tools;
 
 import committee.nova.mods.avaritia.Static;
 import committee.nova.mods.avaritia.client.model.InfinityArmorModel;

@@ -1,4 +1,4 @@
-package committee.nova.mods.avaritia.common.item;
+package committee.nova.mods.avaritia.common.item.resources;
 
 import committee.nova.mods.avaritia.api.common.item.BaseItem;
 import committee.nova.mods.avaritia.init.registry.ModRarities;

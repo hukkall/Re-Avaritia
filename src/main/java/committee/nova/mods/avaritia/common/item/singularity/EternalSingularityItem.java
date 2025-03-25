@@ -24,8 +24,8 @@ import java.util.function.Function;
  * @date 2024/6/13 下午7:52
  */
 public class EternalSingularityItem extends Item {
-    public EternalSingularityItem(Function<Properties, Properties> properties) {
-        super(properties.apply(new Properties().stacksTo(16).rarity(ModRarities.RARE)));
+    public EternalSingularityItem() {
+        super(new Properties().stacksTo(16).rarity(ModRarities.RARE));
     }
 
     @Override

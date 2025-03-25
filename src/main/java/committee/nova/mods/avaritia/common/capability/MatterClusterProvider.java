@@ -1,7 +1,7 @@
 package committee.nova.mods.avaritia.common.capability;
 
 import committee.nova.mods.avaritia.api.common.wrapper.ItemStackWrapper;
-import committee.nova.mods.avaritia.common.item.MatterClusterItem;
+import committee.nova.mods.avaritia.common.item.resources.MatterClusterItem;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;

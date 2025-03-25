@@ -1,7 +1,7 @@
 package committee.nova.mods.avaritia.init.handler;
 
 import committee.nova.mods.avaritia.Static;
-import committee.nova.mods.avaritia.common.item.MatterClusterItem;
+import committee.nova.mods.avaritia.common.item.resources.MatterClusterItem;
 import committee.nova.mods.avaritia.common.item.tools.infinity.InfinityCrossBowItem;
 import committee.nova.mods.avaritia.init.registry.ModItems;
 import net.minecraft.client.renderer.item.ItemProperties;

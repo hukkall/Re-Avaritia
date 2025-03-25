@@ -30,8 +30,8 @@ import java.util.function.Function;
  * Version: 1.0
  */
 public class SingularityItem extends Item implements IColored {
-    public SingularityItem(Function<Properties, Properties> properties) {
-        super(properties.apply(new Properties().rarity(ModRarities.UNCOMMON)));
+    public SingularityItem() {
+        super(new Properties().rarity(ModRarities.UNCOMMON));
     }
 
     @Override
