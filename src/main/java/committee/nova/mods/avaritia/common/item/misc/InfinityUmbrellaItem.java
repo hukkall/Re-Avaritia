@@ -11,8 +11,6 @@ import net.minecraft.world.item.Item;
  * @Description:
  */
 public class InfinityUmbrellaItem extends ResourceItem {
-
-
     public InfinityUmbrellaItem() {
         super(ModRarities.COSMIC, "infinity_umbrella", true, new Item.Properties().stacksTo(1));
     }

@@ -18,6 +18,12 @@ import net.minecraft.world.level.block.Block;
 public class ModTags {
     public static final TagKey<Item> SINGULARITY = ItemTags.create(Static.rl("singularity"));
     public static final TagKey<Item> DRAWERS = ItemTags.create(new ResourceLocation("storagedrawers", "drawers"));
+
+    public static final TagKey<Item> NEUTRON_DUST = ItemTags.create(new ResourceLocation("forge", "dust/neutronium"));
+    public static final TagKey<Item> NEUTRON_NUGGET = ItemTags.create(new ResourceLocation("forge", "nuggets/neutronium"));
+    public static final TagKey<Item> NEUTRON_INGOT = ItemTags.create(new ResourceLocation("forge", "ingot/neutronium"));
+    public static final TagKey<Block> NEUTRON_BLOCK = BlockTags.create(new ResourceLocation("forge", "storage_blocks/neutronium"));
+
     public static final TagKey<Block> EXTREME_ANVIL_UNBREAK = BlockTags.create(Static.rl("extreme_anvil_unbreak"));
     public static final TagKey<Block> NEEDS_CRYSTAL_TOOL = BlockTags.create(Static.rl("needs_crystal_tool"));
     public static final TagKey<Block> NEEDS_BLAZE_TOOL = BlockTags.create(Static.rl("needs_blaze_tool"));

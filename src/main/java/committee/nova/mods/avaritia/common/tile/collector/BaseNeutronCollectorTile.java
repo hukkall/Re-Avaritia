@@ -53,13 +53,13 @@ public class BaseNeutronCollectorTile extends BaseInventoryTileEntity {
         if (level.isClientSide) return;
         if (tile.canWork()) {
             var result = tile.inventory.getStackInSlot(0);
-            var stack = new ItemStack(tile.tier.production);
+            var stack = tile.tier.production.getItems()[0];
             tile.progress++;
             tile.data.set(0, tile.progress);
             if (tile.progress >= tile.tier.production_ticks) {
                 if (result.isEmpty()) {
                     tile.inventory.setStackInSlot(0, ItemHandlerHelper.copyStackWithSize(stack, 1));
-                } else if (result.is(tile.tier.production)) {
+                } else if (result.is(stack.getItem())) {
                     if (result.getCount() < 64) {
                         tile.inventory.setStackInSlot(0, ItemUtils.grow(result, 1));
                     }
@@ -124,6 +124,6 @@ public class BaseNeutronCollectorTile extends BaseInventoryTileEntity {
     }
 
     public Item getProduction() {
-        return tier.production;
+        return tier.production.getItems()[0].getItem();
     }
 }

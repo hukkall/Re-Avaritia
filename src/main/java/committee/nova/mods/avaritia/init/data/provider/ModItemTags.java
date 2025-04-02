@@ -36,5 +36,8 @@ public class ModItemTags extends IntrinsicHolderTagsProvider<Item> {
     @Override
     protected void addTags(HolderLookup.@NotNull Provider p_256380_) {
         tag(ModTags.SINGULARITY).add(ModItems.singularity.get());
+        tag(ModTags.NEUTRON_DUST).add(ModItems.neutron_pile.get());
+        tag(ModTags.NEUTRON_NUGGET).add(ModItems.neutron_nugget.get());
+        tag(ModTags.NEUTRON_INGOT).add(ModItems.neutron_ingot.get());
     }
 }

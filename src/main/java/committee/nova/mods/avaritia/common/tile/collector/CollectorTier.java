@@ -1,7 +1,7 @@
 package committee.nova.mods.avaritia.common.tile.collector;
 
-import committee.nova.mods.avaritia.init.registry.ModItems;
-import net.minecraft.world.item.Item;
+import committee.nova.mods.avaritia.init.registry.ModTags;
+import net.minecraft.world.item.crafting.Ingredient;
 
 /**
  * @Project: Avaritia
@@ -10,16 +10,16 @@ import net.minecraft.world.item.Item;
  * @Description:
  */
 public enum CollectorTier {
-    DEFAULT("neutron_collector", ModItems.neutron_pile.get(), 3600),
-    DENSE("dense_neutron_collector", ModItems.neutron_nugget.get(), 3600),
-    DENSER("denser_neutron_collector", ModItems.neutron_ingot.get(), 3600),
-    DENSEST("densest_neutron_collector", ModItems.neutron_ingot.get(), 200);
+    DEFAULT("neutron_collector", Ingredient.of(ModTags.NEUTRON_DUST), 3600),
+    DENSE("dense_neutron_collector", Ingredient.of(ModTags.NEUTRON_NUGGET), 3600),
+    DENSER("denser_neutron_collector", Ingredient.of(ModTags.NEUTRON_INGOT), 3600),
+    DENSEST("densest_neutron_collector", Ingredient.of(ModTags.NEUTRON_INGOT), 200);
 
     public final int production_ticks;
-    public final Item production;
+    public final Ingredient production;
     public final String name;
 
-    CollectorTier(String name, Item production, int production_ticks) {
+    CollectorTier(String name, Ingredient production, int production_ticks) {
         this.production_ticks = production_ticks;
         this.production = production;
         this.name = name;

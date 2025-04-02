@@ -159,7 +159,7 @@ public class ServerChannelManager {
             File userCache = new File(saveDataPath, "UserCache.dat");
             if (!userCache.exists()) userCache.createNewFile();
             NbtIo.writeCompressed(this.userCache, userCache);
-            Static.LOGGER.info("成功保存用户名缓存");
+            Static.LOGGER.debug("成功保存用户名缓存");
 
             channelList.forEach((uuid, channels) -> {
                 File user = new File(saveDataPath, uuid.toString());
