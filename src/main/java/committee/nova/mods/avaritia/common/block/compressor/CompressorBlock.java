@@ -45,6 +45,16 @@ public class CompressorBlock extends BaseTileEntityBlock {
     }
 
     @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(FACING);
+    }
+
+    @Override
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+        return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+    }
+
+    @Override
     public @NotNull InteractionResult use(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult trace) {
         if (!level.isClientSide()) {
             var tile = level.getBlockEntity(pos);
@@ -71,21 +81,6 @@ public class CompressorBlock extends BaseTileEntityBlock {
     }
 
     @Override
-    public BlockState getStateForPlacement(BlockPlaceContext context) {
-        return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
-    }
-
-    @Override
-    public boolean hasAnalogOutputSignal(@NotNull BlockState state) {
-        return true;
-    }
-
-    @Override
-    public int getAnalogOutputSignal(@NotNull BlockState state, Level level, @NotNull BlockPos pos) {
-        return AbstractContainerMenu.getRedstoneSignalFromBlockEntity(level.getBlockEntity(pos));
-    }
-
-    @Override
     public @NotNull BlockState rotate(BlockState state, Rotation rot) {
         return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
     }
@@ -96,18 +91,8 @@ public class CompressorBlock extends BaseTileEntityBlock {
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING);
-    }
-
-
-    @Override
     protected <T extends BlockEntity> BlockEntityTicker<T> getServerTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return createTicker(type, ModTileEntities.compressor_tile.get(), CompressorTile::tick);
+        return createTicker(type, ModTileEntities.compressor_tile.get(), CompressorTile::serverTick);
     }
 
-    @Override
-    protected <T extends BlockEntity> BlockEntityTicker<T> getClientTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return createTicker(type, ModTileEntities.compressor_tile.get(), CompressorTile::tick);
-    }
 }

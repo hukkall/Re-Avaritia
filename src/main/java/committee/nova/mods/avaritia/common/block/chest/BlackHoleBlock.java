@@ -2,9 +2,9 @@ package committee.nova.mods.avaritia.common.block.chest;
 
 import com.google.common.collect.ImmutableMap;
 import committee.nova.mods.avaritia.api.common.block.BaseTileEntityBlock;
-import committee.nova.mods.avaritia.addons.channel.WipChestMenuProvider;
+import committee.nova.mods.avaritia.addons.channel.ChannelMenuProvider;
 import committee.nova.mods.avaritia.addons.channel.ClientChannelManager;
-import committee.nova.mods.avaritia.common.tile.BlackHoleTile;
+import committee.nova.mods.avaritia.addons.channel.BlackHoleTile;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -157,10 +157,10 @@ public class BlackHoleBlock extends BaseTileEntityBlock implements SimpleWaterlo
                 }
 
                 if (chestTile.getChannelInfo() == null)
-                    NetworkHooks.openScreen((ServerPlayer) player, new WipChestMenuProvider(chestTile), buf -> {
+                    NetworkHooks.openScreen((ServerPlayer) player, new ChannelMenuProvider(chestTile), buf -> {
                     });
                 else {
-                    NetworkHooks.openScreen((ServerPlayer) player, new WipChestMenuProvider(chestTile), buf -> {
+                    NetworkHooks.openScreen((ServerPlayer) player, new ChannelMenuProvider(chestTile), buf -> {
                         buf.writeBlockPos(pos);
                         buf.writeInt(-2);
                         buf.writeUUID(chestTile.getOwner());

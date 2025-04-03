@@ -1,7 +1,6 @@
 package committee.nova.mods.avaritia.common.block.chest;
 
 import committee.nova.mods.avaritia.api.common.block.BaseTileEntityBlock;
-import committee.nova.mods.avaritia.common.tile.BlackHoleTile;
 import committee.nova.mods.avaritia.common.tile.InfinityChestTile;
 import committee.nova.mods.avaritia.common.wrappers.StorageItem;
 import committee.nova.mods.avaritia.util.StorageUtils;

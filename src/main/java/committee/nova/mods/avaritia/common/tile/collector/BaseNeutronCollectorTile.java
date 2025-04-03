@@ -14,7 +14,6 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -49,8 +48,7 @@ public class BaseNeutronCollectorTile extends BaseInventoryTileEntity {
         }
     }
 
-    public static void tick(Level level, BlockPos pos, BlockState state, BaseNeutronCollectorTile tile) {
-        if (level.isClientSide) return;
+    public static void serverTick(Level level, BlockPos pos, BlockState state, BaseNeutronCollectorTile tile) {
         if (tile.canWork()) {
             var result = tile.inventory.getStackInSlot(0);
             var stack = tile.tier.production.getItems()[0];

@@ -1,6 +1,5 @@
 package committee.nova.mods.avaritia.addons.channel;
 
-import committee.nova.mods.avaritia.common.tile.BlackHoleTile;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -16,17 +15,17 @@ import javax.annotation.ParametersAreNonnullByDefault;
  * @CreateTime: 2025/2/28 20:10
  * @Description:
  */
-public class WipChestMenuProvider implements MenuProvider {
+public class ChannelMenuProvider implements MenuProvider {
 
     private final BlackHoleTile blockEntity;
     private final int slotIndex;
 
-    public WipChestMenuProvider(BlackHoleTile blockEntity) {
+    public ChannelMenuProvider(BlackHoleTile blockEntity) {
         this.blockEntity = blockEntity;
         this.slotIndex = -2;
     }
 
-    public WipChestMenuProvider(int slotIndex) {
+    public ChannelMenuProvider(int slotIndex) {
         this.blockEntity = null;
         this.slotIndex = slotIndex;
     }

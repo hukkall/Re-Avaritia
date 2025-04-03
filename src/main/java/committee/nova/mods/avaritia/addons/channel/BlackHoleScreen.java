@@ -40,7 +40,7 @@ import java.util.List;
  * @CreateTime: 2025/2/24 00:39
  * @Description:
  */
-public class WipChestScreen extends AbstractContainerScreen<ChannelMenu> {
+public class BlackHoleScreen extends AbstractContainerScreen<ChannelMenu> {
     @Setter
     @Getter
     private int blitOffset;
@@ -57,7 +57,7 @@ public class WipChestScreen extends AbstractContainerScreen<ChannelMenu> {
     private CraftToInventoryButton craftToInventoryButton;
     private CraftAndDropButton craftAndDropButton;
 
-    public WipChestScreen(ChannelMenu menu, Inventory inventory, Component title) {
+    public BlackHoleScreen(ChannelMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
         this.imageWidth = 202;
         this.imageHeight = 236;

@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "avaritia:block/misc/infinity_clock/infinity_clock",
+      "y": 180
+    },
+    "facing=south": {
+      "model": "avaritia:block/misc/infinity_clock/infinity_clock"
+    },
+    "facing=west": {
+      "model": "avaritia:block/misc/infinity_clock/infinity_clock",
+      "y": 90
+    },
+    "facing=east": {
+      "model": "avaritia:block/misc/infinity_clock/infinity_clock",
+      "y": 270
+    }
+  }
+}

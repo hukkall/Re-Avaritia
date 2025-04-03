@@ -9,7 +9,7 @@ import committee.nova.mods.avaritia.client.screen.craft.SculkCraftScreen;
 import committee.nova.mods.avaritia.addons.channel.ChannelMenu;
 import committee.nova.mods.avaritia.addons.channel.ChannelSelectMenu;
 import committee.nova.mods.avaritia.addons.channel.ChannelSelectScreen;
-import committee.nova.mods.avaritia.addons.channel.WipChestScreen;
+import committee.nova.mods.avaritia.addons.channel.BlackHoleScreen;
 import committee.nova.mods.avaritia.common.menu.*;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -43,7 +43,7 @@ public class ModMenus {
         MenuScreens.register(GENERIC_9x27.get(), CompressedChestScreen::new);
         MenuScreens.register(neutron_ring.get(), NeutronRingScreen::new);
         MenuScreens.register(infinity_chest.get(), InfinityChestScreen::new);
-        MenuScreens.register(channel_menu.get(), WipChestScreen::new);
+        MenuScreens.register(channel_menu.get(), BlackHoleScreen::new);
         MenuScreens.register(channel_select_menu.get(), ChannelSelectScreen::new);
         MenuScreens.register(extreme_smithing_table.get(), ExtremeSmithingScreen::new);
         MenuScreens.register(extreme_anvil.get(), ExtremeAnvilScreen::new);
@@ -62,10 +62,9 @@ public class ModMenus {
     public static RegistryObject<MenuType<CompressorMenu>> compressor = menu("compressor", () -> IForgeMenuType.create(CompressorMenu::new));
     public static RegistryObject<MenuType<ExtremeSmithingMenu>> extreme_smithing_table = menu("extreme_smithing_table", () -> IForgeMenuType.create(ExtremeSmithingMenu::new));
     public static RegistryObject<MenuType<InfinityChestMenu>> infinity_chest = menu("infinity_chest", () -> IForgeMenuType.create(InfinityChestMenu::new));
-    public static RegistryObject<MenuType<ChannelMenu>> channel_menu = menu("channel", () -> IForgeMenuType.create(ChannelMenu::new));
     public static RegistryObject<MenuType<CompressedChestMenu>> GENERIC_9x27 = menu("generic_9x27", () -> IForgeMenuType.create(CompressedChestMenu::new));
     public static RegistryObject<MenuType<ExtremeAnvilMenu>> extreme_anvil = menu("extreme_anvil", () -> IForgeMenuType.create(ExtremeAnvilMenu::new));
     public static RegistryObject<MenuType<ChannelSelectMenu>> channel_select_menu = menu("channel_select_menu", () -> IForgeMenuType.create(ChannelSelectMenu::new));
-
+    public static RegistryObject<MenuType<ChannelMenu>> channel_menu = menu("channel", () -> IForgeMenuType.create(ChannelMenu::new));
 
 }

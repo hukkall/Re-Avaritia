@@ -9,7 +9,6 @@ import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
@@ -41,8 +40,19 @@ public class BaseNeutronCollectorBlock extends BaseTileEntityBlock {
     }
 
     @Override
-    public @NotNull RenderShape getRenderShape(@NotNull BlockState p_49232_) {
-        return RenderShape.MODEL;
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+        return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(FACING);
+    }
+
+    @Nullable
+    @Override
+    public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
+        return new BaseNeutronCollectorTile(pos, state);
     }
 
     @Override
@@ -71,22 +81,6 @@ public class BaseNeutronCollectorBlock extends BaseTileEntityBlock {
         return InteractionResult.SUCCESS;
     }
 
-
-    @Override
-    public BlockState getStateForPlacement(BlockPlaceContext context) {
-        return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
-    }
-
-    @Override
-    public boolean hasAnalogOutputSignal(BlockState state) {
-        return true;
-    }
-
-    @Override
-    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
-        return AbstractContainerMenu.getRedstoneSignalFromBlockEntity(level.getBlockEntity(pos));
-    }
-
     @Override
     public BlockState rotate(BlockState state, Rotation rot) {
         return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
@@ -98,25 +92,8 @@ public class BaseNeutronCollectorBlock extends BaseTileEntityBlock {
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING);
-    }
-
-
-    @Nullable
-    @Override
-    public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
-        return new BaseNeutronCollectorTile(pos, state);
-    }
-
-    @Override
     protected <T extends BlockEntity> BlockEntityTicker<T> getServerTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return createTicker(type, ModTileEntities.neutron_collector_tile.get(), BaseNeutronCollectorTile::tick);
-    }
-
-    @Override
-    protected <T extends BlockEntity> BlockEntityTicker<T> getClientTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return createTicker(type, ModTileEntities.neutron_collector_tile.get(), BaseNeutronCollectorTile::tick);
+        return createTicker(type, ModTileEntities.neutron_collector_tile.get(), BaseNeutronCollectorTile::serverTick);
     }
 
 }

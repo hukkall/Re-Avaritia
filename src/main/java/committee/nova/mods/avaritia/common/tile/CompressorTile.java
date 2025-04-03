@@ -13,7 +13,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -52,7 +51,7 @@ public class CompressorTile extends BaseInventoryTileEntity {
         return inventory;
     }
 
-    public static void tick(Level level, BlockPos pos, BlockState state, CompressorTile tile) {
+    public static void serverTick(Level level, BlockPos pos, BlockState state, CompressorTile tile) {
         var output = tile.inventory.getStackInSlot(0);
         var input = tile.inventory.getStackInSlot(1);
 
