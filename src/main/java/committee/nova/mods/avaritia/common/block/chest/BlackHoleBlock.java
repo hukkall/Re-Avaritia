@@ -2,8 +2,8 @@ package committee.nova.mods.avaritia.common.block.chest;
 
 import com.google.common.collect.ImmutableMap;
 import committee.nova.mods.avaritia.api.common.block.BaseTileEntityBlock;
-import committee.nova.mods.avaritia.common.menu.WipChestMenuProvider;
-import committee.nova.mods.avaritia.common.sync.ClientChannelManager;
+import committee.nova.mods.avaritia.addons.channel.WipChestMenuProvider;
+import committee.nova.mods.avaritia.addons.channel.ClientChannelManager;
 import committee.nova.mods.avaritia.common.tile.BlackHoleTile;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;

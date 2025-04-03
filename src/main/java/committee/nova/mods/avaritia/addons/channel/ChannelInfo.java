@@ -1,4 +1,4 @@
-package committee.nova.mods.avaritia.common.sync;
+package committee.nova.mods.avaritia.addons.channel;
 
 import java.util.UUID;
 

@@ -1,7 +1,6 @@
-package committee.nova.mods.avaritia.common.sync;
+package committee.nova.mods.avaritia.addons.channel;
 
 import committee.nova.mods.avaritia.Static;
-import committee.nova.mods.avaritia.client.screen.ChannelSelectScreen;
 import committee.nova.mods.avaritia.common.container.DummyContainer;
 import committee.nova.mods.avaritia.common.wrappers.channel.ClientChannel;
 import net.minecraft.nbt.CompoundTag;

@@ -1,4 +1,4 @@
-package committee.nova.mods.avaritia.common.menu;
+package committee.nova.mods.avaritia.addons.channel;
 
 import committee.nova.mods.avaritia.common.tile.BlackHoleTile;
 import net.minecraft.network.chat.Component;

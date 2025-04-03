@@ -1,4 +1,4 @@
-package committee.nova.mods.avaritia.common.sync;
+package committee.nova.mods.avaritia.addons.channel;
 
 import committee.nova.mods.avaritia.Static;
 import committee.nova.mods.avaritia.common.net.channel.*;
@@ -12,7 +12,6 @@ import net.minecraft.nbt.NbtIo;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.storage.LevelResource;
 import net.minecraftforge.common.MinecraftForge;

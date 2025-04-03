@@ -2,12 +2,12 @@ package committee.nova.mods.avaritia.common.tile;
 
 import committee.nova.mods.avaritia.Static;
 import committee.nova.mods.avaritia.api.common.tile.BaseTileEntity;
-import committee.nova.mods.avaritia.common.menu.ChannelMenu;
+import committee.nova.mods.avaritia.addons.channel.ChannelMenu;
 import committee.nova.mods.avaritia.common.net.channel.ChannelAction;
 import committee.nova.mods.avaritia.common.net.channel.S2CChannelActionPack;
-import committee.nova.mods.avaritia.common.sync.ChannelInfo;
-import committee.nova.mods.avaritia.common.sync.IChannelTerminal;
-import committee.nova.mods.avaritia.common.sync.ServerChannelManager;
+import committee.nova.mods.avaritia.addons.channel.ChannelInfo;
+import committee.nova.mods.avaritia.addons.channel.IChannelTerminal;
+import committee.nova.mods.avaritia.addons.channel.ServerChannelManager;
 import committee.nova.mods.avaritia.common.wrappers.channel.NullChannel;
 import committee.nova.mods.avaritia.common.wrappers.channel.ServerChannel;
 import committee.nova.mods.avaritia.init.handler.NetworkHandler;

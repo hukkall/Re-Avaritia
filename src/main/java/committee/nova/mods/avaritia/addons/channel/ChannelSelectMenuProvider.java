@@ -1,6 +1,5 @@
-package committee.nova.mods.avaritia.common.menu;
+package committee.nova.mods.avaritia.addons.channel;
 
-import committee.nova.mods.avaritia.common.sync.IChannelTerminal;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
