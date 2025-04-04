@@ -47,6 +47,8 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
@@ -743,6 +745,42 @@ public class ToolUtils {
         @Override
         public boolean contains(Object o) {
             return stream().anyMatch(pos1 -> pos1.equals(o));
+        }
+    }
+
+
+    /**
+     * 加速方块实体和更新
+     * @param pos 被加速方块位置
+     * @param level 世界
+     * @param speed 速度
+     * @param randomTicks 随机刻
+     * from Torcherino
+     */
+    public static void speedBlockTick(BlockPos pos, ServerLevel level, int speed, int randomTicks) {
+        int random_tick_rate = 4;
+        var targetState = level.getBlockState(pos);
+        var targetBlock = targetState.getBlock();
+        if (!(targetBlock instanceof EntityBlock entityBlock)) {
+            return;
+        }
+        if (level instanceof ServerLevel && targetBlock.isRandomlyTicking(targetState) &&
+                level.getRandom().nextInt(Mth.clamp(4096 / (speed * random_tick_rate), 1, 4096)) < randomTicks) {
+            targetState.randomTick(level, pos, level.getRandom());
+        }
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+        if (blockEntity != null) {
+            //noinspection unchecked
+            BlockEntityTicker<BlockEntity> ticker = (BlockEntityTicker<BlockEntity>) entityBlock.getTicker(level, targetState, blockEntity.getType());
+            if (blockEntity.isRemoved() || ticker == null) {
+                return;
+            }
+            for (int i = 0; i < speed; i++) {
+                if (blockEntity.isRemoved()) {
+                    break;
+                }
+                ticker.tick(level, pos, targetState, blockEntity);
+            }
         }
     }
 }

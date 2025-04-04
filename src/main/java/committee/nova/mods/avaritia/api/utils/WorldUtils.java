@@ -2,8 +2,17 @@ package committee.nova.mods.avaritia.api.utils;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.LightLayer;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.phys.AABB;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Project: Avaritia
@@ -85,5 +94,68 @@ public class WorldUtils {
             int moonLight = 9 - moonPhase;
             return isThundering ? Math.max(moonLight - 3, 1) : isRaining ? Math.max(moonLight - 2, 1) : moonLight;
         }
+    }
+
+
+    public static List<BlockEntity> getBlockEntitiesWithinAABB(Level level, AABB bBox) {
+        List<BlockEntity> list = new ArrayList<>();
+
+        for(BlockPos pos : getPositionsFromBox(bBox)) {
+            BlockEntity blockEntity = getBlockEntity(level, pos);
+            if (blockEntity != null) {
+                list.add(blockEntity);
+            }
+        }
+
+        return list;
+    }
+
+    public static Iterable<BlockPos> getPositionsFromBox(AABB box) {
+        return getPositionsFromBox(BlockPos.containing(box.minX, box.minY, box.minZ), BlockPos.containing(box.maxX, box.maxY, box.maxZ));
+    }
+
+    public static Iterable<BlockPos> getPositionsFromBox(BlockPos corner1, BlockPos corner2) {
+        return () -> BlockPos.betweenClosedStream(corner1, corner2).iterator();
+    }
+
+    /**
+     * 如果加载位置，获取一个块实体
+     *
+     * @param level world
+     * @param pos   position
+     *
+     * @return 如果发现块实体，则无发现或未加载
+     *
+     * @implNote From Mekanism
+     */
+    @Nullable
+    public static BlockEntity getBlockEntity(@Nullable BlockGetter level, @NotNull BlockPos pos) {
+        if (!isBlockLoaded(level, pos)) {
+            //If the world is null or its a world reader and the block is not loaded, return null
+            return null;
+        }
+        return level.getBlockEntity(pos);
+    }
+
+    /**
+     * 检查位置是否处于世界范围，并已加载
+     *
+     * @param world world
+     * @param pos   position
+     *
+     * @return 如果位置已加载或给定的世界是Iworldreader的超级类，则没有加载的概念。
+     *
+     * @implNote From Mekanism
+     */
+    public static boolean isBlockLoaded(@Nullable BlockGetter world, @NotNull BlockPos pos) {
+        if (world == null) {
+            return false;
+        } else if (world instanceof LevelReader reader) {
+            if (reader instanceof Level level && !level.isInWorldBounds(pos)) {
+                return false;
+            }
+            return reader.hasChunkAt(pos);
+        }
+        return true;
     }
 }
