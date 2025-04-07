@@ -1,6 +1,7 @@
 package committee.nova.mods.avaritia.common.block.misc.infinity_clock;
 
 import net.minecraft.util.StringRepresentable;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @Project: Avaritia
@@ -24,7 +25,7 @@ public enum ClockSpeed implements StringRepresentable {
         return this.getSerializedName();
     }
 
-    public String getSerializedName() {
+    public @NotNull String getSerializedName() {
         return this.name;
     }
 }

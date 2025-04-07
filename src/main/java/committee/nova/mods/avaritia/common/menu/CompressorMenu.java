@@ -2,7 +2,7 @@ package committee.nova.mods.avaritia.common.menu;
 
 import committee.nova.mods.avaritia.api.common.wrapper.ItemStackWrapper;
 import committee.nova.mods.avaritia.api.common.menu.BaseTileMenu;
-import committee.nova.mods.avaritia.api.common.slot.BaseItemStackHandlerSlot;
+import committee.nova.mods.avaritia.api.common.slot.ItemStackWrapperSlot;
 import committee.nova.mods.avaritia.api.common.slot.OutputSlot;
 import committee.nova.mods.avaritia.common.tile.CompressorTile;
 import committee.nova.mods.avaritia.init.registry.ModMenus;
@@ -33,7 +33,7 @@ public class CompressorMenu extends BaseTileMenu<CompressorTile> {
         super(ModMenus.compressor.get(), id, playerInventory, pos);
         this.progressData = data;
         this.addSlot(new OutputSlot(inventory, 0, 120, 35));
-        this.addSlot(new BaseItemStackHandlerSlot(inventory, 1, 39, 35));
+        this.addSlot(new ItemStackWrapperSlot(inventory, 1, 39, 35));
         createInventorySlots(playerInventory);
     }
 

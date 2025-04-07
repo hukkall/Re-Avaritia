@@ -50,9 +50,6 @@ public class HeavenArrowEntity extends Arrow {
         var randy = level().random;
         if (getOwner() != null) {
             ToolUtils.arrowBarrage(this.getOwner(), level(), piercedAndKilledEntities, pickup, randy, pos);
-        } else {
-            // 记录日志
-            System.out.println("HeavenArrowEntity: shooter is null!");
         }
         this.remove(RemovalReason.KILLED);
     }

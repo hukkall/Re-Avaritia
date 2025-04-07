@@ -370,15 +370,10 @@ public class InfinityCrossBowItem extends CrossbowItem implements ITooltip {
             performShooting(level, player, itemstack, getSpeed(itemstack), 1.0F);
             setCharged(itemstack, false);
             return InteractionResultHolder.consume(itemstack);
-        } else if (!findArrow(player).isEmpty() && !isCharged(itemstack)) { //玩家有弹药
+        } else if (!isCharged(itemstack)) { //无弹药依然触发装填
                 this.startSoundPlayed = false;
                 this.midLoadSoundPlayed = false;
                 player.startUsingItem(hand);
-            return InteractionResultHolder.consume(itemstack);
-        } else if (findArrow(player).isEmpty() && !isCharged(itemstack)) { //无弹药依然触发装填
-            this.startSoundPlayed = false;
-            this.midLoadSoundPlayed = false;
-            player.startUsingItem(hand);
             return InteractionResultHolder.consume(itemstack);
         } else {
             return InteractionResultHolder.fail(itemstack);

@@ -3,7 +3,7 @@ package committee.nova.mods.avaritia.addons.channel;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import committee.nova.mods.avaritia.Static;
-import committee.nova.mods.avaritia.client.widget.SimpleScrollBar;
+import committee.nova.mods.avaritia.api.client.widget.SimpleScrollBar;
 import committee.nova.mods.avaritia.common.net.channel.*;
 import committee.nova.mods.avaritia.init.handler.NetworkHandler;
 import lombok.Getter;

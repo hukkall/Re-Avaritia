@@ -1,13 +1,18 @@
 package committee.nova.mods.avaritia.common.tile;
 
+import committee.nova.mods.avaritia.api.common.tile.BaseInventoryTileEntity;
 import committee.nova.mods.avaritia.api.common.tile.BaseTileEntity;
+import committee.nova.mods.avaritia.api.common.wrapper.BaseItemWrapper;
+import committee.nova.mods.avaritia.api.common.wrapper.ItemStackWrapper;
 import committee.nova.mods.avaritia.api.utils.lang.Localizable;
+import committee.nova.mods.avaritia.common.menu.InfinityClockBlockMenu;
 import committee.nova.mods.avaritia.init.registry.ModBlocks;
 import committee.nova.mods.avaritia.init.registry.ModTileEntities;
 import committee.nova.mods.avaritia.util.ToolUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -25,14 +30,22 @@ import java.util.function.Predicate;
  * @CreateTime: 2025/4/4 01:05
  * @Description:
  */
-public class InfinityClockTile extends BaseTileEntity {
+public class InfinityClockTile extends BaseInventoryTileEntity {
     int range = 12;
     int speed = 100;
-    private Iterable<BlockPos> targetBlocks;
+    public final Iterable<BlockPos> targetBlocks;
+    public final ItemStackWrapper inventory;
+    public Mode mode = Mode.COMMON;
+
     public InfinityClockTile(BlockPos pos, BlockState state) {
         super(ModTileEntities.infinity_clock_tile.get(), pos, state);
+        this.inventory = createInventoryHandler();
         this.targetBlocks = BlockPos.betweenClosed(pos.getX() - this.range, pos.getY() - this.range, pos.getZ() - this.range,
                 pos.getX() + this.range, pos.getY() + this.range, pos.getZ() + this.range);
+    }
+
+    public static ItemStackWrapper createInventoryHandler() {
+        return new ItemStackWrapper(1, 1);
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, InfinityClockTile tile) {
@@ -49,7 +62,32 @@ public class InfinityClockTile extends BaseTileEntity {
     }
 
     @Override
-    public @Nullable AbstractContainerMenu createMenu(int pContainerId, @NotNull Inventory pPlayerInventory, @NotNull Player pPlayer) {
-        return null;
+    public @NotNull ItemStackWrapper getInventory() {
+        return this.inventory;
+    }
+
+    @Override
+    protected AbstractContainerMenu createMenu(int pContainerId, Inventory pInventory) {
+        return new InfinityClockBlockMenu(pContainerId, pInventory, this.getBlockPos());
+    }
+
+
+    public enum Mode implements StringRepresentable {
+        COMMON("common"),
+        CARD("card");
+
+        private final String name;
+
+        private Mode(String pName) {
+            this.name = pName;
+        }
+
+        public String toString() {
+            return this.getSerializedName();
+        }
+
+        public @NotNull String getSerializedName() {
+            return this.name;
+        }
     }
 }

@@ -12,11 +12,11 @@ import org.jetbrains.annotations.NotNull;
  * Date: 2022/4/2 18:12
  * Version: 1.0
  */
-public class BaseItemStackHandlerSlot extends SlotItemHandler {
+public class ItemStackWrapperSlot extends SlotItemHandler {
     private final ItemStackWrapper inventory;
     private final int index;
 
-    public BaseItemStackHandlerSlot(ItemStackWrapper inventory, int index, int xPosition, int yPosition) {
+    public ItemStackWrapperSlot(ItemStackWrapper inventory, int index, int xPosition, int yPosition) {
         super(inventory, index, xPosition, yPosition);
         this.inventory = inventory;
         this.index = index;

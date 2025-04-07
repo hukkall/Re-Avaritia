@@ -1,4 +1,4 @@
-package committee.nova.mods.avaritia.client.widget;
+package committee.nova.mods.avaritia.api.client.widget;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -19,7 +19,7 @@ import java.util.function.Supplier;
  * @Description:
  */
 public class GuiButton extends Button{
-    public static final ResourceLocation BUTTON_TEXTURES = Static.rl( "textures/gui/filter_buttons.png");
+    public static final ResourceLocation BUTTON_TEXTURES = Static.rl( "textures/gui/buttons.png");
 
     public ResourceLocation texture;
     public int tile;

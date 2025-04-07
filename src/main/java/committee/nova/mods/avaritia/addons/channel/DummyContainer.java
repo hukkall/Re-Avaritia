@@ -1,6 +1,5 @@
-package committee.nova.mods.avaritia.common.container;
+package committee.nova.mods.avaritia.addons.channel;
 
-import committee.nova.mods.avaritia.addons.channel.ChannelMenu;
 import committee.nova.mods.avaritia.util.SortUtils;
 import committee.nova.mods.avaritia.util.StorageUtils;
 import committee.nova.mods.avaritia.util.StorageUtils.*;
