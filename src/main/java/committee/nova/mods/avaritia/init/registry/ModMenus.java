@@ -47,6 +47,7 @@ public class ModMenus {
         MenuScreens.register(channel_select_menu.get(), ChannelSelectScreen::new);
         MenuScreens.register(extreme_smithing_table.get(), ExtremeSmithingScreen::new);
         MenuScreens.register(extreme_anvil.get(), ExtremeAnvilScreen::new);
+        MenuScreens.register(infinity_clock_block.get(), InfinityClockBlockScreen::new);
     }
 
     public static <T extends AbstractContainerMenu> RegistryObject<MenuType<T>> menu(String name, Supplier<? extends MenuType<T>> container) {

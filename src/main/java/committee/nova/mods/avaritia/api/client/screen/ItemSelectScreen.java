@@ -3,6 +3,7 @@ package committee.nova.mods.avaritia.api.client.screen;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonObject;
 import committee.nova.mods.avaritia.api.client.screen.component.OperationButton;
+import committee.nova.mods.avaritia.api.client.screen.component.OperationButtonType;
 import committee.nova.mods.avaritia.api.client.screen.component.Text;
 import committee.nova.mods.avaritia.api.client.util.GuiUtils;
 import committee.nova.mods.avaritia.api.utils.ItemUtils;
@@ -131,29 +132,6 @@ public class ItemSelectScreen extends Screen {
     private double inScrollY;
 
     // endregion 滚动条相关
-
-    /**
-     * 操作按钮类型
-     */
-    @Getter
-    enum OperationButtonType {
-        TYPE(1),
-        ITEM(2),
-        COUNT(3),
-        NBT(4),
-        SLIDER(5),
-        ;
-
-        final int code;
-
-        OperationButtonType(int code) {
-            this.code = code;
-        }
-
-        static OperationButtonType valueOf(int code) {
-            return Arrays.stream(values()).filter(v -> v.getCode() == code).findFirst().orElse(null);
-        }
-    }
 
     public ItemSelectScreen(@NonNull Screen callbackScreen, @NonNull Consumer<ItemStack> onDataReceived, @NonNull ItemStack defaultItem) {
         super(Component.literal("ItemSelectScreen"));

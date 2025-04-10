@@ -226,7 +226,7 @@ public class OperationButton {
     public double getRealMouseX(double mouseX, double mouseY) {
         // 矩形范围定义
         double startX = getRealX(); // 起始 X
-        double startY = getRealY(); // 起始 Y
+        double startY = getRealY(); // 起始b Y
         double width = getRealWidth();  // 范围宽度
         double height = getRealHeight(); // 范围高度
 
