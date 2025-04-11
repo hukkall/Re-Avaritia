@@ -59,8 +59,6 @@ public class ModEntities {
     public static final RegistryObject<EntityType<TraceArrowEntity>> TRACE_ARROW = ENTITIES.register("trace_arrow",
             () -> EntityType.Builder.<TraceArrowEntity>of(TraceArrowEntity::new, MobCategory.MISC)
                     .sized(0.5F, 0.5F)
-                    .clientTrackingRange(4)
-                    .updateInterval(20)
                     .fireImmune()
                     .noSummon()
                     .setShouldReceiveVelocityUpdates(true)
@@ -83,8 +81,8 @@ public class ModEntities {
     public static final RegistryObject<EntityType<BladeSlashEntity>> BLADE_SLASH = ENTITIES.register("blade_slash",
             () -> EntityType.Builder.<BladeSlashEntity>of(BladeSlashEntity::new, MobCategory.MISC)
                     .sized(3F, 0.5F)
-                    .fireImmune()
                     .setUpdateInterval(10)
+                    .fireImmune()
                     .build(new ResourceLocation(Static.MOD_ID, "blade_slash").toString()));
 
     @OnlyIn(Dist.CLIENT)

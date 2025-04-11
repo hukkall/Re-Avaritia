@@ -6,6 +6,7 @@ import committee.nova.mods.avaritia.api.utils.InventoryUtils;
 import committee.nova.mods.avaritia.common.entity.BladeSlashEntity;
 import committee.nova.mods.avaritia.common.entity.EndestPearlEntity;
 import committee.nova.mods.avaritia.common.entity.arrow.HeavenSubArrowEntity;
+import committee.nova.mods.avaritia.common.entity.arrow.TraceArrowEntity;
 import committee.nova.mods.avaritia.common.item.tools.InfinityArmorItem;
 import committee.nova.mods.avaritia.init.config.ModConfig;
 import committee.nova.mods.avaritia.init.handler.ItemCaptureHandler;
@@ -303,7 +304,7 @@ public class ToolUtils {
      * @param result 命中结果
      * @param arrow  弓箭
      */
-    public static void infinityTraceArrowDamage(@NotNull EntityHitResult result, Arrow arrow) {
+    public static void infinityTraceArrowDamage(@NotNull EntityHitResult result, TraceArrowEntity arrow) {
 
         Entity entity = result.getEntity();
         float f = (float) arrow.getDeltaMovement().length();
@@ -384,7 +385,10 @@ public class ToolUtils {
 
             arrow.playSound(arrow.getHitGroundSoundEvent(), 1.0F, 1.2F / (arrow.random.nextFloat() * 0.2F + 0.9F));
             if (arrow.getPierceLevel() <= 0) {
-                arrow.discard();
+                arrow.setDeltaMovement(entity.getDeltaMovement().scale(0.0D));
+                arrow.setPos(entity.position());
+                arrow.seekNextTarget();
+                arrow.level().playSound(null, arrow.getX(), arrow.getY(), arrow.getZ(), SoundEvents.ARROW_HIT, SoundSource.PLAYERS, 4.0F, 1.0F);
             }
         } else {
             entity.setRemainingFireTicks(k);
@@ -396,7 +400,8 @@ public class ToolUtils {
                 if (arrow.pickup == AbstractArrow.Pickup.ALLOWED) {
                     arrow.spawnAtLocation(arrow.getPickupItem(), 0.1F);
                 }
-                arrow.discard();
+                arrow.seekNextTarget();
+                arrow.level().playSound(null, arrow.getX(), arrow.getY(), arrow.getZ(), SoundEvents.ARROW_HIT, SoundSource.PLAYERS, 4.0F, 1.0F);
             }
         }
     }
