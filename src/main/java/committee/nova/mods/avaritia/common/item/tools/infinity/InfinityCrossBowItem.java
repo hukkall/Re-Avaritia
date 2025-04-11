@@ -6,10 +6,13 @@ import committee.nova.mods.avaritia.common.entity.ImmortalItemEntity;
 import committee.nova.mods.avaritia.common.entity.arrow.HeavenSubArrowEntity;
 import committee.nova.mods.avaritia.init.registry.ModEntities;
 import committee.nova.mods.avaritia.init.registry.ModRarities;
+import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -27,6 +30,8 @@ import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.FireworkRocketEntity;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
@@ -60,77 +65,48 @@ public class InfinityCrossBowItem extends CrossbowItem implements ITooltip {
         );
     }
 
-    public static int getChargeTime() {
-        return 25 - 5 * 3;//快速装填3
-    }
-
-    /**
-     * 寻找弹药
-     *
-     * @param living 使用无尽弓的生物
-     * @return 弹药 无尽矢 普通箭矢 烟花火箭
-     */
-    private static ItemStack findArrow(LivingEntity living) {
-        if (living instanceof Player player) {
-            ItemStack heldAmmo = getHeldAmmo(player, ARROWS);
-            if (!heldAmmo.isEmpty()) return heldAmmo;
-            else {
-                for (NonNullList<ItemStack> e : player.getInventory().compartments) {
-                    for (ItemStack stack1 : e) {
-                        if (stack1.is(Items.ARROW) || stack1.is(Items.FIREWORK_ROCKET)) return stack1;
-                    }
-                }
-                return player.isCreative() ? new ItemStack(Items.ARROW) : ItemStack.EMPTY;
-            }
-        }
-        return ItemStack.EMPTY;
-    }
-
-    public static ItemStack getHeldAmmo(LivingEntity living, Predicate<ItemStack> isAmmo) {
-        if (isAmmo.test(living.getOffhandItem())) {
-            return living.getOffhandItem();
-        } else {
-            return isAmmo.test(living.getMainHandItem()) ? living.getOffhandItem() : ItemStack.EMPTY;
-        }
-    }
-
     /**
      * 获取弹药速度
      *
      * @param stack 弩
      * @return 速度
      */
-    private static float getSpeed(ItemStack stack) {
-        return stack.getItem() == Items.CROSSBOW && containsChargedProjectile(stack, Items.FIREWORK_ROCKET) ? 1.6F : 3.15F;
+    private static float getShootingPower(ItemStack stack) {
+        return containsChargedProjectile(stack, Items.FIREWORK_ROCKET) ? 1.6F : 5F;//增加默认速度
     }
 
-    public static void performShooting(Level worldIn, LivingEntity shooter, ItemStack stack, float velocityIn, float inaccuracyIn) {
+    public static boolean containsChargedProjectile(ItemStack pCrossbowStack, Item pAmmoItem) {
+        return getChargedProjectiles(pCrossbowStack).stream().anyMatch((stack) -> stack.is(pAmmoItem));
+    }
+
+    public static void performShooting(@NotNull Level worldIn, LivingEntity shooter, @NotNull InteractionHand pUsedHand, ItemStack stack, float velocityIn, float inaccuracyIn) {
+        if (shooter instanceof Player player && net.minecraftforge.event.ForgeEventFactory.onArrowLoose(stack, shooter.level(), player, 1, true) < 0) return;
         List<ItemStack> list = getChargedProjectiles(stack);
-        float[] afloat = getRandomSoundPitches(shooter.random); //声音大小
+        float[] afloat = getShotPitches(shooter.getRandom()); //声音大小
 
         for (int i = 0; i < list.size(); ++i) {
             ItemStack itemstack = list.get(i);
-            boolean flag = shooter instanceof Player player && player.isCreative();
+            boolean flag = shooter instanceof Player player && player.getAbilities().instabuild;
             if (!itemstack.isEmpty()) {
                 if (list.size() <= 3) {
                     if (i == 0) {
-                        fireProjectile(worldIn, shooter, stack, itemstack, afloat[i], flag, velocityIn, inaccuracyIn, 0.0F);
+                        shootProjectile(worldIn, shooter, pUsedHand, stack, itemstack, afloat[i], flag, velocityIn, inaccuracyIn, 0.0F);
                     } else if (i == 1) {
-                        fireProjectile(worldIn, shooter, stack, itemstack, afloat[i], flag, velocityIn, inaccuracyIn, -10.0F);
+                        shootProjectile(worldIn, shooter, pUsedHand, stack, itemstack, afloat[i], flag, velocityIn, inaccuracyIn, -10.0F);
                     } else {
-                        fireProjectile(worldIn, shooter, stack, itemstack, afloat[i], flag, velocityIn, inaccuracyIn, 10.0F);
+                        shootProjectile(worldIn, shooter, pUsedHand, stack, itemstack, afloat[i], flag, velocityIn, inaccuracyIn, 10.0F);
                     }
                 } else { // 无尽箭矢 扇形射出大量箭矢 中间为无尽箭
                     {
-                        fireProjectile(worldIn, shooter, stack, new ItemStack(Items.ARROW), afloat[i < 10 ? 1 : 2], flag, velocityIn, inaccuracyIn, getArrowAngle(i, i < 10));
+                        shootProjectile(worldIn, shooter, pUsedHand, stack, new ItemStack(Items.ARROW), afloat[i < 10 ? 1 : 2], flag, velocityIn, inaccuracyIn, getArrowAngle(i, i < 10));
                     }
                 }
             } else {
-                fireProjectile(worldIn, shooter, stack, itemstack, afloat[i], flag, velocityIn, inaccuracyIn, 0.0F);
+                shootProjectile(worldIn, shooter, pUsedHand, stack, itemstack, afloat[i], flag, velocityIn, inaccuracyIn, 0.0F);
             }
         }
 
-        fireProjectilesAfter(worldIn, shooter, stack);
+        onCrossbowShot(worldIn, shooter, stack);
     }
 
     /**
@@ -144,7 +120,7 @@ public class InfinityCrossBowItem extends CrossbowItem implements ITooltip {
         return flag ? -(45f - i * 4.5f) : (i - 10) * 4.5f;
     }
 
-    private static float[] getRandomSoundPitches(RandomSource rand) {
+    private static float[] getShotPitches(RandomSource rand) {
         boolean flag = rand.nextBoolean();
         return new float[]{1.0F, getRandomSoundPitch(flag, rand), getRandomSoundPitch(!flag, rand)};
     }
@@ -174,7 +150,7 @@ public class InfinityCrossBowItem extends CrossbowItem implements ITooltip {
     }
 
     //修改玩家状态
-    private static void fireProjectilesAfter(Level worldIn, LivingEntity shooter, ItemStack stack) {
+    private static void onCrossbowShot(Level worldIn, LivingEntity shooter, ItemStack stack) {
         if (shooter instanceof ServerPlayer serverPlayer) {
             if (!worldIn.isClientSide) {
                 CriteriaTriggers.SHOT_CROSSBOW.trigger(serverPlayer, stack);
@@ -182,11 +158,11 @@ public class InfinityCrossBowItem extends CrossbowItem implements ITooltip {
             serverPlayer.awardStat(Stats.ITEM_USED.get(stack.getItem()));
         }
 
-        clearProjectiles(stack);
+        clearChargedProjectiles(stack);
     }
 
     //清除弩上的弹药
-    private static void clearProjectiles(ItemStack pCrossbowStack) {
+    private static void clearChargedProjectiles(ItemStack pCrossbowStack) {
         CompoundTag compoundtag = pCrossbowStack.getTag();
         if (compoundtag != null) {
             ListTag listtag = compoundtag.getList("ChargedProjectiles", 9);
@@ -196,15 +172,17 @@ public class InfinityCrossBowItem extends CrossbowItem implements ITooltip {
     }
 
     //射出一发
-    private static void fireProjectile(Level pLevel, LivingEntity pShooter, ItemStack pCrossbowStack, ItemStack pAmmoStack, float pSoundPitch, boolean pIsCreativeMode, float pVelocity, float pInaccuracy, float pProjectileAngle) {
+    private static void shootProjectile(Level pLevel, LivingEntity pShooter, InteractionHand pHand, ItemStack pCrossbowStack, ItemStack pAmmoStack, float pSoundPitch, boolean pIsCreativeMode, float pVelocity, float pInaccuracy, float pProjectileAngle) {
         if (!pLevel.isClientSide) {
             boolean flag = pAmmoStack.is(Items.FIREWORK_ROCKET);
             Projectile projectile;
             if (flag) {
                 projectile = new FireworkRocketEntity(pLevel, pAmmoStack, pShooter, pShooter.getX(), pShooter.getEyeY() - (double) 0.15F, pShooter.getZ(), true);
             } else {
-                projectile = createArrow(pLevel, pShooter, pCrossbowStack, pAmmoStack);
-                ((AbstractArrow) projectile).pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
+                projectile = getArrow(pLevel, pShooter, pCrossbowStack, pAmmoStack);
+                if (pIsCreativeMode || pProjectileAngle != 0.0F) {
+                    ((AbstractArrow)projectile).pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
+                }
             }
 
             if (pShooter instanceof CrossbowAttackMob crossbowattackmob) {
@@ -216,38 +194,33 @@ public class InfinityCrossBowItem extends CrossbowItem implements ITooltip {
                 Vector3f vector3f = vec3.toVector3f().rotate(quaternionf);
                 projectile.shoot(vector3f.x(), vector3f.y(), vector3f.z(), pVelocity, pInaccuracy);
             }
-
+            pCrossbowStack.hurtAndBreak(flag ? 3 : 1, pShooter, (p_40858_) -> {
+                p_40858_.broadcastBreakEvent(pHand);
+            });
             pLevel.addFreshEntity(projectile);
             pLevel.playSound(null, pShooter.getX(), pShooter.getY(), pShooter.getZ(), SoundEvents.CROSSBOW_SHOOT, SoundSource.PLAYERS, 1.0F, pSoundPitch);
         }
     }
 
     //创建投掷物实体
-    private static AbstractArrow createArrow(Level worldIn, LivingEntity shooter, ItemStack crossbow, ItemStack ammo) {
-        AbstractArrow arrow = null;
-        if (ammo.isEmpty()) { //弹药为空发射普通箭矢
-            ItemStack stack = new ItemStack(Items.ARROW);
-            ArrowItem arrowitem = (ArrowItem) (stack.getItem() instanceof ArrowItem ? stack.getItem() : Items.ARROW);
-            arrow = arrowitem.createArrow(worldIn, ammo, shooter);
-            arrow.setOwner(shooter);
-            arrow.setBaseDamage(20);
-            arrow.setPierceLevel((byte) 2);
-        } else {
-            arrow = new HeavenSubArrowEntity(shooter);
-            arrow.setPierceLevel((byte) 5);
-        }
+    private static AbstractArrow getArrow(Level worldIn, LivingEntity shooter, ItemStack crossbow, ItemStack ammo) {
+        AbstractArrow arrow = new HeavenSubArrowEntity(shooter);
         if (shooter instanceof Player) {
             arrow.setCritArrow(true);
         } //暴击粒子
         arrow.setSoundEvent(SoundEvents.CROSSBOW_HIT);
         arrow.setShotFromCrossbow(true);
-
+        arrow.setPierceLevel((byte) 5);
         return arrow;
     }
 
+    public static int getChargeDuration() {
+        return 25 - 5 * 3;//快速装填3
+    }
+
     //使用程度
-    private static float getCharge(int useTime, ItemStack stack) {
-        float f = (float) useTime / (float) getChargeTime();
+    private static float getPowerForTime(int useTime, ItemStack stack) {
+        float f = (float) useTime / (float) getChargeDuration();
         if (f > 1.0F) {
             f = 1.0F;
         }
@@ -255,11 +228,11 @@ public class InfinityCrossBowItem extends CrossbowItem implements ITooltip {
         return f;
     }
 
-    private static boolean hasAmmo(LivingEntity entityIn, ItemStack stack) {
-        boolean flag = entityIn instanceof Player player && player.isCreative();
-        ItemStack itemstack = findArrow(entityIn); //无弹药 发射一发普通箭
-        int j = itemstack.isEmpty() ? 1 :
-                (itemstack.is(ItemTags.ARROWS) || itemstack.getItem() == Items.FIREWORK_ROCKET ? 3 : 21);
+    private static boolean tryLoadProjectiles(LivingEntity entityIn, ItemStack pCrossbowStack) {
+        boolean flag = entityIn instanceof Player player && player.getAbilities().instabuild;
+        //ItemStack itemstack = findArrow(entityIn); //无弹药 发射一发普通箭
+        ItemStack itemstack = entityIn.getProjectile(pCrossbowStack);
+        int j =  3;
         ItemStack itemstack1 = itemstack.copy();
 
         for (int k = 0; k < j; ++k) {
@@ -272,7 +245,7 @@ public class InfinityCrossBowItem extends CrossbowItem implements ITooltip {
                 itemstack1 = itemstack.copy();
             }
 
-            if (!deleteStack(entityIn, stack, itemstack, k > 0, flag)) {
+            if (!loadProjectile(entityIn, pCrossbowStack, itemstack, k > 0, flag)) {
                 return false;
             }
         }
@@ -286,24 +259,38 @@ public class InfinityCrossBowItem extends CrossbowItem implements ITooltip {
      * @param living    实体
      * @param stack     弩
      * @param itemStack 弹药
-     * @param flag0     弹药数量是否超过一
-     * @param flag1     是否创造模式
+     * @param pHasAmmo     弹药数量是否超过一
+     * @param pIsCreative     是否创造模式
      * @return true
      */
-    private static boolean deleteStack(LivingEntity living, ItemStack stack, ItemStack itemStack, boolean flag0, boolean flag1) {
-        boolean flag = flag1 && itemStack.getItem() instanceof ArrowItem;  //普通弹药被消耗
-        ItemStack itemstack;
-        if (!flag && !flag1 && !flag0) {
-            itemstack = itemStack.split(1);
-            if (itemStack.isEmpty() && living instanceof Player player) {
-                player.getInventory().removeItem(itemStack);
-            }
+    private static boolean loadProjectile(LivingEntity living, ItemStack stack, ItemStack itemStack, boolean pHasAmmo, boolean pIsCreative) {
+        if (itemStack.isEmpty()) {
+            return false;
         } else {
-            itemstack = itemStack.copy();
-        }
+            boolean flag = pIsCreative && itemStack.getItem() instanceof ArrowItem;  //普通弹药被消耗
+            ItemStack itemstack;
+            if (!flag && !pIsCreative && !pHasAmmo) {
+                itemstack = itemStack.split(1);
+                if (itemStack.isEmpty() && living instanceof Player player) {
+                    player.getInventory().removeItem(itemStack);
+                }
+            } else {
+                itemstack = itemStack.copy();
+            }
 
-        addChargedProjectile(stack, itemstack);
-        return true;
+            addChargedProjectile(stack, itemstack);
+            return true;
+        }
+    }
+
+    public static boolean isCharged(ItemStack pCrossbowStack) {
+        CompoundTag compoundtag = pCrossbowStack.getTag();
+        return compoundtag != null && compoundtag.getBoolean("Charged");
+    }
+
+    public static void setCharged(ItemStack pCrossbowStack, boolean pIsCharged) {
+        CompoundTag compoundtag = pCrossbowStack.getOrCreateTag();
+        compoundtag.putBoolean("Charged", pIsCharged);
     }
 
     //为弩添加弹药数据
@@ -360,14 +347,14 @@ public class InfinityCrossBowItem extends CrossbowItem implements ITooltip {
 
     @Override
     public int getUseDuration(@NotNull ItemStack stack) {
-        return getChargeTime() + 3; //使用时间
+        return getChargeDuration() + 3; //使用时间
     }
 
     @Override
     public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand hand) {
         ItemStack itemstack = player.getItemInHand(hand);
         if (isCharged(itemstack)) { //弹药以装填
-            performShooting(level, player, itemstack, getSpeed(itemstack), 1.0F);
+            performShooting(level, player, hand, itemstack, getShootingPower(itemstack), 1.0F);
             setCharged(itemstack, false);
             return InteractionResultHolder.consume(itemstack);
         } else if (!isCharged(itemstack)) { //无弹药依然触发装填
@@ -383,8 +370,9 @@ public class InfinityCrossBowItem extends CrossbowItem implements ITooltip {
     @Override
     public void onUseTick(Level pLevel, @NotNull LivingEntity pLivingEntity, @NotNull ItemStack pStack, int pCount) {
         if (!pLevel.isClientSide) {
+            SoundEvent soundevent = SoundEvents.CROSSBOW_LOADING_START;
             SoundEvent soundevent1 = SoundEvents.CROSSBOW_LOADING_MIDDLE;
-            float f = (float)(pStack.getUseDuration() - pCount) / getChargeTime();
+            float f = (float)(pStack.getUseDuration() - pCount) / getChargeDuration();
             if (f < 0.2F) {
                 this.startSoundPlayed = false;
                 this.midLoadSoundPlayed = false;
@@ -392,7 +380,7 @@ public class InfinityCrossBowItem extends CrossbowItem implements ITooltip {
 
             if (f >= 0.2F && !this.startSoundPlayed) {
                 this.startSoundPlayed = true;
-                pLevel.playSound(null, pLivingEntity.getX(), pLivingEntity.getY(), pLivingEntity.getZ(), soundevent1, SoundSource.PLAYERS, 0.5F, 1.0F);
+                pLevel.playSound(null, pLivingEntity.getX(), pLivingEntity.getY(), pLivingEntity.getZ(), soundevent, SoundSource.PLAYERS, 0.5F, 1.0F);
             }
 
             if (f >= 0.5F && !this.midLoadSoundPlayed) {
@@ -406,11 +394,29 @@ public class InfinityCrossBowItem extends CrossbowItem implements ITooltip {
     @Override
     public void releaseUsing(@NotNull ItemStack stack, @NotNull Level pLevel, @NotNull LivingEntity entity, int pTimeLeft) {
         int i = this.getUseDuration(stack) - pTimeLeft;
-        float f = getCharge(i, stack);
-        if (f >= 1.0F && !isCharged(stack) && hasAmmo(entity, stack)) {
+        float f = getPowerForTime(i, stack);
+        if (f >= 1.0F && !isCharged(stack) && tryLoadProjectiles(entity, stack)) {
             setCharged(stack, true);
             SoundSource soundcategory = entity instanceof Player ? SoundSource.PLAYERS : SoundSource.HOSTILE;
             entity.level().playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.CROSSBOW_LOADING_END, soundcategory, 1.0F, 1.0F / (entity.random.nextFloat() * 0.5F + 1.0F) + 0.2F);
+        }
+    }
+
+    @Override
+    public void appendHoverText(@NotNull ItemStack pStack, @javax.annotation.Nullable Level pLevel, @NotNull List<Component> pTooltip, @NotNull TooltipFlag pFlag) {
+        List<ItemStack> list = getChargedProjectiles(pStack);
+        if (isCharged(pStack) && !list.isEmpty()) {
+            ItemStack itemstack = list.get(0);
+            pTooltip.add(Component.translatable("item.minecraft.crossbow.projectile").append(CommonComponents.SPACE).append(itemstack.getDisplayName()));
+            if (pFlag.isAdvanced() && itemstack.is(Items.FIREWORK_ROCKET)) {
+                List<Component> list1 = Lists.newArrayList();
+                Items.FIREWORK_ROCKET.appendHoverText(itemstack, pLevel, list1, pFlag);
+                if (!list1.isEmpty()) {
+                    list1.replaceAll(pSibling -> Component.literal("  ").append(pSibling).withStyle(ChatFormatting.GRAY));
+                    pTooltip.addAll(list1);
+                }
+            }
+
         }
     }
 

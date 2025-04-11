@@ -217,7 +217,7 @@ public class TraceArrowEntity extends Arrow {
             if (this.isInWater()) {
                 for (int j = 0; j < 4; ++j) {
                     float f4 = 0.25F;
-                    this.level().addParticle(ParticleTypes.BUBBLE, d5 - d3 * 0.25D, d1 - d4 * 0.25D, d2 - d0 * 0.25D, d3, d4, d0);
+                    this.level().addParticle(ParticleTypes.BUBBLE, d5 - d3 * f4, d1 - d4 * f4, d2 - d0 * f4, d3, d4, d0);
                 }
 
                 f2 = this.getWaterInertia();
