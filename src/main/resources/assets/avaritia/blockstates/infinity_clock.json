@@ -1,18 +1,18 @@
 {
   "variants": {
     "facing=north": {
-      "model": "avaritia:block/misc/infinity_clock/infinity_clock",
+      "model": "avaritia:block/misc/infinity_clock/infinity_clock_speed1",
       "y": 180
     },
     "facing=south": {
-      "model": "avaritia:block/misc/infinity_clock/infinity_clock"
+      "model": "avaritia:block/misc/infinity_clock/infinity_clock_speed1"
     },
     "facing=west": {
-      "model": "avaritia:block/misc/infinity_clock/infinity_clock",
+      "model": "avaritia:block/misc/infinity_clock/infinity_clock_speed1",
       "y": 90
     },
     "facing=east": {
-      "model": "avaritia:block/misc/infinity_clock/infinity_clock",
+      "model": "avaritia:block/misc/infinity_clock/infinity_clock_speed1",
       "y": 270
     }
   }

@@ -2,7 +2,6 @@ package committee.nova.mods.avaritia.common.block.misc.infinity_clock;
 
 import committee.nova.mods.avaritia.api.common.block.BaseTileEntityBlock;
 import committee.nova.mods.avaritia.common.tile.InfinityClockTile;
-import committee.nova.mods.avaritia.common.tile.collector.BaseNeutronCollectorTile;
 import committee.nova.mods.avaritia.init.registry.ModTileEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -19,7 +18,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
@@ -35,14 +33,16 @@ import org.jetbrains.annotations.Nullable;
  */
 public class InfinityClockBlock extends BaseTileEntityBlock {
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;;
-    public static final EnumProperty<ClockSpeed> SPEED = EnumProperty.create("speed", ClockSpeed.class);
+    //public static final EnumProperty<ClockSpeed> SPEED = EnumProperty.create("speed", ClockSpeed.class);
     public InfinityClockBlock() {
         super(Properties.of()
                 .mapColor(MapColor.GOLD)
                 .instrument(NoteBlockInstrument.BASS)
                 .strength(30.0F, 1200.0F)
                 .sound(SoundType.GLASS));
-        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(SPEED, ClockSpeed.COMMON));
+        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH)
+                //.setValue(SPEED, ClockSpeed.COMMON)
+        );
     }
 
     @Override
@@ -52,7 +52,9 @@ public class InfinityClockBlock extends BaseTileEntityBlock {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder) {
-        pBuilder.add(FACING, SPEED);
+        pBuilder.add(FACING
+                //, SPEED
+        );
     }
 
     @Override

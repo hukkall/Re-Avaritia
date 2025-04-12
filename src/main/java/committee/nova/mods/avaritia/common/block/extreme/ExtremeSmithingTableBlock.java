@@ -30,7 +30,7 @@ public class ExtremeSmithingTableBlock extends BaseBlock {
     private static final Component CONTAINER_TITLE = Component.translatable("container.extreme_smithing");
 
     public ExtremeSmithingTableBlock() {
-        super(BlockBehaviour.Properties.of()
+        super(Properties.of()
                 .mapColor(MapColor.COLOR_RED)
                 .instrument(NoteBlockInstrument.BASS)
                 .strength(2.5F)

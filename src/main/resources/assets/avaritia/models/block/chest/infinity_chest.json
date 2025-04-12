@@ -1,6 +1,6 @@
 {
-  "render_type": "cutout",
   "parent": "block/block",
+  "render_type": "cutout",
   "textures": {
     "texture": "avaritia:block/chest/infinity_chest",
     "particle": "avaritia:block/resource/infinity"
