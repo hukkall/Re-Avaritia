@@ -153,6 +153,7 @@
   "block.avaritia.refined_coal_block": "Refined Coal Block",
   "block.avaritia.diamond_lattice_block": "Diamond Lattice Block",
   "block.avaritia.infinity_clock": "Infinity Clock",
+  "container.extreme_anvil" : "Extreme Anvil",
   "container.compressor": "Neutronium Compressor",
   "container.neutron_collector": "Neutronium Collector",
   "container.dense_neutron_collector": "Dense Neutron Collector",

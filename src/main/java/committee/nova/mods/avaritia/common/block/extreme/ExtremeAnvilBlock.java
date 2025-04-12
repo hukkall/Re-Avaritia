@@ -1,5 +1,6 @@
 package committee.nova.mods.avaritia.common.block.extreme;
 
+import committee.nova.mods.avaritia.api.common.wrapper.ItemStackWrapper;
 import committee.nova.mods.avaritia.common.menu.ExtremeAnvilMenu;
 import committee.nova.mods.avaritia.init.registry.ModResourceBlocks;
 import committee.nova.mods.avaritia.init.registry.ModTags;
@@ -34,8 +35,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @Project: Avaritia

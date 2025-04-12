@@ -25,13 +25,10 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ExtremeAnvilScreen extends BaseContainerScreen<ExtremeAnvilMenu> {
     private static final ResourceLocation ANVIL_LOCATION = Static.rl("textures/gui/extreme_anvil_gui.png");
-    private static final Component TOO_EXPENSIVE_TEXT = Component.translatable("container.repair.expensive");
     private EditBox name;
-    private final Player player;
 
     public ExtremeAnvilScreen(ExtremeAnvilMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle, ANVIL_LOCATION);
-        this.player = pPlayerInventory.player;
         this.titleLabelX = 60;
     }
 
@@ -74,11 +71,11 @@ public class ExtremeAnvilScreen extends BaseContainerScreen<ExtremeAnvilMenu> {
         return this.name.keyPressed(pKeyCode, pScanCode, pModifiers) || this.name.canConsumeInput() || super.keyPressed(pKeyCode, pScanCode, pModifiers);
     }
 
-    private void onNameChanged(String p_97899_) {
+    private void onNameChanged(String name) {
         Slot slot = this.menu.getSlot(0);
         if (slot.hasItem()) {
-            String s = p_97899_;
-            if (!slot.getItem().hasCustomHoverName() && p_97899_.equals(slot.getItem().getHoverName().getString())) {
+            String s = name;
+            if (!slot.getItem().hasCustomHoverName() && name.equals(slot.getItem().getHoverName().getString())) {
                 s = "";
             }
 

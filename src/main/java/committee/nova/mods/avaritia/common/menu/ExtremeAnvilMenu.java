@@ -125,59 +125,35 @@ public class ExtremeAnvilMenu extends ItemCombinerMenu {
                     }
 
                     Map<Enchantment, Integer> map1 = EnchantmentHelper.getEnchantments(itemstack2);
-                    boolean flag2 = false;
-                    boolean flag3 = false;
-
                     for(Enchantment enchantment1 : map1.keySet()) {
                         if (enchantment1 != null) {
                             int i2 = map.getOrDefault(enchantment1, 0);
                             int j2 = map1.get(enchantment1);
                             j2 = i2 + j2;
-                            boolean flag1 = enchantment1.canEnchant(itemstack);
-                            if (this.player.getAbilities().instabuild || itemstack.is(Items.ENCHANTED_BOOK)) {
-                                flag1 = true;
+                            if (j2 > enchantment1.getMaxLevel()) {
+                                j2 = enchantment1.getMaxLevel();
                             }
 
-                            for(Enchantment enchantment : map.keySet()) {
-                                if (enchantment != enchantment1) {
-                                    flag1 = false;
-                                    ++i;
-                                }
+                            map.put(enchantment1, j2);
+                            int k3 = 0;
+                            switch (enchantment1.getRarity()) {
+                                case COMMON -> k3 = 1;
+                                case UNCOMMON -> k3 = 2;
+                                case RARE -> k3 = 4;
+                                case VERY_RARE -> k3 = 8;
                             }
 
-                            if (!flag1) {
-                                flag3 = true;
-                            } else {
-                                flag2 = true;
-                                if (j2 > enchantment1.getMaxLevel()) {
-                                    j2 = enchantment1.getMaxLevel();
-                                }
+                            if (flag) {
+                                k3 = Math.max(1, k3 / 2);
+                            }
 
-                                map.put(enchantment1, j2);
-                                int k3 = 0;
-                                switch (enchantment1.getRarity()) {
-                                    case COMMON -> k3 = 1;
-                                    case UNCOMMON -> k3 = 2;
-                                    case RARE -> k3 = 4;
-                                    case VERY_RARE -> k3 = 8;
-                                }
-
-                                if (flag) {
-                                    k3 = Math.max(1, k3 / 2);
-                                }
-
-                                i += k3 * j2;
-                                if (itemstack.getCount() > 1) {
-                                    i = 40;
-                                }
+                            i += k3 * j2;
+                            if (itemstack.getCount() > 1) {
+                                i = 40;
                             }
                         }
                     }
 
-                    if (flag3 && !flag2) {
-                        this.resultSlots.setItem(0, ItemStack.EMPTY);
-                        return;
-                    }
                 }
             }
 

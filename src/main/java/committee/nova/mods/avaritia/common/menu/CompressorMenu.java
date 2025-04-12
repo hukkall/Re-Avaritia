@@ -57,7 +57,7 @@ public class CompressorMenu extends BaseTileMenu<CompressorTile> {
                         if (!this.moveItemStackTo(itemstack1, 29, 38, false)) {
                             return ItemStack.EMPTY;
                         }
-                    } else if (!this.moveItemStackTo(itemstack1, 10, 29, false)) {
+                    } else if (!this.moveItemStackTo(itemstack1, 11, 29, false)) {
                         return ItemStack.EMPTY;
                     }
                 }
