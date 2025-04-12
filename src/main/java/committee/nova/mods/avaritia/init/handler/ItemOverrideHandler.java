@@ -70,14 +70,11 @@ public class ItemOverrideHandler {
                     return InfinityCrossBowItem.isCharged(itemStack) ? 0.0F : (float) (itemStack.getUseDuration() - livingEntity.getUseItemRemainingTicks()) / InfinityCrossBowItem.getChargeDuration();
                 }
             });
-            setPropertyOverride(Items.CROSSBOW, new ResourceLocation("pulling"), (itemStack, level, livingEntity, p_174608_) -> {
+            setPropertyOverride(Items.CROSSBOW, Static.rl("pulling"), (itemStack, level, livingEntity, i) -> {
                 return livingEntity != null && livingEntity.isUsingItem() && livingEntity.getUseItem() == itemStack && !InfinityCrossBowItem.isCharged(itemStack) ? 1.0F : 0.0F;
             });
             setPropertyOverride(ModItems.infinity_crossbow.get(), Static.rl("charged"), (itemStack, world, livingEntity, d) -> {
                 return InfinityCrossBowItem.isCharged(itemStack) ? 1.0F : 0.0F;
-            });
-            setPropertyOverride(ModItems.infinity_crossbow.get(), Static.rl("firework"), (itemStack, world, livingEntity, d) -> {
-                return InfinityCrossBowItem.isCharged(itemStack) && InfinityCrossBowItem.containsChargedProjectile(itemStack, Items.FIREWORK_ROCKET) ? 1.0F : 0.0F;
             });
         });
 

@@ -81,49 +81,49 @@ public class InfinitySwordItem extends SwordItem implements IMultiFunction, Init
         return true;
     }
 
-    @Override
-    public boolean hurtEnemy(@NotNull ItemStack stack, @NotNull LivingEntity victim, LivingEntity livingEntity) {
-        var level = livingEntity.level();
-        var endlessDamage = ModConfig.isSwordAttackEndless.get();
-        if (!level.isClientSide && livingEntity instanceof Player player && level instanceof ServerLevel serverLevel) {
-            var damageSource = player.damageSources().source(ModDamageTypes.INFINITY, livingEntity, victim);
-            ToolUtils.sweepAttack(level, livingEntity, victim);//横扫
-            if (victim instanceof EnderDragon dragon ) {
-                victim.setInvulnerable(false);//取消无敌
-                dragon.hurt(dragon.head, damageSource, endlessDamage ? Float.MAX_VALUE : this.getTier().getAttackDamageBonus());
-            } else if (victim instanceof Player pvp) {
-                if (ToolUtils.isInfinite(pvp)) {
-                    // 玩家身着无尽甲则只造成爆炸伤害
-                    pvp.level().explode(livingEntity, pvp.getBlockX(), pvp.getBlockY(), pvp.getBlockZ(), 25.0F, Level.ExplosionInteraction.MOB);
-                    return true;//直接返回
-                } else {
-                    victim.setInvulnerable(false);
-                    victim.hurt(damageSource, endlessDamage ? Float.MAX_VALUE : this.getTier().getAttackDamageBonus());
-                }
-
-            } else {
-                victim.setInvulnerable(false);
-                victim.hurt(damageSource, endlessDamage ? Float.MAX_VALUE : this.getTier().getAttackDamageBonus());
-            }
-
-            victim.lastHurtByPlayerTime = 60;
-            victim.getCombatTracker().recordDamage(damageSource, victim.getHealth());
-
-
-            if (endlessDamage) {
-                victim.setHealth(0);//设置血量为零
-                victim.die(damageSource);//设置死亡
-                if (victim.isAlive()) {
-                    livingEntity.kill();//修正死亡
-                    livingEntity.dropAllDeathLoot(damageSource);
-                    player.killedEntity(serverLevel, victim);
-                    serverLevel.broadcastEntityEvent(victim, (byte)3);
-                }
-            }
-        }
-        victim.setPose(Pose.DYING);
-        return true;
-    }
+//    @Override
+//    public boolean hurtEnemy(@NotNull ItemStack stack, @NotNull LivingEntity victim, LivingEntity livingEntity) {
+//        var level = livingEntity.level();
+//        var endlessDamage = ModConfig.isSwordAttackEndless.get();
+//        if (!level.isClientSide && livingEntity instanceof Player player && level instanceof ServerLevel serverLevel) {
+//            var damageSource = player.damageSources().source(ModDamageTypes.INFINITY, livingEntity, victim);
+//            ToolUtils.sweepAttack(level, livingEntity, victim);//横扫
+//            if (victim instanceof EnderDragon dragon ) {
+//                victim.setInvulnerable(false);//取消无敌
+//                dragon.hurt(dragon.head, damageSource, endlessDamage ? Float.MAX_VALUE : this.getTier().getAttackDamageBonus());
+//            } else if (victim instanceof Player pvp) {
+//                if (ToolUtils.isInfinite(pvp)) {
+//                    // 玩家身着无尽甲则只造成爆炸伤害
+//                    pvp.level().explode(livingEntity, pvp.getBlockX(), pvp.getBlockY(), pvp.getBlockZ(), 25.0F, Level.ExplosionInteraction.MOB);
+//                    return true;//直接返回
+//                } else {
+//                    victim.setInvulnerable(false);
+//                    victim.hurt(damageSource, endlessDamage ? Float.MAX_VALUE : this.getTier().getAttackDamageBonus());
+//                }
+//
+//            } else {
+//                victim.setInvulnerable(false);
+//                victim.hurt(damageSource, endlessDamage ? Float.MAX_VALUE : this.getTier().getAttackDamageBonus());
+//            }
+//
+//            victim.lastHurtByPlayerTime = 60;
+//            victim.getCombatTracker().recordDamage(damageSource, victim.getHealth());
+//
+//
+//            if (endlessDamage) {
+//                victim.setHealth(0);//设置血量为零
+//                victim.die(damageSource);//设置死亡
+//                if (victim.isAlive()) {
+//                    livingEntity.kill();//修正死亡
+//                    livingEntity.dropAllDeathLoot(damageSource);
+//                    player.killedEntity(serverLevel, victim);
+//                    serverLevel.broadcastEntityEvent(victim, (byte)3);
+//                }
+//            }
+//        }
+//        victim.setPose(Pose.DYING);
+//        return true;
+//    }
 
     @Override
     public @NotNull InteractionResultHolder<ItemStack> use(Level level, Player player, @NotNull InteractionHand hand) {

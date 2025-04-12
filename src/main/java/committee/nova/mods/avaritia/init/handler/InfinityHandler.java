@@ -232,8 +232,7 @@ public class InfinityHandler {
                 NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new S2CTotemPack(totem, player.getId()));
 
                 player.removeAllEffects();
-                int damage = totem.getUseDuration();
-                if (damage == 9) { //最后一次
+                if (totem.getDamageValue() == 1) { //最后一次
                     player.setHealth(player.getMaxHealth());
                     player.addEffect(new MobEffectInstance(MobEffects.JUMP, 800, 1));
                     player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 800, 1));

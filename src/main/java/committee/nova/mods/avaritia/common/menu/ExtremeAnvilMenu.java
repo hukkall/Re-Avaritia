@@ -201,11 +201,6 @@ public class ExtremeAnvilMenu extends ItemCombinerMenu {
                 itemstack1 = ItemStack.EMPTY;
             }
 
-
-            if (!this.player.getAbilities().instabuild) {
-                itemstack1 = ItemStack.EMPTY;
-            }
-
             if (!itemstack1.isEmpty()) {
                 int k2 = itemstack1.getBaseRepairCost();
                 if (!itemstack2.isEmpty() && k2 < itemstack2.getBaseRepairCost()) {
@@ -215,7 +210,7 @@ public class ExtremeAnvilMenu extends ItemCombinerMenu {
                 if (k != i || k == 0) {
                     k2 = calculateIncreasedRepairCost(k2);
                 }
-                itemstack1.setRepairCost(k2);//to 0
+                itemstack1.setRepairCost(k2);
                 EnchantmentHelper.setEnchantments(map, itemstack1);
             }
 
