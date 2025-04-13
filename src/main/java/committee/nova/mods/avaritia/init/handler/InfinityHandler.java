@@ -227,27 +227,28 @@ public class InfinityHandler {
             if (ToolUtils.isInfinite(player)) {
                 event.setCanceled(true);
                 player.setHealth(player.getMaxHealth());
-            }
-            ItemStack totem = ToolUtils.getPlayerTotemItem(player);
-            if (!totem.isEmpty()) {
-                NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new S2CTotemPack(totem, player.getId()));
+            } else {
+                ItemStack totem = ToolUtils.getPlayerTotemItem(player);
+                if (!totem.isEmpty()) {
+                    NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new S2CTotemPack(totem, player.getId()));
 
-                player.removeAllEffects();
-                if (totem.getDamageValue() == 1) { //最后一次
-                    player.setHealth(player.getMaxHealth());
-                    player.addEffect(new MobEffectInstance(MobEffects.JUMP, 800, 1));
-                    player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 800, 1));
-                    ToolUtils.aoeAttack(player, 8, 1000.0f, false, false);//触发无尽图腾后对附近造成伤害
-                    player.displayClientMessage(Component.translatable("tooltip.avaritia.totem_break"), false);
-                } else {
-                    player.setHealth(10.0F);
+                    player.removeAllEffects();
+                    if (totem.getDamageValue() == 1) { //最后一次
+                        player.setHealth(player.getMaxHealth());
+                        player.addEffect(new MobEffectInstance(MobEffects.JUMP, 800, 1));
+                        player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 800, 1));
+                        ToolUtils.aoeAttack(player, 8, 1000.0f, false, false);//触发无尽图腾后对附近造成伤害
+                        player.displayClientMessage(Component.translatable("tooltip.avaritia.totem_break"), false);
+                    } else {
+                        player.setHealth(player.getMaxHealth());
+                    }
+                    player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 2600, 4));
+                    player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 400, 1));
+                    player.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 700, 2));
+                    player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 1100, 0));
+                    totem.hurtAndBreak(1, player, e -> e.swing(InteractionHand.MAIN_HAND));
+                    event.setCanceled(true);
                 }
-                player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 2600, 4));
-                player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 400, 1));
-                player.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 700, 2));
-                player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 1100, 0));
-                totem.hurtAndBreak(1, player, e -> e.swing(InteractionHand.MAIN_HAND));
-                event.setCanceled(true);
             }
         }
     }
