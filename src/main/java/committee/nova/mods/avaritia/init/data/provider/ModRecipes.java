@@ -311,7 +311,7 @@ public class ModRecipes extends RecipeProvider implements IConditionBuilder {
                 .define('a', ModItems.neutron_pile.get())
                 .unlockedBy("has_item", has(ItemTags.MUSIC_DISCS)).save(consumer);
 
-        ModShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.nether_crafting_table.get(), 2)
+        ModShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.refined_coal.get(), 2)
                 .pattern("     ")
                 .pattern(" aaa ")
                 .pattern(" aba ")
