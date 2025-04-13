@@ -107,25 +107,11 @@ public class AvaritiaForgeClient {
     public static void onItemTooltip(final ItemTooltipEvent e){
         if (!FMLLoader.isProduction() || ModConfig.useAdvanceTooltips.get()) {
             var stack = e.getItemStack();
-            var flags = e.getFlags();
             var tooltips = e.getToolTip();
-            if (!flags.isAdvanced() && !stack.isEmpty()) {
-                if (stack.isDamaged()) {
-                    Component toolTip =
-                            ModTooltips.INIT_ENCHANT.args((stack.getMaxDamage()- stack.getDamageValue())+
-                                            " / "+
-                                            stack.getMaxDamage()).build()
-                            .withStyle(DARK_PURPLE);
-                    if (!tooltips.contains(toolTip)) {
-                        tooltips.add(toolTip);
-                    }
-                }
-            }
-
             if (Screen.hasAltDown()) {
                 CompoundTag tag=stack.getTag();
                 if (tag != null) {
-                    addTagCompound("", tooltips, tag);
+                    addTagCompound("  ", tooltips, tag);
                 }
             }
         }
@@ -140,6 +126,7 @@ public class AvaritiaForgeClient {
                 case Tag.TAG_INT -> list.add(Component.literal(prefix+key+": §3"+tag.getInt(key)));
                 case Tag.TAG_DOUBLE -> list.add(Component.literal(prefix+key+": §6"+tag.getDouble(key)));
                 case Tag.TAG_STRING -> list.add(Component.literal(prefix+key+": §8"+tag.getString(key)));
+                case Tag.TAG_BYTE -> list.add(Component.literal(prefix+key+": §9"+tag.getByte(key)));
                 case Tag.TAG_LIST -> {
                     list.add(Component.literal(prefix+key+": §9List, "+((ListTag)elem).size()+" items"));
                     if (Screen.hasShiftDown()) {
@@ -151,10 +138,10 @@ public class AvaritiaForgeClient {
                 case Tag.TAG_COMPOUND -> {
                     list.add(Component.literal(prefix+key+": §aCompound"));
                     if (Screen.hasShiftDown()) {
-                        addTagCompound(prefix+"    ", list, (CompoundTag)elem);
+                        addTagCompound(prefix + "    ", list, (CompoundTag)elem);
                     }
                 }
-                default -> list.add(Component.literal(prefix+key+": Type "+elem.getType()));
+                default -> list.add(Component.literal(prefix + key + ": Type "+ elem.getType()));
             }
         }
     }
