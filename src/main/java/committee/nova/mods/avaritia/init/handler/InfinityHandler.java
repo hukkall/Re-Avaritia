@@ -50,6 +50,7 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;
@@ -220,10 +221,10 @@ public class InfinityHandler {
     }
 
     //取消身穿无尽套时的伤害
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onDeath(LivingDeathEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            if (ToolUtils.isInfinite(player) && !(event.getSource() instanceof ModDamageTypes.DamageSourceRandomMessages)) {
+            if (ToolUtils.isInfinite(player)) {
                 event.setCanceled(true);
                 player.setHealth(player.getMaxHealth());
             }
@@ -252,7 +253,7 @@ public class InfinityHandler {
     }
 
     //取消身穿无尽套时受到的所有伤害
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onGetHurt(LivingHurtEvent event) {
         if (!(event.getEntity() instanceof Player player)) {
             return;
@@ -260,18 +261,18 @@ public class InfinityHandler {
         if (!player.getMainHandItem().isEmpty() && player.getMainHandItem().is(ModItems.infinity_sword.get()) && player.getMainHandItem().useOnRelease()) {
             event.setCanceled(true);
         }
-        if (ToolUtils.isInfinite(player) && !event.getSource().is(ModDamageTypes.INFINITY)) {
+        if (ToolUtils.isInfinite(player)) {
             event.setCanceled(true);
         }
     }
 
     //取消对无尽套的伤害
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onAttacked(LivingAttackEvent event) {
         if (!(event.getEntity() instanceof Player player)) {
             return;
         }
-        if (ToolUtils.isInfinite(player) && !event.getSource().is(ModDamageTypes.INFINITY)) {
+        if (ToolUtils.isInfinite(player)) {
             event.setCanceled(true);
         }
     }
