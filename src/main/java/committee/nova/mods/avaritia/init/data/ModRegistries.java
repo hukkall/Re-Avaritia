@@ -1,17 +1,9 @@
 package committee.nova.mods.avaritia.init.data;
 
 import committee.nova.mods.avaritia.Static;
-import committee.nova.mods.avaritia.init.data.provider.ModDamageTypeTags;
-import committee.nova.mods.avaritia.init.registry.ModDamageTypes;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.RegistrySetBuilder;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraftforge.common.data.DatapackBuiltinEntriesProvider;
-import net.minecraftforge.common.data.ExistingFileHelper;
 
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;

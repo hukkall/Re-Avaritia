@@ -2,14 +2,9 @@ package committee.nova.mods.avaritia.init.data;
 
 import committee.nova.mods.avaritia.init.data.provider.*;
 import committee.nova.mods.avaritia.init.data.provider.loot.ModLootTables;
-import committee.nova.mods.avaritia.init.data.provider.ModRecipes;
 import committee.nova.mods.avaritia.init.registry.ModDamageTypes;
 import net.minecraft.DetectedVersion;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.RegistrySetBuilder;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.metadata.PackMetadataGenerator;

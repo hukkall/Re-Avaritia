@@ -1,6 +1,5 @@
 package committee.nova.mods.avaritia.api.client.widget;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.gui.GuiGraphics;

@@ -1,7 +1,6 @@
 package committee.nova.mods.avaritia.common.tile;
 
 import committee.nova.mods.avaritia.common.menu.CompressedChestMenu;
-import committee.nova.mods.avaritia.init.registry.ModMenus;
 import committee.nova.mods.avaritia.init.registry.ModTileEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

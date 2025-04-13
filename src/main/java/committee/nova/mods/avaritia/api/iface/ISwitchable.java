@@ -3,7 +3,6 @@ package committee.nova.mods.avaritia.api.iface;
 import committee.nova.mods.avaritia.init.registry.ModTooltips;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;

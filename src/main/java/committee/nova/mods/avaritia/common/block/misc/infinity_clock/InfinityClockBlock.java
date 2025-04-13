@@ -10,6 +10,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -21,6 +22,8 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,6 +37,7 @@ import org.jetbrains.annotations.Nullable;
 public class InfinityClockBlock extends BaseTileEntityBlock {
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;;
     //public static final EnumProperty<ClockSpeed> SPEED = EnumProperty.create("speed", ClockSpeed.class);
+    protected static final VoxelShape AABB = Block.box(4.0D, 0.0D, 4.0D, 14.0D, 14.0D, 8.0D);
     public InfinityClockBlock() {
         super(Properties.of()
                 .mapColor(MapColor.GOLD)
@@ -67,6 +71,10 @@ public class InfinityClockBlock extends BaseTileEntityBlock {
         return createTicker(type, ModTileEntities.infinity_clock_tile.get(), InfinityClockTile::serverTick);
     }
 
+    @Override
+    public VoxelShape getShape(@NotNull BlockState pState, @NotNull BlockGetter pLevel, @NotNull BlockPos pPos, @NotNull CollisionContext pContext) {
+        return AABB;
+    }
 
     @Override
     public BlockState rotate(BlockState pState, Rotation pRotation) {

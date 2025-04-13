@@ -4,25 +4,32 @@ import com.mojang.blaze3d.platform.InputConstants;
 import committee.nova.mods.avaritia.Static;
 import committee.nova.mods.avaritia.api.iface.IFilterItem;
 import committee.nova.mods.avaritia.client.screen.ItemFilterScreen;
-import committee.nova.mods.avaritia.common.menu.NeutronRingMenu;
 import committee.nova.mods.avaritia.common.net.C2SElytraSpeedUpPacket;
 import committee.nova.mods.avaritia.common.net.C2SOpenRingPack;
+import committee.nova.mods.avaritia.init.config.ModConfig;
 import committee.nova.mods.avaritia.init.handler.NetworkHandler;
+import committee.nova.mods.avaritia.init.registry.ModTooltips;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.SimpleMenuProvider;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.network.NetworkHooks;
+import net.minecraftforge.fml.loading.FMLLoader;
 
 import java.util.Collections;
+import java.util.List;
+import java.util.TreeSet;
+
+import static net.minecraft.ChatFormatting.DARK_PURPLE;
 
 /**
  * Author cnlimiter
@@ -95,4 +102,60 @@ public class AvaritiaForgeClient {
 
     // endregion
 
+
+    @SubscribeEvent(priority = EventPriority.LOW)
+    public static void onItemTooltip(final ItemTooltipEvent e){
+        if (!FMLLoader.isProduction() || ModConfig.useAdvanceTooltips.get()) {
+            var stack = e.getItemStack();
+            var flags = e.getFlags();
+            var tooltips = e.getToolTip();
+            if (!flags.isAdvanced() && !stack.isEmpty()) {
+                if (stack.isDamaged()) {
+                    Component toolTip =
+                            ModTooltips.INIT_ENCHANT.args((stack.getMaxDamage()- stack.getDamageValue())+
+                                            " / "+
+                                            stack.getMaxDamage()).build()
+                            .withStyle(DARK_PURPLE);
+                    if (!tooltips.contains(toolTip)) {
+                        tooltips.add(toolTip);
+                    }
+                }
+            }
+
+            if (Screen.hasAltDown()) {
+                CompoundTag tag=stack.getTag();
+                if (tag != null) {
+                    addTagCompound("", tooltips, tag);
+                }
+            }
+        }
+    }
+
+    private static void addTagCompound(String prefix, List<Component> list, CompoundTag tag) {
+        TreeSet<String> sortedKeys = new TreeSet<>(tag.getAllKeys());
+        for (String key: sortedKeys) {
+            Tag elem=tag.get(key);
+            switch(elem.getId()) {
+                case Tag.TAG_SHORT -> list.add(Component.literal(prefix+key+": §2"+tag.getShort(key)));
+                case Tag.TAG_INT -> list.add(Component.literal(prefix+key+": §3"+tag.getInt(key)));
+                case Tag.TAG_DOUBLE -> list.add(Component.literal(prefix+key+": §6"+tag.getDouble(key)));
+                case Tag.TAG_STRING -> list.add(Component.literal(prefix+key+": §8"+tag.getString(key)));
+                case Tag.TAG_LIST -> {
+                    list.add(Component.literal(prefix+key+": §9List, "+((ListTag)elem).size()+" items"));
+                    if (Screen.hasShiftDown()) {
+                        for (Tag key1 : (ListTag)elem) {
+                            addTagCompound(prefix+"    ", list, (CompoundTag)key1);
+                        }
+                    }
+                }
+                case Tag.TAG_COMPOUND -> {
+                    list.add(Component.literal(prefix+key+": §aCompound"));
+                    if (Screen.hasShiftDown()) {
+                        addTagCompound(prefix+"    ", list, (CompoundTag)elem);
+                    }
+                }
+                default -> list.add(Component.literal(prefix+key+": Type "+elem.getType()));
+            }
+        }
+    }
 }

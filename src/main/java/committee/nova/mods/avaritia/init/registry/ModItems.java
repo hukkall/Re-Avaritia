@@ -2,14 +2,11 @@ package committee.nova.mods.avaritia.init.registry;
 
 import committee.nova.mods.avaritia.Static;
 import committee.nova.mods.avaritia.api.common.item.BaseItem;
-import committee.nova.mods.avaritia.common.item.resources.EndestPearlItem;
-import committee.nova.mods.avaritia.common.item.tools.InfinityArmorItem;
-import committee.nova.mods.avaritia.common.item.misc.InfinityElytraItem;
-import committee.nova.mods.avaritia.common.item.resources.MatterClusterItem;
 import committee.nova.mods.avaritia.common.item.misc.*;
 import committee.nova.mods.avaritia.common.item.resources.*;
 import committee.nova.mods.avaritia.common.item.singularity.EternalSingularityItem;
 import committee.nova.mods.avaritia.common.item.singularity.SingularityItem;
+import committee.nova.mods.avaritia.common.item.tools.InfinityArmorItem;
 import committee.nova.mods.avaritia.common.item.tools.blaze.*;
 import committee.nova.mods.avaritia.common.item.tools.crystal.*;
 import committee.nova.mods.avaritia.common.item.tools.infinity.*;

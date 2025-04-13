@@ -10,7 +10,7 @@ import committee.nova.mods.avaritia.common.wrappers.channel.ServerChannel;
 import committee.nova.mods.avaritia.init.handler.NetworkHandler;
 import committee.nova.mods.avaritia.init.registry.ModMenus;
 import committee.nova.mods.avaritia.util.StorageUtils;
-import committee.nova.mods.avaritia.util.StorageUtils.*;
+import committee.nova.mods.avaritia.util.StorageUtils.Action;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;

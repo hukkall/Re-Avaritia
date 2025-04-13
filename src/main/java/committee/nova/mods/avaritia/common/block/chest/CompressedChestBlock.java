@@ -1,7 +1,6 @@
 package committee.nova.mods.avaritia.common.block.chest;
 
 import committee.nova.mods.avaritia.common.tile.CompressedChestTile;
-import committee.nova.mods.avaritia.common.tile.collector.BaseNeutronCollectorTile;
 import committee.nova.mods.avaritia.init.registry.ModBlocks;
 import committee.nova.mods.avaritia.init.registry.ModTileEntities;
 import net.minecraft.core.BlockPos;

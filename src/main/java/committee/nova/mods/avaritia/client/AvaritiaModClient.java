@@ -1,6 +1,7 @@
 package committee.nova.mods.avaritia.client;
 
 import committee.nova.mods.avaritia.Static;
+import committee.nova.mods.avaritia.api.client.util.ColorUtils;
 import committee.nova.mods.avaritia.api.iface.IColored;
 import committee.nova.mods.avaritia.client.model.CosmicModelLoader;
 import committee.nova.mods.avaritia.client.model.HaloModelLoader;
@@ -11,7 +12,6 @@ import committee.nova.mods.avaritia.init.registry.ModEntities;
 import committee.nova.mods.avaritia.init.registry.ModItems;
 import committee.nova.mods.avaritia.init.registry.ModMenus;
 import committee.nova.mods.avaritia.init.registry.ModTileEntities;
-import committee.nova.mods.avaritia.api.client.util.ColorUtils;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;

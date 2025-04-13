@@ -1,6 +1,5 @@
 package committee.nova.mods.avaritia.api.utils;
 
-import committee.nova.mods.avaritia.Static;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;

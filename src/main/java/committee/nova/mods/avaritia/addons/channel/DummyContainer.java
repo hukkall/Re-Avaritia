@@ -2,7 +2,7 @@ package committee.nova.mods.avaritia.addons.channel;
 
 import committee.nova.mods.avaritia.util.SortUtils;
 import committee.nova.mods.avaritia.util.StorageUtils;
-import committee.nova.mods.avaritia.util.StorageUtils.*;
+import committee.nova.mods.avaritia.util.StorageUtils.ViewType;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;

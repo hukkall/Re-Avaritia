@@ -1,7 +1,7 @@
 package committee.nova.mods.avaritia.common.item.misc;
 
-import committee.nova.mods.avaritia.common.wrappers.InfinityBucketWrapper;
 import committee.nova.mods.avaritia.common.item.resources.ResourceItem;
+import committee.nova.mods.avaritia.common.wrappers.InfinityBucketWrapper;
 import committee.nova.mods.avaritia.init.registry.ModRarities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;

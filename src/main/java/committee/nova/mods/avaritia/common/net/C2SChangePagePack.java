@@ -1,7 +1,6 @@
 package committee.nova.mods.avaritia.common.net;
 
 import committee.nova.mods.avaritia.api.iface.IChangePage;
-import committee.nova.mods.avaritia.common.menu.InfinityChestMenu;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkEvent;

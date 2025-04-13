@@ -1,18 +1,15 @@
 package committee.nova.mods.avaritia.common.menu;
 
 import committee.nova.mods.avaritia.api.common.menu.BaseMenu;
-import committee.nova.mods.avaritia.api.utils.InventoryUtils;
 import committee.nova.mods.avaritia.api.common.slot.BlackListSlot;
+import committee.nova.mods.avaritia.api.utils.InventoryUtils;
 import committee.nova.mods.avaritia.init.registry.ModItems;
 import committee.nova.mods.avaritia.init.registry.ModMenus;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;

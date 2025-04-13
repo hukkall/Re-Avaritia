@@ -1,8 +1,6 @@
 package committee.nova.mods.avaritia.common.tile;
 
 import committee.nova.mods.avaritia.api.common.tile.BaseInventoryTileEntity;
-import committee.nova.mods.avaritia.api.common.tile.BaseTileEntity;
-import committee.nova.mods.avaritia.api.common.wrapper.BaseItemWrapper;
 import committee.nova.mods.avaritia.api.common.wrapper.ItemStackWrapper;
 import committee.nova.mods.avaritia.api.utils.lang.Localizable;
 import committee.nova.mods.avaritia.common.menu.InfinityClockBlockMenu;
@@ -14,15 +12,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.function.Predicate;
 
 /**
  * @Project: Avaritia

@@ -2,7 +2,6 @@ package committee.nova.mods.avaritia.api.common.menu;
 
 import committee.nova.mods.avaritia.api.iface.IDataReceiver;
 import committee.nova.mods.avaritia.init.handler.NetworkHandler;
-import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -11,7 +10,6 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 
 /**

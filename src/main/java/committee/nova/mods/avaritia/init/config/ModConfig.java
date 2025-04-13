@@ -47,6 +47,9 @@ public class ModConfig {
     public static ForgeConfigSpec.IntValue MAX_PUBLIC_CHANNELS;
     public static ForgeConfigSpec.IntValue CHANNEL_FAST_UPDATE_RATE;
     public static ForgeConfigSpec.IntValue CHANNEL_FULL_UPDATE_RATE;
+
+    public static final ForgeConfigSpec.BooleanValue useAdvanceTooltips;
+
     //SERVER
     static {
         final var common = new ForgeConfigSpec.Builder();
@@ -89,6 +92,9 @@ public class ModConfig {
         MAX_PUBLIC_CHANNELS = buildInt(common, "MaxPublic Channels", 128, 32, 1024, "");
         CHANNEL_FAST_UPDATE_RATE = buildInt(common,  "FastUpdate Rate", 1, 1, 40, "");
         CHANNEL_FULL_UPDATE_RATE = buildInt(common, "FullUpdate Rate", 40, 20, 1200, "");
+        common.pop();
+        common.push("misc");
+        useAdvanceTooltips = buildBoolean(common, "Use Advance Tooltips", false, "For develop");
         common.pop();
         COMMON = common.build();
     }

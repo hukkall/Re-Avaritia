@@ -1,14 +1,11 @@
 package committee.nova.mods.avaritia.common.wrappers;
 
-import committee.nova.mods.avaritia.api.common.container.OffsetContainer;
 import committee.nova.mods.avaritia.api.common.wrapper.OffsetItemStackWrapper;
 import committee.nova.mods.avaritia.common.item.misc.NeutronRingItem;
-import committee.nova.mods.avaritia.init.config.ModConfig;
 import committee.nova.mods.avaritia.util.StorageUtils;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import lombok.Getter;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.item.ItemStack;

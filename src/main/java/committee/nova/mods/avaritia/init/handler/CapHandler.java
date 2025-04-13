@@ -1,10 +1,5 @@
 package committee.nova.mods.avaritia.init.handler;
 
-import committee.nova.mods.avaritia.Static;
-import committee.nova.mods.avaritia.api.iface.IFilterItem;
-import committee.nova.mods.avaritia.common.capability.ItemFiltersProvider;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;

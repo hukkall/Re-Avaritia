@@ -1,7 +1,5 @@
 package committee.nova.mods.avaritia.api.utils;
 
-import net.minecraft.core.BlockPos;
-
 /**
  * @Project: Avaritia
  * @Author: cnlimiter

@@ -1,12 +1,8 @@
 package committee.nova.mods.avaritia.init.data.provider;
 
 import committee.nova.mods.avaritia.Static;
-import committee.nova.mods.avaritia.init.data.ModDataGen;
 import committee.nova.mods.avaritia.init.registry.ModDamageTypes;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.RegistrySetBuilder;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.TagsProvider;

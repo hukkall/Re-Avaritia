@@ -1,6 +1,5 @@
 package committee.nova.mods.avaritia.common.block.extreme;
 
-import committee.nova.mods.avaritia.api.common.wrapper.ItemStackWrapper;
 import committee.nova.mods.avaritia.common.menu.ExtremeAnvilMenu;
 import committee.nova.mods.avaritia.init.registry.ModResourceBlocks;
 import committee.nova.mods.avaritia.init.registry.ModTags;

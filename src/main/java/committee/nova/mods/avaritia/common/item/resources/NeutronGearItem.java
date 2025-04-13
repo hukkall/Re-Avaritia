@@ -1,14 +1,6 @@
 package committee.nova.mods.avaritia.common.item.resources;
 
-import committee.nova.mods.avaritia.common.tile.collector.BaseNeutronCollectorTile;
-import committee.nova.mods.avaritia.common.tile.collector.CollectorTier;
-import committee.nova.mods.avaritia.init.registry.ModBlocks;
 import committee.nova.mods.avaritia.init.registry.ModRarities;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.item.context.UseOnContext;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * NeutronGearItem

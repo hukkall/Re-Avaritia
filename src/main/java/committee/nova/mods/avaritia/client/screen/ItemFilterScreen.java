@@ -28,7 +28,6 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static committee.nova.mods.avaritia.client.AvaritiaForgeClient.FILTER_KEY;
-import static committee.nova.mods.avaritia.client.AvaritiaForgeClient.RING_KEY;
 
 /**
  * @Project: Avaritia

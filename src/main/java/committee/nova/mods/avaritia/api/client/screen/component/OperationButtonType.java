@@ -1,6 +1,5 @@
 package committee.nova.mods.avaritia.api.client.screen.component;
 
-import committee.nova.mods.avaritia.api.client.screen.ItemSelectScreen;
 import lombok.Getter;
 
 import java.util.Arrays;
