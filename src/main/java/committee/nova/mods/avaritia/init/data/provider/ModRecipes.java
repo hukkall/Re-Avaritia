@@ -311,6 +311,33 @@ public class ModRecipes extends RecipeProvider implements IConditionBuilder {
                 .define('a', ModItems.neutron_pile.get())
                 .unlockedBy("has_item", has(ItemTags.MUSIC_DISCS)).save(consumer);
 
+        ModShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.nether_crafting_table.get(), 2)
+                .pattern("     ")
+                .pattern(" aaa ")
+                .pattern(" aba ")
+                .pattern(" aaa ")
+                .pattern("     ")
+                .define('a', Items.COAL)
+                .define('b', ModItems.neutron_nugget.get())
+                .unlockedBy("has_block", has(ModItems.neutron_pile.get())).save(consumer);
+
+        ModShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.star_fuel.get(), 4)
+                .pattern("         ")
+                .pattern("  aaaaa  ")
+                .pattern(" abbcbba ")
+                .pattern(" abeeeba ")
+                .pattern(" acedeca ")
+                .pattern(" abeeeba ")
+                .pattern(" abbcbba ")
+                .pattern("  aaaaa  ")
+                .pattern("         ")
+                .define('a', Blocks.COAL_BLOCK)
+                .define('b', Blocks.MAGMA_BLOCK)
+                .define('c', Items.LAVA_BUCKET)
+                .define('d', ModItems.eternal_singularity.get())
+                .define('e', ModBlocks.refined_coal_block.get())
+                .unlockedBy("has_item", has(ModItems.eternal_singularity.get())).save(consumer);
+
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.neutron_gear.get())
                 .pattern(" n ")
                 .pattern("ncn")

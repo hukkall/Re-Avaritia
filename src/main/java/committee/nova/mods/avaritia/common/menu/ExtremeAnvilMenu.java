@@ -1,5 +1,6 @@
 package committee.nova.mods.avaritia.common.menu;
 
+import committee.nova.mods.avaritia.init.registry.ModItems;
 import committee.nova.mods.avaritia.init.registry.ModMenus;
 import net.minecraft.SharedConstants;
 import net.minecraft.Util;
@@ -180,15 +181,6 @@ public class ExtremeAnvilMenu extends ItemCombinerMenu {
             }
 
             if (!itemstack1.isEmpty()) {
-                int k2 = itemstack1.getBaseRepairCost();
-                if (!itemstack2.isEmpty() && k2 < itemstack2.getBaseRepairCost()) {
-                    k2 = itemstack2.getBaseRepairCost();
-                }
-
-                if (k != i || k == 0) {
-                    k2 = calculateIncreasedRepairCost(k2);
-                }
-                itemstack1.setRepairCost(k2);
                 EnchantmentHelper.setEnchantments(map, itemstack1);
             }
 

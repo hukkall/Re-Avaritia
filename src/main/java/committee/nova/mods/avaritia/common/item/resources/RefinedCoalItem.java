@@ -16,7 +16,7 @@ public class RefinedCoalItem extends ResourceItem{
         super(ModRarities.UNCOMMON, registryName, true, new Properties().stacksTo(32));
     }
 
-    public static final int BURN_TIME = 16000 * 2;
+    public static final int BURN_TIME = 16000 * 10;
 
     @Override
     public int getBurnTime(ItemStack stack, @Nullable RecipeType<?> recipeType) {

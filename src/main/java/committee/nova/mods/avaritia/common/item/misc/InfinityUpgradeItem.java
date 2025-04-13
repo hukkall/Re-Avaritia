@@ -4,6 +4,7 @@ import committee.nova.mods.avaritia.common.item.resources.ResourceItem;
 import committee.nova.mods.avaritia.common.tile.collector.BaseNeutronCollectorTile;
 import committee.nova.mods.avaritia.common.tile.collector.CollectorTier;
 import committee.nova.mods.avaritia.init.registry.ModBlocks;
+import committee.nova.mods.avaritia.init.registry.ModItems;
 import committee.nova.mods.avaritia.init.registry.ModRarities;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -22,13 +23,20 @@ import org.jetbrains.annotations.NotNull;
 public class InfinityUpgradeItem extends ResourceItem {
     public InfinityUpgradeItem(String registryName) {
         super(ModRarities.LEGEND, registryName, true,
-                new Properties().durability(16)
+                new Properties()
+                        .durability(16)
+
                 );
     }
 
     @Override
     public boolean isFoil(@NotNull ItemStack pStack) {
         return false;
+    }
+
+    @Override
+    public boolean isValidRepairItem(@NotNull ItemStack pStack, @NotNull ItemStack pRepairCandidate) {
+        return pRepairCandidate.is(ModItems.star_fuel.get());
     }
 
     @Override
