@@ -1,12 +1,15 @@
 package committee.nova.mods.avaritia.init.registry;
 
 import committee.nova.mods.avaritia.Static;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.minecraftforge.common.Tags;
 
 /**
  * @Project: Avaritia-forge
@@ -28,5 +31,7 @@ public class ModTags {
     public static final TagKey<Block> NEEDS_CRYSTAL_TOOL = BlockTags.create(Static.rl("needs_crystal_tool"));
     public static final TagKey<Block> NEEDS_BLAZE_TOOL = BlockTags.create(Static.rl("needs_blaze_tool"));
     public static final TagKey<Block> NEEDS_INFINITY_TOOL = BlockTags.create(Static.rl("needs_infinity_tool"));
+
+    public static final TagKey<EntityType<?>> NEUTRAL_CREATURES = TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation("forge","neutral_creatures"));
 
 }

@@ -14,6 +14,7 @@ import committee.nova.mods.avaritia.init.handler.ItemCaptureHandler;
 import committee.nova.mods.avaritia.init.registry.ModDamageTypes;
 import committee.nova.mods.avaritia.init.registry.ModEntities;
 import committee.nova.mods.avaritia.init.registry.ModItems;
+import committee.nova.mods.avaritia.init.registry.ModTags;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
@@ -466,27 +467,30 @@ public class ToolUtils {
         AABB aabb = player.getBoundingBox().deflate(range);
         List<Entity> toAttack = player.level().getEntities(player, aabb);
         DamageSource src = player.damageSources().source(ModDamageTypes.INFINITY, player, player);
-        toAttack.stream().filter(entity -> entity instanceof Mob).forEach(entity -> {
-            if (entity instanceof Mob mob) {
-                if (mob instanceof Animal animal && hurtAnimal) {
-                    animal.hurt(src, damage);
-                } else if (mob instanceof EnderDragon dragon) {
-                    dragon.hurt(dragon.head, src, Float.POSITIVE_INFINITY);
-                } else if (mob instanceof WitherBoss wither) {
-                    wither.setInvulnerableTicks(0);
-                    wither.hurt(src, damage);
-                } else if (!(mob instanceof Animal)) {
-                    mob.hurt(src, damage);
-                }
-            }
-            LightningBolt lightningbolt = EntityType.LIGHTNING_BOLT.create(player.level());
-            if (lightOn && lightningbolt != null) {
-                if (!(entity instanceof Animal && hurtAnimal)) {
-                    lightningbolt.moveTo(Vec3.atBottomCenterOf(entity.blockPosition()));
-                    lightningbolt.setCause(player instanceof ServerPlayer serverPlayer ? serverPlayer : null);
-                    player.level().addFreshEntity(lightningbolt);
-                }
-            }
+        toAttack.stream()
+                .filter(entity -> entity instanceof Mob)
+                .filter(entity -> !entity.getType().is(ModTags.NEUTRAL_CREATURES))
+                .forEach(entity -> {
+                    if (entity instanceof Mob mob) {
+                        if (mob instanceof Animal animal && hurtAnimal) {
+                            animal.hurt(src, damage);
+                        } else if (mob instanceof EnderDragon dragon) {
+                            dragon.hurt(dragon.head, src, Float.POSITIVE_INFINITY);
+                        } else if (mob instanceof WitherBoss wither) {
+                            wither.setInvulnerableTicks(0);
+                            wither.hurt(src, damage);
+                        } else if (!(mob instanceof Animal)) {
+                            mob.hurt(src, damage);
+                        }
+                    }
+                    LightningBolt lightningbolt = EntityType.LIGHTNING_BOLT.create(player.level());
+                    if (lightOn && lightningbolt != null) {
+                        if (!(entity instanceof Animal && hurtAnimal)) {
+                            lightningbolt.moveTo(Vec3.atBottomCenterOf(entity.blockPosition()));
+                            lightningbolt.setCause(player instanceof ServerPlayer serverPlayer ? serverPlayer : null);
+                            player.level().addFreshEntity(lightningbolt);
+                        }
+                    }
         });
     }
 

@@ -55,6 +55,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;
 
+import java.util.Set;
+
 /**
  * Description:
  * Author: cnlimiter
@@ -63,19 +65,6 @@ import net.minecraftforge.network.PacketDistributor;
  */
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class InfinityHandler {
-
-    //黑名单功能
-    private static boolean isGarbageBlock(BlockState state) {
-        return state.is(Tags.Blocks.COBBLESTONE) || state.is(Tags.Blocks.STONE) || state.is(Tags.Blocks.NETHERRACK);
-    }
-
-
-    //特殊效果（附魔）
-    @SubscribeEvent
-    public static void opTool(PlayerEvent.ItemCraftedEvent event) {
-        ItemStack stack = event.getCrafting();
-    }
-
     @SubscribeEvent
     public static void onPlayerMine(PlayerInteractEvent.LeftClickBlock event) {
         ItemStack item = event.getItemStack();
@@ -147,19 +136,6 @@ public class InfinityHandler {
                 }
                 if (held.getOrCreateTag().getBoolean("hammer") || held.getOrCreateTag().getBoolean("destroyer")) {
                     event.setNewSpeed(event.getNewSpeed() * 0.5F);
-                }
-            }
-        }
-    }
-
-    @SubscribeEvent
-    public static void canHarvest(PlayerEvent.HarvestCheck event) {
-        if (!event.getEntity().getMainHandItem().isEmpty()) {
-            var level = event.getEntity().level();
-            ItemStack held = event.getEntity().getMainHandItem();
-            if (held.is(ModItems.infinity_pickaxe.get()) && event.getTargetBlock().getMapColor(level, BlockPos.ZERO) == MapColor.STONE) {
-                if (held.getOrCreateTag().getBoolean("destroyer") && isGarbageBlock(event.getTargetBlock().getBlock().defaultBlockState())) {
-                    event.setResult(Event.Result.ALLOW);
                 }
             }
         }

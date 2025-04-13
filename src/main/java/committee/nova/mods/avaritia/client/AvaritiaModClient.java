@@ -8,10 +8,7 @@ import committee.nova.mods.avaritia.client.model.HaloModelLoader;
 import committee.nova.mods.avaritia.client.model.InfinityArmorModel;
 import committee.nova.mods.avaritia.client.render.tile.CompressedChestRenderer;
 import committee.nova.mods.avaritia.client.shader.AvaritiaShaders;
-import committee.nova.mods.avaritia.init.registry.ModEntities;
-import committee.nova.mods.avaritia.init.registry.ModItems;
-import committee.nova.mods.avaritia.init.registry.ModMenus;
-import committee.nova.mods.avaritia.init.registry.ModTileEntities;
+import committee.nova.mods.avaritia.init.registry.*;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
@@ -57,6 +54,7 @@ public class AvaritiaModClient {
         ModEntities.onClientSetup();
         ModMenus.onClientSetup();
         ModTileEntities.onClientSetup();
+        ModSearches.onClientSetup();
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)

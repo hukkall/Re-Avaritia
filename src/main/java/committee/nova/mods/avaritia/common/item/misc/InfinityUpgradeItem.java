@@ -8,13 +8,9 @@ import committee.nova.mods.avaritia.init.registry.ModRarities;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -26,8 +22,13 @@ import org.jetbrains.annotations.NotNull;
 public class InfinityUpgradeItem extends ResourceItem {
     public InfinityUpgradeItem(String registryName) {
         super(ModRarities.LEGEND, registryName, true,
-                new Properties().defaultDurability(16)
+                new Properties().durability(16)
                 );
+    }
+
+    @Override
+    public boolean isFoil(@NotNull ItemStack pStack) {
+        return false;
     }
 
     @Override

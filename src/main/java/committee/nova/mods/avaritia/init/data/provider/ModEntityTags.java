@@ -2,11 +2,15 @@ package committee.nova.mods.avaritia.init.data.provider;
 
 import committee.nova.mods.avaritia.Static;
 import committee.nova.mods.avaritia.init.registry.ModEntities;
+import committee.nova.mods.avaritia.init.registry.ModTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.EntityTypeTagsProvider;
 import net.minecraft.tags.EntityTypeTags;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -34,5 +38,10 @@ public class ModEntityTags extends EntityTypeTagsProvider {
     protected void addTags(HolderLookup.@NotNull Provider provider) {
         //vanilla
         tag(EntityTypeTags.IMPACT_PROJECTILES).add(ModEntities.ENDER_PEARL.get());
+        ForgeRegistries.ENTITY_TYPES.getValues().forEach(entityType -> {
+            if (entityType.getCategory() == MobCategory.CREATURE){
+                tag(ModTags.NEUTRAL_CREATURES).add(entityType);
+            }
+        });
     }
 }

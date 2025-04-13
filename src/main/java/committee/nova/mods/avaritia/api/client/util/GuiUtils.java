@@ -40,6 +40,7 @@ import java.util.stream.Collectors;
 public class GuiUtils {
 
     public final static int ITEM_ICON_SIZE = 16;
+    public final static int ENTITY_ICON_SIZE = 28;
 
     // region 设置深度
 

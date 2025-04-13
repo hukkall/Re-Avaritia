@@ -21,6 +21,7 @@ import net.minecraft.client.searchtree.SearchTree;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.*;
@@ -47,8 +48,6 @@ import static committee.nova.mods.avaritia.Static.GSON;
 public class ItemSelectScreen extends Screen {
 
     private static final Logger LOGGER = LogManager.getLogger();
-    private final NonNullList<ItemStack> allItemList = this.getAllItemList();
-    private final List<ItemStack> playerItemList = this.getPlayerItemList();
     // 每行显示数量
     private final int itemPerLine = 9;
     // 每页显示行数
@@ -66,6 +65,15 @@ public class ItemSelectScreen extends Screen {
      * 是否要显示该界面, 若为false则直接关闭当前界面并返回到调用者的 Screen
      */
     private final Supplier<Boolean> shouldClose;
+    /**
+     * 显示种类
+     */
+    private final ResourceKey<CreativeModeTab> tabs;
+    /**
+     * 背包模式
+     */
+    private final boolean useInventoryMode;
+    private  boolean inventoryMode = false;
     /**
      * 输入框
      */
@@ -94,15 +102,12 @@ public class ItemSelectScreen extends Screen {
      * 当前选择的物品 ID
      */
     @Getter
-    private String selectedItemId = "";
+    private String selectedItemId;
     /**
      * 当前选择的物品
      */
-    private ItemStack currentItem = new ItemStack(Items.AIR);
-    /**
-     * 背包模式
-     */
-    private boolean inventoryMode = false;
+    private ItemStack currentItem;
+
 
     private int bgX;
     private int bgY;
@@ -133,22 +138,23 @@ public class ItemSelectScreen extends Screen {
 
     // endregion 滚动条相关
 
-    public ItemSelectScreen(@NonNull Screen callbackScreen, @NonNull Consumer<ItemStack> onDataReceived, @NonNull ItemStack defaultItem) {
-        super(Component.literal("ItemSelectScreen"));
-        this.previousScreen = callbackScreen;
-        this.onDataReceived1 = onDataReceived;
-        this.currentItem = defaultItem;
-        this.selectedItemId = ItemUtils.getId(defaultItem);
-        this.shouldClose = null;
+    public ItemSelectScreen(@NonNull Screen callbackScreen, @NonNull Consumer<ItemStack> onDataReceived,
+                            @NonNull ItemStack defaultItem) {
+        this(callbackScreen, onDataReceived, defaultItem, null, CreativeModeTabs.INVENTORY, true);
     }
 
-    public ItemSelectScreen(@NonNull Screen callbackScreen, @NonNull Consumer<ItemStack> onDataReceived, @NonNull ItemStack defaultItem, Supplier<Boolean> shouldClose) {
-        super(Component.literal("ItemSelectScreen"));
+    public ItemSelectScreen(@NonNull Screen callbackScreen, @NonNull Consumer<ItemStack> onDataReceived,
+                            @NonNull ItemStack defaultItem, Supplier<Boolean> shouldClose, ResourceKey<CreativeModeTab> tabs,
+                            boolean useInventoryMode
+    ) {
+        super(Component.literal("SelectScreen"));
         this.previousScreen = callbackScreen;
         this.onDataReceived1 = onDataReceived;
         this.currentItem = defaultItem;
         this.selectedItemId = ItemUtils.getId(defaultItem);
         this.shouldClose = shouldClose;
+        this.tabs = tabs;
+        this.useInventoryMode = useInventoryMode;
     }
 
     @Override
@@ -306,7 +312,7 @@ public class ItemSelectScreen extends Screen {
         if (player != null) {
             CreativeModeTabs.tryRebuildTabContents(player.connection.enabledFeatures(), true, player.level().registryAccess());
         }
-        list.addAll(CreativeModeTabs.searchTab().getDisplayItems());
+        list.addAll(BuiltInRegistries.CREATIVE_MODE_TAB.getOrThrow(this.tabs).getDisplayItems());
         return list;
     }
 
@@ -339,7 +345,7 @@ public class ItemSelectScreen extends Screen {
             GuiUtils.fillOutLine(context.graphics(), (int) context.button().getX(), (int) context.button().getY(), (int) context.button().getWidth(), (int) context.button().getHeight(), 1, lineColor, 2);
             ItemStack itemStack = new ItemStack(this.inventoryMode ? Items.CHEST : Items.COMPASS);
             context.graphics().renderItem(itemStack, (int) context.button().getX() + 2, (int) context.button().getY() + 2);
-            Text text = this.inventoryMode ? Text.i18n("列出模式\n物品栏 (%s)", playerItemList.size()) : Text.i18n("列出模式\n所有物品 (%s)", allItemList.size());
+            Text text = this.inventoryMode ? Text.i18n("列出模式\n物品栏 (%s)", getPlayerItemList().size()) : Text.i18n("列出模式\n所有物品 (%s)", getAllItemList().size());
             context.button().setTooltip(text);
         }).setX(this.bgX - GuiUtils.ITEM_ICON_SIZE - 2 - margin - 3).setY(this.bgY + margin).setWidth(GuiUtils.ITEM_ICON_SIZE + 4).setHeight(GuiUtils.ITEM_ICON_SIZE + 4));
         this.OP_BUTTONS.put(OperationButtonType.ITEM.getCode(), new OperationButton(OperationButtonType.ITEM.getCode(), context -> {
@@ -472,7 +478,7 @@ public class ItemSelectScreen extends Screen {
             }
             this.itemList.addAll(isearchtree.search(s.toLowerCase(Locale.ROOT)));
         } else {
-            this.itemList.addAll(new ArrayList<>(this.inventoryMode ? this.playerItemList : this.allItemList));
+            this.itemList.addAll(new ArrayList<>(this.inventoryMode ? this.getPlayerItemList() : this.getAllItemList()));
         }
         this.setScrollOffset(0);
     }
@@ -520,7 +526,7 @@ public class ItemSelectScreen extends Screen {
     }
 
     private void handleOperation(OperationButton bt, int button, AtomicBoolean flag, AtomicBoolean updateSearchResults) {
-        if (bt.getOperation() == OperationButtonType.TYPE.getCode()) {
+        if (this.useInventoryMode && bt.getOperation() == OperationButtonType.TYPE.getCode()) {
             this.inventoryMode = !this.inventoryMode;
             updateSearchResults.set(true);
             flag.set(true);
