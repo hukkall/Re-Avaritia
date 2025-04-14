@@ -17,18 +17,19 @@ import org.jetbrains.annotations.NotNull;
  * @Description: 切换状态
  */
 public interface ISwitchable {
-    default boolean isActive(ItemStack stack) {
-        if (!stack.getOrCreateTag().contains("active")) return false;
-        return stack.getOrCreateTag().getBoolean("active");
+    default boolean isActive(ItemStack stack, String funcName) {
+        if (!stack.getOrCreateTagElement("mode").contains(funcName)) return false;
+        return stack.getOrCreateTagElement("mode").getBoolean(funcName);
     }
 
-    default void switchMode(@NotNull Level world, Player player, @NotNull InteractionHand hand, Component funcName) {
+    default void switchMode(@NotNull Level world, Player player, @NotNull InteractionHand hand, String funcName) {
         ItemStack stack = player.getItemInHand(hand);
-        CompoundTag tags = stack.getOrCreateTag();
-        tags.putBoolean("active", !tags.getBoolean("active"));
+        CompoundTag tags = stack.getOrCreateTagElement("mode");
+        Component funcTooltip = Component.translatable("tooltip.avaritia.tool." + funcName);
+        tags.putBoolean(funcName, !tags.getBoolean(funcName));
         if (!world.isClientSide && player instanceof ServerPlayer serverPlayer)
             serverPlayer.sendSystemMessage(
-                tags.getBoolean("active") ? ModTooltips.ACTIVE.args(funcName).build() : ModTooltips.INACTIVE.args(funcName).build()
+                tags.getBoolean(funcName) ? ModTooltips.ACTIVE.args(funcTooltip).build() : ModTooltips.INACTIVE.args(funcTooltip).build()
                 , true);
         player.swing(hand);
     }

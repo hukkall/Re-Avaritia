@@ -3,6 +3,7 @@ package committee.nova.mods.avaritia.common.item.tools.infinity;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import committee.nova.mods.avaritia.api.iface.IFilterItem;
+import committee.nova.mods.avaritia.api.iface.ISwitchable;
 import committee.nova.mods.avaritia.api.iface.InitEnchantItem;
 import committee.nova.mods.avaritia.api.utils.lang.Localizable;
 import committee.nova.mods.avaritia.common.entity.ImmortalItemEntity;
@@ -44,7 +45,7 @@ import java.util.List;
  * Date: 2022/3/31 10:25
  * Version: 1.0
  */
-public class InfinityPickaxeItem extends PickaxeItem implements InitEnchantItem, IFilterItem {
+public class InfinityPickaxeItem extends PickaxeItem implements InitEnchantItem, IFilterItem, ISwitchable {
 
     public InfinityPickaxeItem() {
         super(ModToolTiers.INFINITY, -50, 0F, (new Properties())
@@ -81,8 +82,8 @@ public class InfinityPickaxeItem extends PickaxeItem implements InitEnchantItem,
 
 
     @Override
-    public float getDestroySpeed(ItemStack stack, @NotNull BlockState state) {
-        if (stack.getOrCreateTag().getBoolean("hammer")) {
+    public float getDestroySpeed(@NotNull ItemStack stack, @NotNull BlockState state) {
+        if (isActive(stack, "infinity_pickaxe_hammer")) {
             return 8888.0F;
         }
         return Math.max(super.getDestroySpeed(stack, state), 9999.0F);
@@ -92,20 +93,15 @@ public class InfinityPickaxeItem extends PickaxeItem implements InitEnchantItem,
     public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level world, Player player, @NotNull InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (player.isCrouching()) {
-            CompoundTag tags = stack.getOrCreateTag();
-            tags.putBoolean("hammer", !tags.getBoolean("hammer"));
-            player.swing(hand);
-            if (!world.isClientSide && player instanceof ServerPlayer serverPlayer) serverPlayer.sendSystemMessage(
-                    Localizable.of(tags.getBoolean("hammer") ? "tooltip.infinity_pickaxe.type_2" : "tooltip.infinity_pickaxe.type_1").build()
-                    , true);
+            switchMode(world, player, hand, "infinity_pickaxe_hammer");
             return InteractionResultHolder.success(stack);
         }
         return super.use(world, player, hand);
     }
 
     @Override
-    public boolean hurtEnemy(ItemStack stack, @NotNull LivingEntity victim, @NotNull LivingEntity player) {
-        if (stack.getOrCreateTag().getBoolean("hammer")) {
+    public boolean hurtEnemy(@NotNull ItemStack stack, @NotNull LivingEntity victim, @NotNull LivingEntity player) {
+        if (isActive(stack, "infinity_pickaxe_hammer")) {
             if (!(victim instanceof Player)) {
                 int i = 10;
                 victim.setDeltaMovement(-Mth.sin(player.yBodyRot * (float) Math.PI / 180.0F) * i * 0.5F, 2.0D, Mth.cos(player.yBodyRot * (float) Math.PI / 180.0F) * i * 0.5F);
@@ -118,7 +114,7 @@ public class InfinityPickaxeItem extends PickaxeItem implements InitEnchantItem,
     public boolean onBlockStartBreak(ItemStack stack, BlockPos pos, Player player) {
         var world = player.level();
         var state = world.getBlockState(pos);
-        if (stack.getOrCreateTag().getBoolean("hammer")) {
+        if (isActive(stack, "infinity_pickaxe_hammer")) {
             ToolUtils.breakRangeBlocks(player, stack, pos, ModConfig.pickAxeBreakRange.get(), ToolUtils.materialsPick, true);
         }
         return false;

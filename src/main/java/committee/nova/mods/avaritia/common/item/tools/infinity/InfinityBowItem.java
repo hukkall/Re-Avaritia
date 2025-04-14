@@ -1,5 +1,6 @@
 package committee.nova.mods.avaritia.common.item.tools.infinity;
 
+import committee.nova.mods.avaritia.api.iface.ISwitchable;
 import committee.nova.mods.avaritia.api.iface.ITooltip;
 import committee.nova.mods.avaritia.api.iface.InitEnchantItem;
 import committee.nova.mods.avaritia.common.entity.ImmortalItemEntity;
@@ -42,7 +43,7 @@ import java.util.List;
  * Date: 2022/4/2 20:07
  * Version: 1.0
  */
-public class InfinityBowItem extends BowItem implements ITooltip, InitEnchantItem {
+public class InfinityBowItem extends BowItem implements ITooltip, ISwitchable, InitEnchantItem {
     public InfinityBowItem() {
         super(new Properties()
                 .stacksTo(1)
@@ -117,13 +118,8 @@ public class InfinityBowItem extends BowItem implements ITooltip, InitEnchantIte
         InteractionResultHolder<ItemStack> ret = net.minecraftforge.event.ForgeEventFactory.onArrowNock(itemstack, level, player, hand, true);
         if (ret != null) return ret;
         if (player.isCrouching()) {
-            CompoundTag tags = itemstack.getOrCreateTag();
-            tags.putBoolean("tracer", !tags.getBoolean("tracer"));
-            player.swing(hand);
-            if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) serverPlayer.sendSystemMessage(
-                    Component.translatable(tags.getBoolean("tracer") ? "tooltip.infinity_bow.type_2" : "tooltip.infinity_bow.type_1"
-                    ), true);
-            return new InteractionResultHolder<>(InteractionResult.SUCCESS, itemstack);
+            switchMode(level, player, hand, "infinity_bow_tracer");
+            return InteractionResultHolder.success(itemstack);
         }
         player.startUsingItem(hand);
         return InteractionResultHolder.success(itemstack);
@@ -146,7 +142,7 @@ public class InfinityBowItem extends BowItem implements ITooltip, InitEnchantIte
 
                 AbstractArrow arrowEntity = this.customArrow(new HeavenArrowEntity(player));
 
-                if (stack.getOrCreateTag().getBoolean("tracer")) {//追踪模式
+                if (isActive(stack, "infinity_bow_tracer")) {//追踪模式
                     if ((double) powerForTime >= 0.1D) {
                         arrowEntity = this.customArrow(new TraceArrowEntity(player));
                     }

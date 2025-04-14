@@ -297,7 +297,7 @@ public class InfinityHandler {
                 (tool.is(ModItems.blaze_axe.get()) || tool.is(ModItems.blaze_pickaxe.get()) || tool.is(ModItems.blaze_shovel.get()))
                         && tool.getItem() instanceof ISwitchable
         ) {
-            if (((ISwitchable) tool.getItem()).isActive(tool))
+            if (((ISwitchable) tool.getItem()).isActive(tool, "smelt"))
                 ToolUtils.melting(block, state, world, pos, player, tool, event);
         }
     }

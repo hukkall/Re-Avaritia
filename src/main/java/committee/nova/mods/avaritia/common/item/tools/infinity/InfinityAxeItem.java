@@ -2,6 +2,7 @@ package committee.nova.mods.avaritia.common.item.tools.infinity;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import committee.nova.mods.avaritia.api.iface.ISwitchable;
 import committee.nova.mods.avaritia.common.entity.ImmortalItemEntity;
 import committee.nova.mods.avaritia.init.registry.ModEntities;
 import committee.nova.mods.avaritia.init.registry.ModRarities;
@@ -34,7 +35,7 @@ import static committee.nova.mods.avaritia.util.ToolUtils.destroyTree;
  * Date: 2022/5/15 17:11
  * Version: 1.0
  */
-public class InfinityAxeItem extends AxeItem {
+public class InfinityAxeItem extends AxeItem implements ISwitchable {
 
     public InfinityAxeItem() {
         super(ModToolTiers.INFINITY, 100, -50f, (new Properties())
@@ -74,12 +75,7 @@ public class InfinityAxeItem extends AxeItem {
     public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level pLevel, Player player, @NotNull InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (player.isCrouching()) {
-            CompoundTag tags = stack.getOrCreateTag();
-            tags.putBoolean("range", !tags.getBoolean("range"));
-            player.swing(hand);
-            if (!pLevel.isClientSide && player instanceof ServerPlayer serverPlayer) serverPlayer.sendSystemMessage(
-                    Component.translatable(tags.getBoolean("range") ? "tooltip.infinity_axe.type_2" : "tooltip.infinity_axe.type_1"
-                    ), true);
+            switchMode(pLevel, player, hand, "infinity_axe_range");
             return InteractionResultHolder.success(stack);
         }
         return super.use(pLevel, player, hand);
@@ -88,7 +84,7 @@ public class InfinityAxeItem extends AxeItem {
     @Override
     public boolean onBlockStartBreak(ItemStack stack, BlockPos pos, Player player) {
         Level world = player.level();
-        if (!world.isClientSide && stack.getOrCreateTag().getBoolean("range") && canHarvest(pos, world)) {
+        if (!world.isClientSide && isActive(stack, "infinity_axe_range") && canHarvest(pos, world)) {
             destroyTree(player, (ServerLevel) world, pos, stack);
         }
         return false;

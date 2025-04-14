@@ -2,6 +2,7 @@ package committee.nova.mods.avaritia.common.item.tools.infinity;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import committee.nova.mods.avaritia.api.iface.ISwitchable;
 import committee.nova.mods.avaritia.common.entity.ImmortalItemEntity;
 import committee.nova.mods.avaritia.init.config.ModConfig;
 import committee.nova.mods.avaritia.init.registry.ModEntities;
@@ -34,7 +35,7 @@ import org.jetbrains.annotations.Nullable;
  * Date: 2022/5/15 16:33
  * Version: 1.0
  */
-public class InfinityShovelItem extends ShovelItem {
+public class InfinityShovelItem extends ShovelItem implements ISwitchable {
 
     public InfinityShovelItem() {
         super(ModToolTiers.INFINITY, 0, -50f, (new Properties())
@@ -77,17 +78,12 @@ public class InfinityShovelItem extends ShovelItem {
     public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level pLevel, Player player, @NotNull InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (player.isCrouching()) {
-            CompoundTag tags = stack.getOrCreateTag();
-            tags.putBoolean("destroyer", !tags.getBoolean("destroyer"));
-            player.swing(hand);
-            if (!pLevel.isClientSide && player instanceof ServerPlayer serverPlayer) serverPlayer.sendSystemMessage(
-                    Component.translatable(tags.getBoolean("destroyer") ? "tooltip.infinity_shovel.type_2" : "tooltip.infinity_shovel.type_1"
-                    ), true);
+            switchMode(pLevel, player, hand, "infinity_shovel_destroyer");
             return InteractionResultHolder.success(stack);
         }
 
         //右键发射发射终望珍珠,冷却20s
-        if (stack.getOrCreateTag().contains("destroyer") && stack.getOrCreateTag().getBoolean("destroyer")) {
+        if (isActive(stack, "infinity_shovel_destroyer")) {
             ToolUtils.pearlAttack(player, ModItems.endest_pearl.get().getDefaultInstance(), pLevel);//
             player.getCooldowns().addCooldown(stack.getItem(), 200);
         }
@@ -97,7 +93,7 @@ public class InfinityShovelItem extends ShovelItem {
 
     @Override
     public boolean onBlockStartBreak(ItemStack stack, BlockPos pos, Player player) {
-        if (stack.getOrCreateTag().getBoolean("destroyer")) {
+        if (isActive(stack, "infinity_shovel_destroyer")) {
             ToolUtils.breakRangeBlocks(player, stack, pos, ModConfig.shovelBreakRange.get(), ToolUtils.materialsShovel, false);
         }
         return false;
