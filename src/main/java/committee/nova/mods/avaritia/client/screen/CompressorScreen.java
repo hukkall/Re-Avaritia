@@ -24,16 +24,9 @@ import java.util.List;
  */
 public class CompressorScreen extends BaseContainerScreen<CompressorMenu> {
     private static final ResourceLocation BACKGROUND = new ResourceLocation(Static.MOD_ID, "textures/gui/compressor.png");
-    private CompressorTile tile;
 
     public CompressorScreen(CompressorMenu container, Inventory inventory, Component title) {
         super(container, inventory, title, BACKGROUND);
-    }
-
-    @Override
-    public void init() {
-        super.init();
-        this.tile = this.getTileEntity();
     }
 
     @Override
@@ -116,53 +109,53 @@ public class CompressorScreen extends BaseContainerScreen<CompressorMenu> {
     }
 
     public boolean isEjecting() {
-        if (this.tile == null)
+        if (this.menu.getTileEntity() == null)
             return false;
 
-        return this.tile.isEjecting();
+        return this.menu.getTileEntity().isEjecting();
     }
 
 
     public boolean hasRecipe() {
-        if (this.tile == null)
+        if (this.menu.getTileEntity() == null)
             return false;
 
-        return this.tile.hasRecipe();
+        return this.menu.getTileEntity().hasRecipe();
     }
 
     public boolean hasMaterialStack() {
-        if (this.tile == null)
+        if (this.menu.getTileEntity() == null)
             return false;
 
-        return this.tile.hasMaterialStack();
+        return this.menu.getTileEntity().hasMaterialStack();
     }
 
     public int getProgress() {
-        if (this.tile == null)
+        if (this.menu.getTileEntity() == null)
             return 0;
 
         return this.menu.getProgress();
     }
 
     public int getMaterialCount() {
-        if (this.tile == null)
+        if (this.menu.getTileEntity() == null)
             return 0;
 
-        return this.tile.getMaterialCount();
+        return this.menu.getTileEntity().getMaterialCount();
     }
 
     public int getMaterialsRequired() {
-        if (this.tile == null)
+        if (this.menu.getTileEntity() == null)
             return 0;
 
-        return this.tile.getMaterialsRequired();
+        return this.menu.getTileEntity().getMaterialsRequired();
     }
 
     public int getTimeRequired() {
-        if (this.tile == null)
+        if (this.menu.getTileEntity() == null)
             return 0;
 
-        return this.tile.getTimeRequired();
+        return this.menu.getTileEntity().getTimeRequired();
     }
 
     public int getMaterialBarScaled(int pixels) {

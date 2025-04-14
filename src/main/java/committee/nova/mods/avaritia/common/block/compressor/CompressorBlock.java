@@ -91,7 +91,12 @@ public class CompressorBlock extends BaseTileEntityBlock {
 
     @Override
     protected <T extends BlockEntity> BlockEntityTicker<T> getServerTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return createTicker(type, ModTileEntities.compressor_tile.get(), CompressorTile::serverTick);
+        return createTicker(type, ModTileEntities.compressor_tile.get(), CompressorTile::tick);
+    }
+
+    @Override
+    protected <T extends BlockEntity> BlockEntityTicker<T> getClientTicker(Level level, BlockState state, BlockEntityType<T> type) {
+        return createTicker(type, ModTileEntities.compressor_tile.get(), CompressorTile::tick);
     }
 
 }

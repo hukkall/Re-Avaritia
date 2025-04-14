@@ -1,10 +1,10 @@
 package committee.nova.mods.avaritia.common.tile;
 
+import committee.nova.mods.avaritia.api.common.crafting.ICompressorRecipe;
 import committee.nova.mods.avaritia.api.common.tile.BaseInventoryTileEntity;
 import committee.nova.mods.avaritia.api.common.wrapper.ItemStackWrapper;
 import committee.nova.mods.avaritia.api.utils.ItemUtils;
 import committee.nova.mods.avaritia.api.utils.lang.Localizable;
-import committee.nova.mods.avaritia.common.crafting.recipe.CompressorRecipe;
 import committee.nova.mods.avaritia.common.menu.CompressorMenu;
 import committee.nova.mods.avaritia.init.registry.ModRecipeTypes;
 import committee.nova.mods.avaritia.init.registry.ModTileEntities;
@@ -30,7 +30,7 @@ public class CompressorTile extends BaseInventoryTileEntity {
     private final ItemStackWrapper inventory;
     private final ItemStackWrapper recipeInventory;
     private final SimpleContainerData data = new SimpleContainerData(1);
-    private CompressorRecipe recipe;
+    private ICompressorRecipe recipe;
     private ItemStack materialStack = ItemStack.EMPTY;
     private int materialCount;
     private int progress;
@@ -44,21 +44,18 @@ public class CompressorTile extends BaseInventoryTileEntity {
 
     public static ItemStackWrapper createInventoryHandler() {
         var inventory = new ItemStackWrapper(2);
-
         inventory.setOutputSlots(0);
-        inventory.setSlotValidator((slot, stack) -> slot == 1);
-
         return inventory;
     }
 
-    public static void serverTick(Level level, BlockPos pos, BlockState state, CompressorTile tile) {
+    public static void tick(Level level, BlockPos pos, BlockState state, CompressorTile tile) {
         var output = tile.inventory.getStackInSlot(0);
         var input = tile.inventory.getStackInSlot(1);
 
         tile.recipeInventory.setStackInSlot(0, tile.materialStack);
 
-        if (tile.recipe == null || !tile.recipe.matches(tile.recipeInventory)) {
-            tile.recipe = (CompressorRecipe) level.getRecipeManager().getRecipeFor(ModRecipeTypes.COMPRESSOR_RECIPE.get(), tile.recipeInventory.toIInventory(), level).orElse(null);
+        if (tile.recipe == null || !tile.recipe.matches(tile.recipeInventory.toIInventory(), level)) {
+            tile.recipe = level.getRecipeManager().getRecipeFor(ModRecipeTypes.COMPRESSOR_RECIPE.get(), tile.recipeInventory.toIInventory(), level).orElse(null);
         }
 
         if (!level.isClientSide()) {
@@ -90,7 +87,7 @@ public class CompressorTile extends BaseInventoryTileEntity {
                     tile.progress++;
                     tile.data.set(0, tile.progress);
                     if (tile.progress >= tile.recipe.getTimeCost()) {
-                        var result = tile.recipe.assemble(tile.inventory);
+                        var result = tile.recipe.assemble(tile.inventory.toIInventory(), level.registryAccess());
 
                         if (ItemUtils.canCombineStacks(result, output)) {
                             tile.updateResult(result);
@@ -195,14 +192,13 @@ public class CompressorTile extends BaseInventoryTileEntity {
         return this.recipe != null;
     }
 
-    public CompressorRecipe getActiveRecipe() {
+    public ICompressorRecipe getActiveRecipe() {
         return this.recipe;
     }
 
     public int getMaterialsRequired() {
         if (this.hasRecipe())
             return this.recipe.getInputCount();
-
         return 0;
     }
 
