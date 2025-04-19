@@ -8,7 +8,6 @@ import committee.nova.mods.avaritia.Static;
 import committee.nova.mods.avaritia.api.client.render.FluidItemRender;
 import committee.nova.mods.avaritia.api.client.widget.SimpleScrollBar;
 import committee.nova.mods.avaritia.common.net.channel.C2SFilterChannelPack;
-import committee.nova.mods.avaritia.common.wrappers.channel.ClientChannel;
 import committee.nova.mods.avaritia.init.handler.NetworkHandler;
 import committee.nova.mods.avaritia.util.SortUtils;
 import committee.nova.mods.avaritia.util.StorageUtils;

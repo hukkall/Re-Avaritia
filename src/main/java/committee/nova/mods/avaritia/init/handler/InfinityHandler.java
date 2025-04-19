@@ -295,9 +295,9 @@ public class InfinityHandler {
         BlockState state = event.getState();
         if (
                 (tool.is(ModItems.blaze_axe.get()) || tool.is(ModItems.blaze_pickaxe.get()) || tool.is(ModItems.blaze_shovel.get()))
-                        && tool.getItem() instanceof ISwitchable
+                        && tool.getItem() instanceof ISwitchable switchable
         ) {
-            if (((ISwitchable) tool.getItem()).isActive(tool, "smelt"))
+            if (switchable.isActive(tool, "smelt"))
                 ToolUtils.melting(block, state, world, pos, player, tool, event);
         }
     }

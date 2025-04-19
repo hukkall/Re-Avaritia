@@ -1,7 +1,6 @@
 package committee.nova.mods.avaritia.common.item.tools.infinity;
 
 import committee.nova.mods.avaritia.Static;
-import committee.nova.mods.avaritia.api.iface.IMultiFunction;
 import committee.nova.mods.avaritia.api.iface.InitEnchantItem;
 import committee.nova.mods.avaritia.common.entity.ImmortalItemEntity;
 import committee.nova.mods.avaritia.init.config.ModConfig;
@@ -15,15 +14,11 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.stats.Stats;
 import net.minecraft.tags.DamageTypeTags;
-import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
@@ -51,7 +46,7 @@ import java.util.List;
  * Date: 2022/4/2 19:41
  * Version: 1.0
  */
-public class InfinitySwordItem extends SwordItem implements IMultiFunction, InitEnchantItem {
+public class InfinitySwordItem extends SwordItem implements InitEnchantItem {
     public InfinitySwordItem() {
         super(ModToolTiers.INFINITY, 900, 0F, (new Properties())
                 .rarity(ModRarities.COSMIC)

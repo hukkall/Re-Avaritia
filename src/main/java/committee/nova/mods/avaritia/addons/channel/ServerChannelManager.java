@@ -2,8 +2,6 @@ package committee.nova.mods.avaritia.addons.channel;
 
 import committee.nova.mods.avaritia.Static;
 import committee.nova.mods.avaritia.common.net.channel.*;
-import committee.nova.mods.avaritia.common.wrappers.channel.NullChannel;
-import committee.nova.mods.avaritia.common.wrappers.channel.ServerChannel;
 import committee.nova.mods.avaritia.init.config.ModConfig;
 import committee.nova.mods.avaritia.init.handler.NetworkHandler;
 import committee.nova.mods.avaritia.util.StorageUtils;

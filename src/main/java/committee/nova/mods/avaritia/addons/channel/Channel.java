@@ -1,4 +1,4 @@
-package committee.nova.mods.avaritia.common.wrappers.channel;
+package committee.nova.mods.avaritia.addons.channel;
 
 import committee.nova.mods.avaritia.util.StorageUtils;
 import lombok.Getter;

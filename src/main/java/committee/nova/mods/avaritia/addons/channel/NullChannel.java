@@ -1,4 +1,4 @@
-package committee.nova.mods.avaritia.common.wrappers.channel;
+package committee.nova.mods.avaritia.addons.channel;
 
 /**
  * @Project: Avaritia

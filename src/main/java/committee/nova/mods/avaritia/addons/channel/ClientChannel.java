@@ -1,6 +1,5 @@
-package committee.nova.mods.avaritia.common.wrappers.channel;
+package committee.nova.mods.avaritia.addons.channel;
 
-import committee.nova.mods.avaritia.addons.channel.DummyContainer;
 import committee.nova.mods.avaritia.util.StorageUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.Item;

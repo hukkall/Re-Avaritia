@@ -92,7 +92,7 @@ public class InfinityClockBlock extends BaseTileEntityBlock {
             var tile = level.getBlockEntity(pos);
 
             if (tile instanceof InfinityClockTile clockTile) {
-                NetworkHooks.openScreen((ServerPlayer) player, clockTile, pos);
+                //NetworkHooks.openScreen((ServerPlayer) player, clockTile, pos);
             }
         }
 
