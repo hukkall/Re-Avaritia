@@ -1,6 +1,6 @@
 package committee.nova.mods.avaritia.addons.channel;
 
-import committee.nova.mods.avaritia.Static;
+import committee.nova.mods.avaritia.Const;
 import committee.nova.mods.avaritia.common.net.channel.ChannelAction;
 import committee.nova.mods.avaritia.common.net.channel.S2CChannelActionPack;
 import committee.nova.mods.avaritia.init.handler.NetworkHandler;
@@ -75,7 +75,7 @@ public class ItemChannelTerminal implements IChannelTerminal {
     public void removeChannel(ServerPlayer actor) {
         ChannelInfo info = getChannelInfo();
         if (info == null) return;
-        if (info.owner().equals(actor.getUUID()) || info.owner().equals(Static.AVARITIA_FAKE_PLAYER.getId())) {
+        if (info.owner().equals(actor.getUUID()) || info.owner().equals(Const.AVARITIA_FAKE_PLAYER.getId())) {
             if (!ServerChannelManager.getInstance().tryRemoveChannel(info.owner(), info.id())) return;
             NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) inventory.player), new S2CChannelActionPack(ChannelAction.SET, (byte) -1, "", -1));
             terminal.getTag().remove("channel");
@@ -86,7 +86,7 @@ public class ItemChannelTerminal implements IChannelTerminal {
     public void renameChannel(ServerPlayer actor, String name) {
         ChannelInfo info = getChannelInfo();
         if (info == null) return;
-        if (info.owner().equals(actor.getUUID()) || info.owner().equals(Static.AVARITIA_FAKE_PLAYER.getId()))
+        if (info.owner().equals(actor.getUUID()) || info.owner().equals(Const.AVARITIA_FAKE_PLAYER.getId()))
             ServerChannelManager.getInstance().renameChannel(info, name);
     }
 

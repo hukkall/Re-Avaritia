@@ -89,6 +89,13 @@ repositories {
         url = 'https://modmaven.dev/'
     }
     maven {
+        url = "https://maven.latvian.dev/releases"
+        content {
+            includeGroup "dev.latvian.mods"
+            includeGroup "dev.latvian.apps"
+        }
+    }
+    maven {
         url "https://www.cursemaven.com"
         content {
             includeGroup "curse.maven"

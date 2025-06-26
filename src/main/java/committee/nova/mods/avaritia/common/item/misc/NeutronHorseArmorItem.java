@@ -1,6 +1,7 @@
 package committee.nova.mods.avaritia.common.item.misc;
 
-import committee.nova.mods.avaritia.Static;
+import committee.nova.mods.avaritia.Const;
+import committee.nova.mods.avaritia.Res;
 import committee.nova.mods.avaritia.api.iface.ITooltip;
 import committee.nova.mods.avaritia.api.iface.InitEnchantItem;
 import committee.nova.mods.avaritia.common.entity.ImmortalItemEntity;
@@ -31,10 +32,8 @@ import java.util.List;
  * @date 2024/4/5 20:04
  */
 public class NeutronHorseArmorItem extends HorseArmorItem implements ITooltip, InitEnchantItem {
-    private static final String TEX_PATH = "textures/item/armor/horse/neutron_horse_armor.png";
-
     public NeutronHorseArmorItem() {
-        super(Integer.MAX_VALUE, new ResourceLocation(Static.MOD_ID, TEX_PATH),
+        super(Integer.MAX_VALUE, new ResourceLocation(Const.MOD_ID, Res.NEUTRON_HORSE_ARMOR.getPath()),
                 new Item.Properties()
                         .stacksTo(1)
                         .rarity(ModRarities.RARE)

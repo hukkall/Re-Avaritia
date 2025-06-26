@@ -3,6 +3,7 @@ package committee.nova.mods.avaritia.client.render.entity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
+import committee.nova.mods.avaritia.Res;
 import committee.nova.mods.avaritia.common.entity.FireBallEntity;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -22,8 +23,7 @@ import org.joml.Matrix4f;
  * @Description:
  */
 public class FireBallRender extends EntityRenderer<FireBallEntity> {
-    private static final ResourceLocation TEXTURE_LOCATION = new ResourceLocation("textures/entity/enderdragon/dragon_fireball.png");
-    private static final RenderType RENDER_TYPE = RenderType.entityCutoutNoCull(TEXTURE_LOCATION);
+    private static final RenderType RENDER_TYPE = RenderType.entityCutoutNoCull(Res.DRAGON_FIREBALL);
 
     public FireBallRender(EntityRendererProvider.Context pContext) {
         super(pContext);
@@ -61,6 +61,6 @@ public class FireBallRender extends EntityRenderer<FireBallEntity> {
      */
     @Override
     public @NotNull ResourceLocation getTextureLocation(@NotNull FireBallEntity pEntity) {
-        return TEXTURE_LOCATION;
+        return Res.DRAGON_FIREBALL;
     }
 }

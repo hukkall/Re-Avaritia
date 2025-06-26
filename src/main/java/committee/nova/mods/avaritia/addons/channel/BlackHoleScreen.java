@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import committee.nova.mods.avaritia.Static;
+import committee.nova.mods.avaritia.Const;
 import committee.nova.mods.avaritia.api.client.render.FluidItemRender;
 import committee.nova.mods.avaritia.api.client.widget.SimpleScrollBar;
 import committee.nova.mods.avaritia.common.net.channel.C2SFilterChannelPack;
@@ -44,7 +44,7 @@ public class BlackHoleScreen extends AbstractContainerScreen<ChannelMenu> {
     @Getter
     private int blitOffset;
 
-    private static final ResourceLocation GUI_IMG = Static.rl("textures/gui/crafting_panel.png");
+    private static final ResourceLocation GUI_IMG = Const.rl("textures/gui/crafting_panel.png");
     private final String ownerName;
     private String[] lastHoveredObject = new String[2];
     private long lastCount = 0;
@@ -381,7 +381,7 @@ public class BlackHoleScreen extends AbstractContainerScreen<ChannelMenu> {
     }
 
     private void toggleLock() {
-        if (menu.owner.equals(menu.player.getUUID()) || menu.owner.equals(Static.AVARITIA_FAKE_PLAYER.getId())) {
+        if (menu.owner.equals(menu.player.getUUID()) || menu.owner.equals(Const.AVARITIA_FAKE_PLAYER.getId())) {
             this.menu.locked = !this.menu.locked;
             this.shortSearchBox.setFocused(false);
             NetworkHandler.CHANNEL.sendToServer(new C2SFilterChannelPack(menu.containerId, menu.filter));
@@ -543,7 +543,7 @@ public class BlackHoleScreen extends AbstractContainerScreen<ChannelMenu> {
                 tips.add(Component.translatable("gui.avaritia.channel.tip1", "§a" + menu.channel.getName()).getVisualOrderText());
                 tips.add(Component.translatable("gui.avaritia.channel.tip2", "§a" + ClientChannelManager.getInstance().getUserName(menu.channelOwner)).getVisualOrderText());
             }
-            else if (!menu.channelOwner.equals(Static.AVARITIA_FAKE_PLAYER.getId())) {
+            else if (!menu.channelOwner.equals(Const.AVARITIA_FAKE_PLAYER.getId())) {
                 tips.add(Component.translatable("gui.avaritia.channel.tip1", "§c" + menu.channel.getName()).getVisualOrderText());
                 tips.add(Component.translatable("gui.avaritia.channel.tip2", "§c" + ClientChannelManager.getInstance().getUserName(menu.channelOwner)).getVisualOrderText());
             }

@@ -1,14 +1,13 @@
 package committee.nova.mods.avaritia.client;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import committee.nova.mods.avaritia.Static;
+import committee.nova.mods.avaritia.Const;
 import committee.nova.mods.avaritia.api.iface.IFilterItem;
 import committee.nova.mods.avaritia.client.screen.ItemFilterScreen;
 import committee.nova.mods.avaritia.common.net.C2SElytraSpeedUpPacket;
 import committee.nova.mods.avaritia.common.net.C2SOpenRingPack;
 import committee.nova.mods.avaritia.init.config.ModConfig;
 import committee.nova.mods.avaritia.init.handler.NetworkHandler;
-import committee.nova.mods.avaritia.init.registry.ModTooltips;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
@@ -29,8 +28,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.TreeSet;
 
-import static net.minecraft.ChatFormatting.DARK_PURPLE;
-
 /**
  * Author cnlimiter
  * CreateTime 2023/6/17 23:24
@@ -38,7 +35,7 @@ import static net.minecraft.ChatFormatting.DARK_PURPLE;
  * Description
  */
 
-@Mod.EventBusSubscriber(modid = Static.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
+@Mod.EventBusSubscriber(modid = Const.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class AvaritiaForgeClient {
     private static final String CATEGORIES = "key.avaritia.categories";
 

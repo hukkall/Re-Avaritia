@@ -1,7 +1,7 @@
 package committee.nova.mods.avaritia.common.crafting.condition;
 
 import com.google.gson.JsonObject;
-import committee.nova.mods.avaritia.Static;
+import committee.nova.mods.avaritia.Const;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.common.crafting.conditions.IConditionSerializer;
@@ -13,7 +13,7 @@ import net.minecraftforge.common.crafting.conditions.IConditionSerializer;
  * Version: 1.0
  */
 public class InfinityCatalystCondition implements ICondition {
-    private static final ResourceLocation ID = new ResourceLocation(Static.MOD_ID, "infinity_catalyst_recipe");
+    private static final ResourceLocation ID = new ResourceLocation(Const.MOD_ID, "infinity_catalyst_recipe");
 
     @Override
     public ResourceLocation getID() {

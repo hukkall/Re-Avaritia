@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
  * Date: 2022/5/15 10:10
  * Version: 1.0
  */
-@Mod(Static.MOD_ID)
+@Mod(Const.MOD_ID)
 public class Avaritia {
 
     public Avaritia() {
@@ -50,7 +50,7 @@ public class Avaritia {
     }
 
     public void setup(final FMLCommonSetupEvent event) {
-        if (Static.isLoad("projecte")) ModEMCHandler.init();
+        if (Const.isLoad("projecte")) ModEMCHandler.init();
         SingularityRegistryHandler.getInstance().writeDefaultSingularityFiles();
         DispenserBlock.registerBehavior(ModItems.endest_pearl.get(), new AbstractProjectileDispenseBehavior() {
             protected @NotNull Projectile getProjectile(@NotNull Level level, @NotNull Position position, @NotNull ItemStack stack) {

@@ -1,6 +1,6 @@
 package committee.nova.mods.avaritia.client;
 
-import committee.nova.mods.avaritia.Static;
+import committee.nova.mods.avaritia.Const;
 import committee.nova.mods.avaritia.api.client.util.ColorUtils;
 import committee.nova.mods.avaritia.api.iface.IColored;
 import committee.nova.mods.avaritia.client.model.CosmicModelLoader;
@@ -21,7 +21,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
-import static committee.nova.mods.avaritia.Static.LOGGER;
+import static committee.nova.mods.avaritia.Const.LOGGER;
 import static committee.nova.mods.avaritia.client.AvaritiaForgeClient.FILTER_KEY;
 import static committee.nova.mods.avaritia.client.AvaritiaForgeClient.RING_KEY;
 
@@ -32,11 +32,11 @@ import static committee.nova.mods.avaritia.client.AvaritiaForgeClient.RING_KEY;
  * Description
  */
 
-@Mod.EventBusSubscriber(modid = Static.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
+@Mod.EventBusSubscriber(modid = Const.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class AvaritiaModClient {
-    public static final ModelLayerLocation COMPRESSED_CHEST = new ModelLayerLocation(Static.rl("compressed_chest"), "main");
-    public static final ModelLayerLocation COMPRESSED_CHEST_LEFT = new ModelLayerLocation(Static.rl("compressed_chest_left"), "main");
-    public static final ModelLayerLocation COMPRESSED_CHEST_RIGHT = new ModelLayerLocation(Static.rl("compressed_chest_right"), "main");
+    public static final ModelLayerLocation COMPRESSED_CHEST = new ModelLayerLocation(Const.rl("compressed_chest"), "main");
+    public static final ModelLayerLocation COMPRESSED_CHEST_LEFT = new ModelLayerLocation(Const.rl("compressed_chest_left"), "main");
+    public static final ModelLayerLocation COMPRESSED_CHEST_RIGHT = new ModelLayerLocation(Const.rl("compressed_chest_right"), "main");
 
 
     /**

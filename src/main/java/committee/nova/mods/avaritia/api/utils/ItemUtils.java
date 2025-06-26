@@ -22,7 +22,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import static committee.nova.mods.avaritia.Static.LOGGER;
+import static committee.nova.mods.avaritia.Const.LOGGER;
 
 /**
  * Description:

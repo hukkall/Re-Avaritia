@@ -1,6 +1,6 @@
 package committee.nova.mods.avaritia.common.menu;
 
-import committee.nova.mods.avaritia.Static;
+import committee.nova.mods.avaritia.Const;
 import committee.nova.mods.avaritia.api.common.container.OffsetContainer;
 import committee.nova.mods.avaritia.api.common.menu.BaseMenu;
 import committee.nova.mods.avaritia.api.iface.IChangePage;
@@ -100,14 +100,14 @@ public class _NeutronRingMenu extends BaseMenu implements IChangePage {
 
     @Override
     public void changePage(int page) {
-        Static.LOGGER.info("Changing page to {}", page);
-        Static.LOGGER.info("Current page is {}", this.pageData.get());
+        Const.LOGGER.info("Changing page to {}", page);
+        Const.LOGGER.info("Current page is {}", this.pageData.get());
         int nextPage = Mth.clamp(page, 0, ModConfig.maxPageLimit.get() - 1);
         if (nextPage != this.pageData.get()) {
             this.pageData.set(nextPage);
-            Static.LOGGER.info("Page updated to {}", nextPage);
+            Const.LOGGER.info("Page updated to {}", nextPage);
         } else {
-            Static.LOGGER.info("Page remains unchanged at {}", nextPage);
+            Const.LOGGER.info("Page remains unchanged at {}", nextPage);
         }
     }
 

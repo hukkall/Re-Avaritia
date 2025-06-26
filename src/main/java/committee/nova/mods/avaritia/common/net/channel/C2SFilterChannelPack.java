@@ -1,6 +1,6 @@
 package committee.nova.mods.avaritia.common.net.channel;
 
-import committee.nova.mods.avaritia.Static;
+import committee.nova.mods.avaritia.Const;
 import committee.nova.mods.avaritia.addons.channel.ChannelMenu;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -40,7 +40,7 @@ public class C2SFilterChannelPack {
             if (player == null) return;
             if (player.containerMenu.containerId == containerId) {
                 if (!player.containerMenu.stillValid(player)) {
-                    Static.LOGGER.debug("Player {} interacted with invalid menu {}", player, player.containerMenu);
+                    Const.LOGGER.debug("Player {} interacted with invalid menu {}", player, player.containerMenu);
                 } else {
                     ((ChannelMenu) player.containerMenu).filter = filter;
                     player.containerMenu.broadcastChanges();

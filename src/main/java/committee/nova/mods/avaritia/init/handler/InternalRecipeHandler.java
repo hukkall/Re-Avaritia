@@ -1,6 +1,6 @@
 package committee.nova.mods.avaritia.init.handler;
 
-import committee.nova.mods.avaritia.Static;
+import committee.nova.mods.avaritia.Const;
 import committee.nova.mods.avaritia.api.init.event.RegisterRecipesEvent;
 import committee.nova.mods.avaritia.common.crafting.recipe.CompressorRecipe;
 import committee.nova.mods.avaritia.common.crafting.recipe.InfinityCatalystCraftRecipe;
@@ -25,20 +25,6 @@ public class InternalRecipeHandler {
     @SubscribeEvent
     public static void onRegisterRecipes(RegisterRecipesEvent event) {
         List<Singularity> allSingularities = SingularityRegistryHandler.getInstance().getSingularities();
-
-        var infinity_catalyst = (InfinityCatalystCraftRecipe) event.getRecipe(Static.rl("infinity_catalyst"));
-
-        if (ModConfig.internalInfinityCatalystCraft.get() && infinity_catalyst.getGroup().equals("default")) {
-            allSingularities.stream()
-                    .filter(singularity -> singularity.getIngredient() != Ingredient.EMPTY)
-                    //.limit(81)
-                    .map(SingularityUtils::getItemForSingularity)
-                    .map(Ingredient::of)
-                    .forEach(infinity_catalyst.inputs::add);
-
-            event.addRecipe(new InfinityCatalystCraftRecipe(Static.rl("infinity_catalyst"), "default", infinity_catalyst.inputs));
-        }
-
         for (var singularity : allSingularities) {
             if (singularity.isRecipeDisabled()) {
                 continue;
@@ -58,7 +44,7 @@ public class InternalRecipeHandler {
             return null;
 
         var id = singularity.getId();
-        var recipeId = new ResourceLocation(Static.MOD_ID, id.getPath() + "_singularity");
+        var recipeId = new ResourceLocation(Const.MOD_ID, id.getPath() + "_singularity");
         var output = SingularityUtils.getItemForSingularity(singularity);
         int ingredientCount = singularity.getIngredientCount();
         int timeRequired = singularity.getTimeRequired();

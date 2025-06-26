@@ -1,6 +1,6 @@
 package committee.nova.mods.avaritia.addons.channel;
 
-import committee.nova.mods.avaritia.Static;
+import committee.nova.mods.avaritia.Const;
 import committee.nova.mods.avaritia.api.common.tile.BaseTileEntity;
 import committee.nova.mods.avaritia.common.net.channel.ChannelAction;
 import committee.nova.mods.avaritia.common.net.channel.S2CChannelActionPack;
@@ -179,7 +179,7 @@ public class BlackHoleTile extends BaseTileEntity implements IChannelTerminal {
     @Override
     public void removeChannel(ServerPlayer actor) {
         if (channelOwner == null) return;
-        if (channelOwner.equals(actor.getUUID()) || channelOwner.equals(Static.AVARITIA_FAKE_PLAYER.getId())) {
+        if (channelOwner.equals(actor.getUUID()) || channelOwner.equals(Const.AVARITIA_FAKE_PLAYER.getId())) {
             if (!ServerChannelManager.getInstance().tryRemoveChannel(channelOwner, channelID)) return;
             this.channelID = -1;
             this.channelOwner = null;
@@ -192,7 +192,7 @@ public class BlackHoleTile extends BaseTileEntity implements IChannelTerminal {
     @Override
     public void renameChannel(ServerPlayer actor, String name) {
         if (channelID < 0) return;
-        if (actor.getUUID().equals(channelOwner) || channelOwner.equals(Static.AVARITIA_FAKE_PLAYER.getId()))
+        if (actor.getUUID().equals(channelOwner) || channelOwner.equals(Const.AVARITIA_FAKE_PLAYER.getId()))
             ServerChannelManager.getInstance().renameChannel(new ChannelInfo(channelOwner, channelID), name);
     }
 

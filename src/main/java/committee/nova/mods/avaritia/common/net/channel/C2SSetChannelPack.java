@@ -1,6 +1,6 @@
 package committee.nova.mods.avaritia.common.net.channel;
 
-import committee.nova.mods.avaritia.Static;
+import committee.nova.mods.avaritia.Const;
 import committee.nova.mods.avaritia.addons.channel.ChannelSelectMenu;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -44,7 +44,7 @@ public class C2SSetChannelPack {
             if (player == null) return;
             if (player.containerMenu.containerId != containerId) return;
             if (!player.containerMenu.stillValid(player)) {
-                Static.LOGGER.debug("Player {} interacted with invalid menu {}", player, player.containerMenu);
+                Const.LOGGER.debug("Player {} interacted with invalid menu {}", player, player.containerMenu);
             } else {
                 ((ChannelSelectMenu) player.containerMenu).setChannel(type, id);
             }

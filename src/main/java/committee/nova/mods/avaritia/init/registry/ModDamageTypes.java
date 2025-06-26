@@ -1,6 +1,6 @@
 package committee.nova.mods.avaritia.init.registry;
 
-import committee.nova.mods.avaritia.Static;
+import committee.nova.mods.avaritia.Const;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
@@ -29,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class ModDamageTypes {
 
-    public static ResourceKey<DamageType> INFINITY = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(Static.MOD_ID, "infinity"));
+    public static ResourceKey<DamageType> INFINITY = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(Const.MOD_ID, "infinity"));
 
     public static final RegistrySetBuilder DAMAGE_BUILDER = new RegistrySetBuilder()
             .add(Registries.DAMAGE_TYPE, ModDamageTypes::bootstrap);

@@ -1,6 +1,6 @@
 package committee.nova.mods.avaritia.addons.channel;
 
-import committee.nova.mods.avaritia.Static;
+import committee.nova.mods.avaritia.Const;
 import committee.nova.mods.avaritia.init.registry.ModMenus;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -52,7 +52,7 @@ public class ChannelSelectMenu extends AbstractContainerMenu {
         switch (type) {
             case (byte) 0 -> terminal.setChannel(player.getUUID(), id);
             case (byte) 1 -> terminal.setChannel(terminal.getTerminalOwner(), id);
-            case (byte) 2 -> terminal.setChannel(Static.AVARITIA_FAKE_PLAYER.getId(), id);
+            case (byte) 2 -> terminal.setChannel(Const.AVARITIA_FAKE_PLAYER.getId(), id);
         }
     }
 

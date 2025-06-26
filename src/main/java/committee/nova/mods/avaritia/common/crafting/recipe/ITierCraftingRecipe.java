@@ -10,5 +10,5 @@ import committee.nova.mods.avaritia.api.common.crafting.ITierRecipe;
  * @Description: 
  *
 **/
-public interface BaseTableCraftingRecipe extends ISpecialRecipe, ITierRecipe {
+public interface ITierCraftingRecipe extends ISpecialRecipe, ITierRecipe {
 }

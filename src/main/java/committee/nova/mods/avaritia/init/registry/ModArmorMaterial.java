@@ -1,6 +1,6 @@
 package committee.nova.mods.avaritia.init.registry;
 
-import committee.nova.mods.avaritia.Static;
+import committee.nova.mods.avaritia.Const;
 import net.minecraft.Util;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -23,7 +23,7 @@ import java.util.function.Supplier;
 public class ModArmorMaterial {
 
     public static final ArmorMaterial infinite_armor =
-            new SimpleArmorMaterial(Static.MOD_ID + ":" + "infinity_armor", 15, Util.make(new EnumMap<>(ArmorItem.Type.class), (p_266655_) -> {
+            new SimpleArmorMaterial(Const.MOD_ID + ":" + "infinity_armor", 15, Util.make(new EnumMap<>(ArmorItem.Type.class), (p_266655_) -> {
                 p_266655_.put(ArmorItem.Type.BOOTS, 3);
                 p_266655_.put(ArmorItem.Type.LEGGINGS, 6);
                 p_266655_.put(ArmorItem.Type.CHESTPLATE, 8);

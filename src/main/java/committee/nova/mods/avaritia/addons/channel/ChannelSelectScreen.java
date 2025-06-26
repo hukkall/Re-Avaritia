@@ -2,7 +2,7 @@ package committee.nova.mods.avaritia.addons.channel;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
-import committee.nova.mods.avaritia.Static;
+import committee.nova.mods.avaritia.Const;
 import committee.nova.mods.avaritia.api.client.widget.SimpleScrollBar;
 import committee.nova.mods.avaritia.common.net.channel.C2SAddChannelPack;
 import committee.nova.mods.avaritia.common.net.channel.C2SRenameChannelPack;
@@ -36,7 +36,7 @@ public class ChannelSelectScreen extends AbstractContainerScreen<ChannelSelectMe
     @Setter
     @Getter
     private int blitOffset;
-    private static final ResourceLocation GUI_IMG = Static.rl("textures/gui/channel_select.png");
+    private static final ResourceLocation GUI_IMG = Const.rl("textures/gui/channel_select.png");
     private EditBox searchBox;
     private EditBox nameBox;
     private ChannelScrollBar scrollBar;

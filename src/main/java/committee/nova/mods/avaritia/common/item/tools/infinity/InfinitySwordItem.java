@@ -1,6 +1,6 @@
 package committee.nova.mods.avaritia.common.item.tools.infinity;
 
-import committee.nova.mods.avaritia.Static;
+import committee.nova.mods.avaritia.Const;
 import committee.nova.mods.avaritia.api.iface.InitEnchantItem;
 import committee.nova.mods.avaritia.common.entity.ImmortalItemEntity;
 import committee.nova.mods.avaritia.init.config.ModConfig;
@@ -194,7 +194,7 @@ public class InfinitySwordItem extends SwordItem implements InitEnchantItem {
             }
 
             if (!victim.level().isClientSide && victim.hasCustomName()) {
-                Static.LOGGER.info("Named entity {} died: {}", this, victim.getCombatTracker().getDeathMessage().getString());
+                Const.LOGGER.info("Named entity {} died: {}", this, victim.getCombatTracker().getDeathMessage().getString());
             }
 
             victim.dead = true;

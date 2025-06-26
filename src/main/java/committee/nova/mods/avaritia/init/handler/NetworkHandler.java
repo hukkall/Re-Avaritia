@@ -1,6 +1,6 @@
 package committee.nova.mods.avaritia.init.handler;
 
-import committee.nova.mods.avaritia.Static;
+import committee.nova.mods.avaritia.Const;
 import committee.nova.mods.avaritia.common.net.*;
 import committee.nova.mods.avaritia.common.net.channel.*;
 import net.minecraft.nbt.CompoundTag;
@@ -23,7 +23,7 @@ import java.util.Optional;
  */
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class NetworkHandler {
-    public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(Static.rl("main"), () -> {
+    public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(Const.rl("main"), () -> {
         return "1.0";
     }, (s) -> {
         return true;

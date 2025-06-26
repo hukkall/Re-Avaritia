@@ -1,6 +1,6 @@
 package committee.nova.mods.avaritia.init.compat.jei;
 
-import committee.nova.mods.avaritia.Static;
+import committee.nova.mods.avaritia.Const;
 import committee.nova.mods.avaritia.client.screen.CompressorScreen;
 import committee.nova.mods.avaritia.client.screen.ExtremeAnvilScreen;
 import committee.nova.mods.avaritia.client.screen.ExtremeSmithingScreen;
@@ -49,7 +49,7 @@ import java.util.stream.Stream;
  */
 @JeiPlugin
 public class AvaritiaJeiPlugin implements IModPlugin {
-    public static final ResourceLocation UID = new ResourceLocation(Static.MOD_ID, "jei_plugin");
+    public static final ResourceLocation UID = new ResourceLocation(Const.MOD_ID, "jei_plugin");
 
     @Override
     public @NotNull ResourceLocation getPluginUid() {

@@ -31,7 +31,7 @@ import java.util.stream.Stream;
  * Date: 2022/3/31 11:37
  * Version: 1.0
  */
-public class Static {
+public class Const {
     public static final String MOD_ID = "avaritia";
 
     public static final Logger LOGGER = LogManager.getLogger();

@@ -1,6 +1,6 @@
 package committee.nova.mods.avaritia.init.data;
 
-import committee.nova.mods.avaritia.Static;
+import committee.nova.mods.avaritia.Const;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraftforge.common.data.DatapackBuiltinEntriesProvider;
@@ -20,6 +20,6 @@ import static committee.nova.mods.avaritia.init.registry.ModDamageTypes.DAMAGE_B
 public class ModRegistries extends DatapackBuiltinEntriesProvider {
 
     public ModRegistries(PackOutput output, CompletableFuture<HolderLookup.Provider> future) {
-        super(output, future, DAMAGE_BUILDER, Set.of("minecraft", Static.MOD_ID));
+        super(output, future, DAMAGE_BUILDER, Set.of("minecraft", Const.MOD_ID));
     }
 }

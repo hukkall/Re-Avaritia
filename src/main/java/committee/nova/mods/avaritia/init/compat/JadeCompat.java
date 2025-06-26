@@ -1,6 +1,6 @@
 package committee.nova.mods.avaritia.init.compat;
 
-import committee.nova.mods.avaritia.Static;
+import committee.nova.mods.avaritia.Const;
 import committee.nova.mods.avaritia.common.block.compressor.CompressorBlock;
 import committee.nova.mods.avaritia.common.block.craft.TierCraftTableBlock;
 import committee.nova.mods.avaritia.common.block.extreme.ExtremeSmithingTableBlock;
@@ -49,7 +49,7 @@ public class JadeCompat implements IWailaPlugin {
 
         @Override
         public ResourceLocation getUid() {
-            return new ResourceLocation(Static.MOD_ID, "compressor");
+            return new ResourceLocation(Const.MOD_ID, "compressor");
         }
     }
 
@@ -72,7 +72,7 @@ public class JadeCompat implements IWailaPlugin {
 
         @Override
         public ResourceLocation getUid() {
-            return new ResourceLocation(Static.MOD_ID, "crafting_table");
+            return new ResourceLocation(Const.MOD_ID, "crafting_table");
         }
     }
 
@@ -94,7 +94,7 @@ public class JadeCompat implements IWailaPlugin {
 
         @Override
         public ResourceLocation getUid() {
-            return new ResourceLocation(Static.MOD_ID, "extreme_smithing");
+            return new ResourceLocation(Const.MOD_ID, "extreme_smithing");
         }
     }
 }

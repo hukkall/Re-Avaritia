@@ -1,8 +1,8 @@
 package committee.nova.mods.avaritia.init.compat.emi;
 
-import committee.nova.mods.avaritia.Static;
+import committee.nova.mods.avaritia.Const;
 import committee.nova.mods.avaritia.api.common.crafting.ICompressorRecipe;
-import committee.nova.mods.avaritia.common.crafting.recipe.BaseTableCraftingRecipe;
+import committee.nova.mods.avaritia.common.crafting.recipe.ITierCraftingRecipe;
 import committee.nova.mods.avaritia.common.crafting.recipe.ExtremeSmithingRecipe;
 import committee.nova.mods.avaritia.init.compat.emi.category.CompressorCategory;
 import committee.nova.mods.avaritia.init.compat.emi.category.ExtremeSmithingRecipeCategory;
@@ -54,7 +54,7 @@ public class AvaritiaEmiPlugin implements EmiPlugin {
         registry.addWorkstation(EndCraftingTableCategory.CATEGORY, EndCraftingTableCategory.WORKSTATION);
         registry.addCategory(ExtremeCraftingTableCategory.CATEGORY);
         registry.addWorkstation(ExtremeCraftingTableCategory.CATEGORY, ExtremeCraftingTableCategory.WORKSTATION);
-        for (BaseTableCraftingRecipe recipe : registry.getRecipeManager().getAllRecipesFor(ModRecipeTypes.CRAFTING_TABLE_RECIPE.get()))
+        for (ITierCraftingRecipe recipe : registry.getRecipeManager().getAllRecipesFor(ModRecipeTypes.CRAFTING_TABLE_RECIPE.get()))
             registry.addRecipe(switch (recipe.getTier()) {
                 case 1 -> new SculkCraftingTableCategory(recipe);
                 case 2 -> new NetherCraftingTableCategory(recipe);
@@ -63,7 +63,7 @@ public class AvaritiaEmiPlugin implements EmiPlugin {
                 default -> throw new UnsupportedOperationException("Unsupported tier " + recipe.getTier());
             });
 
-        registry.addRecipe(new EmiInfoRecipe(List.of(EmiIngredient.of(Ingredient.of(ModBlocks.neutron_collector.get()))), List.of(Component.translatable("emi.tooltip.avaritia.neutron_collector")), ResourceLocation.tryBuild(Static.MOD_ID, "/info_collector")));
-        registry.addRecipe(new EmiInfoRecipe(List.of(EmiIngredient.of(Ingredient.of(ModItems.neutron_pile.get()))), List.of(Component.translatable("emi.tooltip.avaritia.neutron_pile")), ResourceLocation.tryBuild(Static.MOD_ID, "/info_pile")));
+        registry.addRecipe(new EmiInfoRecipe(List.of(EmiIngredient.of(Ingredient.of(ModBlocks.neutron_collector.get()))), List.of(Component.translatable("emi.tooltip.avaritia.neutron_collector")), ResourceLocation.tryBuild(Const.MOD_ID, "/info_collector")));
+        registry.addRecipe(new EmiInfoRecipe(List.of(EmiIngredient.of(Ingredient.of(ModItems.neutron_pile.get()))), List.of(Component.translatable("emi.tooltip.avaritia.neutron_pile")), ResourceLocation.tryBuild(Const.MOD_ID, "/info_pile")));
     }
 }

@@ -1,6 +1,6 @@
 package committee.nova.mods.avaritia.init.compat.projecte;
 
-import committee.nova.mods.avaritia.Static;
+import committee.nova.mods.avaritia.Const;
 import committee.nova.mods.avaritia.init.config.ModConfig;
 import committee.nova.mods.avaritia.init.registry.ModItems;
 import moze_intel.projecte.api.imc.CustomEMCRegistration;
@@ -17,7 +17,7 @@ import net.minecraft.world.level.ItemLike;
  */
 public class ModEMCHandler {
     private static void registerEMC(ItemLike item, int emc) {
-        APICustomEMCMapper.INSTANCE.registerCustomEMC(Static.MOD_ID, new CustomEMCRegistration(NSSItem.createItem(item), emc));
+        APICustomEMCMapper.INSTANCE.registerCustomEMC(Const.MOD_ID, new CustomEMCRegistration(NSSItem.createItem(item), emc));
     }
 
     public static void init() {

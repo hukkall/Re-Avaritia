@@ -5,7 +5,9 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.math.Axis;
-import committee.nova.mods.avaritia.Static;
+import committee.nova.mods.avaritia.Const;
+import committee.nova.mods.avaritia.Res;
+import committee.nova.mods.avaritia.client.shader.AvaritiaRenderTypes;
 import committee.nova.mods.avaritia.common.entity.BladeSlashEntity;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderStateShard;
@@ -32,17 +34,8 @@ import static net.minecraft.client.renderer.RenderStateShard.*;
 @OnlyIn(Dist.CLIENT)
 public class BladeSlashRender extends EntityRenderer<BladeSlashEntity> {
 
-    private static final ResourceLocation TEXTURE = Static.rl("textures/entity/blade_slash.png");
-    private static final RenderType RENDER_TYPE = RenderType.create("blade_projectile",
-            DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, true, true,
-            RenderType.CompositeState.builder().setTextureState(new RenderStateShard.TextureStateShard(TEXTURE, false, false))
-                    .setShaderState(RENDERTYPE_TEXT_SEE_THROUGH_SHADER)
-                    .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
-                    .setCullState(NO_CULL)
-                    .createCompositeState(true));
 
     public BladeSlashRender(EntityRendererProvider.Context ctx) {
-
         super(ctx);
     }
 
@@ -58,7 +51,7 @@ public class BladeSlashRender extends EntityRenderer<BladeSlashEntity> {
         PoseStack.Pose matrixStackEntry = matrixStackIn.last();
         Matrix4f pose = matrixStackEntry.pose();
         Matrix3f normal = matrixStackEntry.normal();
-        VertexConsumer builder = buffer.getBuffer(RENDER_TYPE);
+        VertexConsumer builder = buffer.getBuffer(AvaritiaRenderTypes.BLADE_SLASH);
 
         packedLight = 0x00F000F0;
         this.vertex(pose, normal, builder, 1, 0, 1, 1, 0, 0, 1, 0, packedLight);
@@ -72,7 +65,7 @@ public class BladeSlashRender extends EntityRenderer<BladeSlashEntity> {
 
     @Override
     public @NotNull ResourceLocation getTextureLocation(@NotNull BladeSlashEntity entity) {
-        return TEXTURE;
+        return Res.BLADE_SLASH;
     }
 
     public void vertex(Matrix4f pose, Matrix3f normal, VertexConsumer builder, float x, float y, float z, float u, float v, int nx, int nz, int ny, int packedLight) {

@@ -20,7 +20,9 @@ import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -38,6 +40,7 @@ import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.Item;
@@ -51,6 +54,7 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
@@ -113,13 +117,10 @@ public class ToolUtils {
      * @param world    世界
      * @param player   玩家
      * @param pos      点击坐标
-     * @param heldItem 手中工具
      */
-    public static void destroy(ServerLevel world, Player player, BlockPos pos, ItemStack heldItem) {
-        if (heldItem != null) {
-            heldItem.getItem().mineBlock(heldItem, world, world.getBlockState(pos), pos, player);
-            world.destroyBlock(pos, true);
-        }
+    public static void destroy(ServerLevel world, Player player, BlockPos pos) {
+        world.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+        world.gameEvent(GameEvent.BLOCK_DESTROY, pos, GameEvent.Context.of(player, world.getBlockState(pos)));
     }
 
     /**
@@ -190,18 +191,16 @@ public class ToolUtils {
                                     BlockPos origin, BlockPos min, BlockPos max,
                                     Set<TagKey<Block>> validMaterials, boolean filterTrash
     ) {
-        ItemCaptureHandler.enableItemCapture(true);//开启凋落物收集
+        Set<ItemStack> drops = Sets.newHashSet();
 
         for (int lx = min.getX(); lx < max.getX(); lx++) {
             for (int ly = min.getY(); ly < max.getY(); ly++) {
                 for (int lz = min.getZ(); lz < max.getZ(); lz++) {
                     BlockPos pos = origin.offset(lx, ly, lz);
-                    removeBlockWithDrops(world, player, pos, stack, validMaterials);
+                    removeBlockWithDrops(world, player, pos, stack, drops, validMaterials);
                 }
             }
         }
-
-        ItemCaptureHandler.enableItemCapture(false);//关闭凋落物收集
 
         ClustersUtils.spawnClusters(world, player,
                 filterTrash ? ClustersUtils.removeTrash(ItemCaptureHandler.getCapturedDrops(),
@@ -214,11 +213,10 @@ public class ToolUtils {
 
     public static void removeBlockWithDrops(ServerLevel world, Player player,
                                             BlockPos pos, ItemStack stack,
+                                            Set<ItemStack> drops,
                                             Set<TagKey<Block>> validMaterials
     ) {
-        if (!world.isLoaded(pos)) {
-            return;
-        }
+        if (!world.isLoaded(pos)) return;
         BlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
         if (world.isClientSide) return;
@@ -232,17 +230,22 @@ public class ToolUtils {
             return;
         }
 
-        BlockEvent.BreakEvent event = new BlockEvent.BreakEvent(world, pos, state, player);
-        MinecraftForge.EVENT_BUS.post(event);
+        List<ItemStack> blockDrops = Block.getDrops(state, world, pos,
+                null);
 
-        if (!event.isCanceled()) {
-            if (!player.isCreative()) {//not creative
-                destroy(world, player, pos, stack);
-            } else {
-                world.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
-            }
+        if (!blockDrops.isEmpty()) {
+            drops.addAll(blockDrops);
+        } else {
+            ResourceLocation blockKey = BuiltInRegistries.BLOCK.getKey(block);
+
+            Item blockItem = BuiltInRegistries.ITEM.get(blockKey);
+            drops.add(new ItemStack(blockItem));
         }
 
+        if (!(block instanceof BaseFireBlock)) {
+            world.levelEvent(2001, pos, Block.getId(state));
+        }
+        destroy(world, player, pos);
     }
 
     /**
@@ -470,6 +473,7 @@ public class ToolUtils {
         toAttack.stream()
                 .filter(entity -> entity instanceof Mob)
                 .filter(entity -> !entity.getType().is(ModTags.NEUTRAL_CREATURES))
+                .filter(entity -> !(entity instanceof Villager))
                 .forEach(entity -> {
                     if (entity instanceof Mob mob) {
                         if (mob instanceof Animal animal && hurtAnimal) {
@@ -596,17 +600,26 @@ public class ToolUtils {
      * @param player   玩家
      * @param world    世界
      * @param pos      点击坐标
-     * @param heldItem 使用的工具
+     * @param state    方块状态
      */
-    public static void destroyTree(Player player, ServerLevel world, BlockPos pos, ItemStack heldItem) {
+    public static void destroyTree(Player player, ServerLevel world, BlockPos pos, BlockState state) {
         List<BlockPos> connectedLogs = getConnectedLogs(world, pos);
-
-        ItemCaptureHandler.enableItemCapture(true);
+        Set<ItemStack> drops = Sets.newHashSet();
         for (BlockPos logPos : connectedLogs) {
-            destroy(world, player, logPos, heldItem);
+            List<ItemStack> blockDrops = Block.getDrops(world.getBlockState(logPos), world, logPos,
+                    null);
+            if (!blockDrops.isEmpty()) {
+                drops.addAll(blockDrops);
+            } else {
+                ResourceLocation blockKey = BuiltInRegistries.BLOCK.getKey(world.getBlockState(logPos).getBlock());
+
+                Item blockItem = BuiltInRegistries.ITEM.get(blockKey);
+                drops.add(new ItemStack(blockItem));
+            }
+            world.levelEvent(2001, pos, Block.getId(state));
+            destroy(world, player, logPos);
         }
-        ItemCaptureHandler.enableItemCapture(false);
-        ClustersUtils.spawnClusters(world, player, ItemCaptureHandler.getCapturedDrops());
+        ClustersUtils.spawnClusters(world, player, drops);
     }
 
     private static List<BlockPos> getConnectedLogs(Level world, BlockPos pos) {

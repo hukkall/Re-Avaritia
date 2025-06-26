@@ -1,6 +1,6 @@
 package committee.nova.mods.avaritia.addons.channel;
 
-import committee.nova.mods.avaritia.Static;
+import committee.nova.mods.avaritia.Const;
 import committee.nova.mods.avaritia.api.common.slot.FakeSlot;
 import committee.nova.mods.avaritia.api.utils.game.CraftingRecipeGridIndexGetter;
 import committee.nova.mods.avaritia.api.utils.math.InvItemCounter;
@@ -169,7 +169,7 @@ public class ChannelMenu extends AbstractContainerMenu {
     public boolean clickMenuButton(Player pPlayer, int pId) {
         switch (pId) {
             case 0 -> {
-                if (owner.equals(player.getUUID()) || owner.equals(Static.AVARITIA_FAKE_PLAYER.getId())) {
+                if (owner.equals(player.getUUID()) || owner.equals(Const.AVARITIA_FAKE_PLAYER.getId())) {
                     locked = !locked;
                     if (panelItemSlotIndex >= 0) {
                         CompoundTag nbt = panelItem.getTag();
@@ -980,7 +980,7 @@ public class ChannelMenu extends AbstractContainerMenu {
                 }
             }
             else {
-                Static.LOGGER.warn("Ohh! Who trigger the quickMoveStack() when slotId >= 51 in server side ?");
+                Const.LOGGER.warn("Ohh! Who trigger the quickMoveStack() when slotId >= 51 in server side ?");
             }
             if (movingStack.isEmpty()) {
                 slot.set(ItemStack.EMPTY);

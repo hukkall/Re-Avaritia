@@ -6,7 +6,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import committee.nova.mods.avaritia.Static;
+import committee.nova.mods.avaritia.Const;
 import committee.nova.mods.avaritia.common.crafting.recipe.EternalSingularityCraftRecipe;
 import committee.nova.mods.avaritia.common.item.singularity.Singularity;
 import committee.nova.mods.avaritia.common.net.S2CSingularitiesPack;
@@ -79,14 +79,14 @@ public class SingularityRegistryHandler {
 
         stopwatch.stop();
 
-        Static.LOGGER.info("Loaded {} singularity type(s) in {} ms", this.singularities.size(), stopwatch.elapsed(TimeUnit.MILLISECONDS));
+        Const.LOGGER.info("Loaded {} singularity type(s) in {} ms", this.singularities.size(), stopwatch.elapsed(TimeUnit.MILLISECONDS));
     }
 
     public void writeDefaultSingularityFiles() {
         var dir = FMLPaths.CONFIGDIR.get().resolve("avaritia" + File.separator + "singularities").toFile();
 
         if (!dir.exists() && dir.mkdirs()) {
-            Static.LOGGER.warn("Could not find default singularities,try to generate!");
+            Const.LOGGER.warn("Could not find default singularities,try to generate!");
             for (var singularity : ModSingularities.getDefaults()) {
                 var json = SingularityUtils.writeToJson(singularity);
                 FileWriter writer = null;
@@ -98,7 +98,7 @@ public class SingularityRegistryHandler {
                     GSON.toJson(json, writer);
                     writer.close();
                 } catch (Exception e) {
-                    Static.LOGGER.error("An error occurred while generating default singularities", e);
+                    Const.LOGGER.error("An error occurred while generating default singularities", e);
                 } finally {
                     IOUtils.closeQuietly(writer);
                 }
@@ -145,7 +145,7 @@ public class SingularityRegistryHandler {
         this.singularities.putAll(singularities);
         EternalSingularityCraftRecipe.invalidate();
 
-        Static.LOGGER.info("Loaded {} singularities from the server", singularities.size());
+        Const.LOGGER.info("Loaded {} singularities from the server", singularities.size());
     }
 
     private void loadFiles(File dir, ICondition.IContext context) {
@@ -163,11 +163,11 @@ public class SingularityRegistryHandler {
                 var name = file.getName().replace(".json", "");
                 json = JsonParser.parseReader(reader).getAsJsonObject();
 
-                singularity = SingularityUtils.loadFromJson(new ResourceLocation(Static.MOD_ID, name), json, context);
+                singularity = SingularityUtils.loadFromJson(new ResourceLocation(Const.MOD_ID, name), json, context);
 
                 reader.close();
             } catch (Exception e) {
-                Static.LOGGER.error("An error occurred while loading singularities", e);
+                Const.LOGGER.error("An error occurred while loading singularities", e);
             } finally {
                 IOUtils.closeQuietly(reader);
             }

@@ -30,7 +30,7 @@ import java.util.function.BiFunction;
  * Date: 2022/4/2 9:16
  * Version: 1.0
  */
-public class ShapelessTableCraftingRecipe implements BaseTableCraftingRecipe {
+public class ShapelessTableCraftingRecipe implements ITierCraftingRecipe {
     public final NonNullList<Ingredient> inputs;
     private final ResourceLocation recipeId;
     private final ItemStack output;
@@ -122,7 +122,7 @@ public class ShapelessTableCraftingRecipe implements BaseTableCraftingRecipe {
 
     @Override
     public @NotNull NonNullList<ItemStack> getRemainingItems(@NotNull IItemHandler inv) {
-        var remaining = BaseTableCraftingRecipe.super.getRemainingItems(inv);
+        var remaining = ITierCraftingRecipe.super.getRemainingItems(inv);
 
         if (this.transformers != null) {
             var used = new boolean[remaining.size()];
