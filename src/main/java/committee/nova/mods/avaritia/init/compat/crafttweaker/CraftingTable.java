@@ -10,10 +10,7 @@ import com.blamejared.crafttweaker.api.item.IItemStack;
 import com.blamejared.crafttweaker.api.item.MCItemStack;
 import com.blamejared.crafttweaker.api.recipe.manager.base.IRecipeManager;
 import committee.nova.mods.avaritia.Const;
-import committee.nova.mods.avaritia.common.crafting.recipe.ITierCraftingRecipe;
-import committee.nova.mods.avaritia.common.crafting.recipe.InfinityCatalystCraftRecipe;
-import committee.nova.mods.avaritia.common.crafting.recipe.ShapedTableCraftingRecipe;
-import committee.nova.mods.avaritia.common.crafting.recipe.ShapelessTableCraftingRecipe;
+import committee.nova.mods.avaritia.common.crafting.recipe.*;
 import committee.nova.mods.avaritia.init.registry.ModRecipeTypes;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
@@ -99,6 +96,26 @@ public class CraftingTable implements IRecipeManager<ITierCraftingRecipe> {
     public static void addCatalyst(String name, String group, IIngredient[] inputs, int count) {
         var id = CraftTweakerConstants.rl(INSTANCE.fixRecipeName(name));
         var recipe = new InfinityCatalystCraftRecipe(id, group, toIngredientsList(inputs), count);
+
+        recipe.setTransformers((slot, stack) -> inputs[slot].getRemainingItem(new MCItemStack(stack)).getInternal());
+
+        CraftTweakerAPI.apply(new ActionAddRecipe<>(INSTANCE, recipe));
+    }
+
+    @ZenCodeType.Method
+    public static void addEnternal(String name, IIngredient[] inputs) {
+        var id = CraftTweakerConstants.rl(INSTANCE.fixRecipeName(name));
+        var recipe = new EternalSingularityCraftRecipe(id, toIngredientsList(inputs), false);
+
+        recipe.setTransformers((slot, stack) -> inputs[slot].getRemainingItem(new MCItemStack(stack)).getInternal());
+
+        CraftTweakerAPI.apply(new ActionAddRecipe<>(INSTANCE, recipe));
+    }
+
+    @ZenCodeType.Method
+    public static void addEnternal(String name, IIngredient[] inputs, boolean custom) {
+        var id = CraftTweakerConstants.rl(INSTANCE.fixRecipeName(name));
+        var recipe = new EternalSingularityCraftRecipe(id, toIngredientsList(inputs), custom);
 
         recipe.setTransformers((slot, stack) -> inputs[slot].getRemainingItem(new MCItemStack(stack)).getInternal());
 
