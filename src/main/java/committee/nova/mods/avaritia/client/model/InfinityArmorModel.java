@@ -1,10 +1,8 @@
 package committee.nova.mods.avaritia.client.model;
 
 import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.vertex.VertexFormat;
 import committee.nova.mods.avaritia.Const;
 import committee.nova.mods.avaritia.Res;
 import committee.nova.mods.avaritia.api.client.util.ColorUtils;
@@ -19,7 +17,6 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
@@ -151,18 +148,18 @@ public class InfinityArmorModel extends HumanoidModel<Player> {
         pPoseStack.pushPose();
         pPoseStack.scale(f, f, f);
         pPoseStack.translate(0.0, this.babyYHeadOffset / 16.0f * f3, 0.0);
-        this.head.render(pPoseStack, material(MASK).buffer(this.bufferSource, AvaritiaRenderTypes::mask), pPackedLight, pPackedOverlay, pRed, pGreen, pBlue, pAlpha);
+        this.head.render(pPoseStack, material(MASK).buffer(this.bufferSource, AvaritiaRenderTypes::armorMask), pPackedLight, pPackedOverlay, pRed, pGreen, pBlue, pAlpha);
         if (InfinityArmorModel.modelRender && !InfinityArmorModel.player) {
-            this.hatsOver().forEach(t -> t.render(pPoseStack, material(MASK_INV).buffer(this.bufferSource, AvaritiaRenderTypes::mask), pPackedLight, pPackedOverlay, pRed, pGreen, pBlue, pAlpha));
+            this.hatsOver().forEach(t -> t.render(pPoseStack, material(MASK_INV).buffer(this.bufferSource, AvaritiaRenderTypes::armorMask), pPackedLight, pPackedOverlay, pRed, pGreen, pBlue, pAlpha));
         }
         pPoseStack.popPose();
 
         pPoseStack.pushPose();
         pPoseStack.scale(f2, f2, f2);
         pPoseStack.translate(0.0, this.bodyYOffset / 16.0f * f3, 0.0);
-        this.bodyParts().forEach(t -> t.render(pPoseStack, material(MASK).buffer(this.bufferSource, AvaritiaRenderTypes::mask), pPackedLight, pPackedOverlay, pRed, pGreen, pBlue, pAlpha));
+        this.bodyParts().forEach(t -> t.render(pPoseStack, material(MASK).buffer(this.bufferSource, AvaritiaRenderTypes::armorMask), pPackedLight, pPackedOverlay, pRed, pGreen, pBlue, pAlpha));
         if (InfinityArmorModel.modelRender && !InfinityArmorModel.player) {
-            this.bodyPartsOver().forEach(t -> t.render(pPoseStack, material(MASK_INV).buffer(this.bufferSource, AvaritiaRenderTypes::mask), pPackedLight, pPackedOverlay, pRed, pGreen, pBlue, pAlpha));
+            this.bodyPartsOver().forEach(t -> t.render(pPoseStack, material(MASK_INV).buffer(this.bufferSource, AvaritiaRenderTypes::armorMask), pPackedLight, pPackedOverlay, pRed, pGreen, pBlue, pAlpha));
         }
         this.bodyParts().forEach(t -> t.render(pPoseStack, this.vertex(AvaritiaRenderTypes.glow(Res.EYE_TEX)), pPackedLight, pPackedOverlay, 0.84f, 1.0f, 0.95f, (float) (pulse_mag_sqr * 0.5)));
         pPoseStack.popPose();
@@ -172,7 +169,7 @@ public class InfinityArmorModel extends HumanoidModel<Player> {
         final float[] col = ColorUtils.HSVtoRGB(this.random.nextFloat() * 6.0f, 1.0f, 1.0f);
         pPoseStack.scale(f, f, f);
         pPoseStack.translate(0.0, this.babyYHeadOffset / 16.0f * f3, -0.029999999329447746);
-        this.hat.render(pPoseStack, material(MASK).buffer(this.bufferSource, AvaritiaRenderTypes::mask), pPackedLight, pPackedOverlay, pRed, pGreen, pBlue, pAlpha);
+        this.hat.render(pPoseStack, material(MASK).buffer(this.bufferSource, AvaritiaRenderTypes::armorMask), pPackedLight, pPackedOverlay, pRed, pGreen, pBlue, pAlpha);
         if (InfinityArmorModel.modelRender) {
             this.hat.render(pPoseStack, this.vertex(AvaritiaRenderTypes.COSMIC_ARMOR), pPackedLight, pPackedOverlay, col[0], col[1], col[2], 1.0f);
         }
@@ -184,8 +181,8 @@ public class InfinityArmorModel extends HumanoidModel<Player> {
             pPoseStack.scale(f2, f2, f2);
             pPoseStack.translate(0.0, this.bodyYOffset / 16.0f * f3, 0.0);
             model.renderToBufferWing(pPoseStack, this.mc.renderBuffers().bufferSource().getBuffer(RenderType.armorCutoutNoCull(Res.WING_TEX)), pPackedLight, pPackedOverlay, pRed, pGreen, pBlue, pAlpha);
-            Const.LOGGER.info(material(WING));
-            model.renderToBufferWing(pPoseStack, material(WING).buffer(this.bufferSource, AvaritiaRenderTypes::mask), pPackedLight, pPackedOverlay, pRed, pGreen, pBlue, pAlpha);
+            //Const.LOGGER.info(material(WING));
+            model.renderToBufferWing(pPoseStack, material(WING).buffer(this.bufferSource, AvaritiaRenderTypes::armorMask), pPackedLight, pPackedOverlay, pRed, pGreen, pBlue, pAlpha);
             model.renderToBufferWing(pPoseStack, this.mc.renderBuffers().bufferSource().getBuffer(AvaritiaRenderTypes.wing(Res.WING_GLOW_TEX)), pPackedLight, pPackedOverlay, 0.84f, 1.0f, 0.95f, (float) (pulse_mag_sqr * 0.5));
             pPoseStack.popPose();
         }
@@ -266,7 +263,7 @@ public class InfinityArmorModel extends HumanoidModel<Player> {
         public void render(final @NotNull PoseStack pPoseStack, final @NotNull MultiBufferSource pBuffer, final int pPackedLight, final @NotNull Player l, final float pLimbSwing, float pLimbSwingAmount, float pPartialTick, float pAgeInTicks, float pNetHeadYaw, float pHeadPitch) {
             if (ToolUtils.isInfinite(l)) {
                 AvaritiaShaders.cosmicOpacity.set(2.0f);
-                this.playerParts().forEach(t -> t.render(pPoseStack, InfinityArmorModel.material(MASK_INV).buffer(pBuffer, AvaritiaRenderTypes::mask), pPackedLight, 1, 1.0f, 1.0f, 1.0f, 1.0f));
+                this.playerParts().forEach(t -> t.render(pPoseStack, InfinityArmorModel.material(MASK_INV).buffer(pBuffer, AvaritiaRenderTypes::armorMask), pPackedLight, 1, 1.0f, 1.0f, 1.0f, 1.0f));
             }
         }
     }

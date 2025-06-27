@@ -1,6 +1,7 @@
-package committee.nova.mods.avaritia.api.client.shader;
+package committee.nova.mods.avaritia.api.client.shader.objects;
 
 import com.google.common.collect.ImmutableList;
+import committee.nova.mods.avaritia.api.client.shader.base.UniformPair;
 
 import java.util.Collection;
 import java.util.Objects;

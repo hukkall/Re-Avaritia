@@ -4,7 +4,7 @@ import committee.nova.mods.avaritia.api.common.menu.BaseTileMenu;
 import committee.nova.mods.avaritia.common.container.ModCraftContainer;
 import committee.nova.mods.avaritia.common.container.slot.ModCraftResultSlot;
 import committee.nova.mods.avaritia.common.tile.TierCraftTile;
-import committee.nova.mods.avaritia.init.registry.ModCraftTier;
+import committee.nova.mods.avaritia.init.registry.enums.ModCraftTier;
 import committee.nova.mods.avaritia.init.registry.ModMenus;
 import committee.nova.mods.avaritia.init.registry.ModRecipeTypes;
 import net.minecraft.core.BlockPos;

@@ -1,4 +1,4 @@
-package committee.nova.mods.avaritia.api.client.shader;
+package committee.nova.mods.avaritia.api.client.shader.types;
 
 import com.mojang.blaze3d.shaders.Uniform;
 import org.jetbrains.annotations.Nullable;

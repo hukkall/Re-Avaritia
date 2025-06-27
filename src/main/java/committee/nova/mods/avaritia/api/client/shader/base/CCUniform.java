@@ -1,9 +1,11 @@
-package committee.nova.mods.avaritia.api.client.shader;
+package committee.nova.mods.avaritia.api.client.shader.base;
 
 import com.mojang.blaze3d.shaders.Shader;
 import com.mojang.blaze3d.shaders.Uniform;
-import committee.nova.mods.avaritia.api.client.shader.UniformType.Carrier;
+import committee.nova.mods.avaritia.api.client.shader.types.UniformType;
+import committee.nova.mods.avaritia.api.client.shader.types.UniformType.Carrier;
 import org.apache.commons.lang3.NotImplementedException;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
@@ -40,7 +42,7 @@ public abstract class CCUniform extends Uniform implements ICCUniform {
         }
     }
 
-    static CCUniform makeUniform(String name, UniformType type, int count, @Nullable Shader parent) {
+    public static CCUniform makeUniform(String name, UniformType type, int count, @Nullable Shader parent) {
         if (count % type.getSize() != 0)
             throw new IllegalArgumentException("Expected count to be a multiple of the uniform type size: " + type.getSize());
         return switch (type.getCarrier()) {
@@ -51,12 +53,12 @@ public abstract class CCUniform extends Uniform implements ICCUniform {
     }
 
     @Override
-    public IntBuffer getIntBuffer() {
+    public @NotNull IntBuffer getIntBuffer() {
         throw new NotImplementedException("TODO");
     }
 
     @Override
-    public FloatBuffer getFloatBuffer() {
+    public @NotNull FloatBuffer getFloatBuffer() {
         throw new NotImplementedException("TODO");
     }
 
@@ -82,7 +84,7 @@ public abstract class CCUniform extends Uniform implements ICCUniform {
         @Override public void set(int i0, int i1) { glUniformI(i0, i1); }
         @Override public void set(int i0, int i1, int i2) { glUniformI(i0, i1, i2); }
         @Override public void set(int i0, int i1, int i2, int i3) { glUniformI(i0, i1, i2, i3); }
-        @Override public void set(float[] p_85632_) { glUniformF(false, p_85632_); }
+        @Override public void set(float@NotNull[] pValueArray) { glUniformF(false, pValueArray); }
         @Override public void setMat2x2(float m00, float m01, float m10, float m11) { glUniformF(true, m00, m01, m10, m11); }
         @Override public void setMat2x3(float m00, float m01, float m02, float m10, float m11, float m12) { glUniformF(true, m00, m01, m02, m10, m11, m12); }
         @Override public void setMat2x4(float m00, float m01, float m02, float m03, float m10, float m11, float m12, float m13) { glUniformF(true, m00, m01, m02, m03, m10, m11, m12, m13); }
@@ -92,8 +94,8 @@ public abstract class CCUniform extends Uniform implements ICCUniform {
         @Override public void setMat4x2(float m00, float m01, float m10, float m11, float m20, float m21, float m30, float m31) { glUniformF(true, m00, m01, m10, m11, m20, m21, m30, m31); }
         @Override public void setMat4x3(float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m23, float m30, float m31, float m32) { glUniformF(true, m00, m01, m02, m10, m11, m12, m20, m21, m23, m30, m31, m32); }
         @Override public void setMat4x4(float m00, float m01, float m02, float m03, float m10, float m11, float m12, float m13, float m20, float m21, float m22, float m23, float m30, float m31, float m32, float m33) { glUniformF(true, m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33); }
-        @Override public void set(Matrix4f mat) { glUniformMatrix4f(mat); }
-        @Override public void set(Matrix3f mat) { glUniformMatrix3f(mat); }
+        @Override public void set(@NotNull Matrix4f mat) { glUniformMatrix4f(mat); }
+        @Override public void set(@NotNull Matrix3f mat) { glUniformMatrix3f(mat); }
         // @formatter:on
 
         @Override

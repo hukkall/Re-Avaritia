@@ -43,7 +43,7 @@ public class InfinityCatalystCraftRecipe extends ShapelessTableCraftingRecipe {
     public static class Serializer implements RecipeSerializer<InfinityCatalystCraftRecipe> {
         @Override
         public @NotNull InfinityCatalystCraftRecipe fromJson(@NotNull ResourceLocation recipeId, @NotNull JsonObject json) {
-            String group1 = GsonHelper.getAsString(json, "group", "");
+            String group1 = GsonHelper.getAsString(json, "group", "default");
             NonNullList<Ingredient> inputs = NonNullList.create();
             var ingredients = GsonHelper.getAsJsonArray(json, "ingredients");
             for (int i = 0; i < ingredients.size(); i++) {

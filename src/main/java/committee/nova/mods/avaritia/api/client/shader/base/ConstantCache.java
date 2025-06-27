@@ -1,4 +1,4 @@
-package committee.nova.mods.avaritia.api.client.shader;
+package committee.nova.mods.avaritia.api.client.shader.base;
 
 /**
  * Provides methods to mutate specilization constants

@@ -1,4 +1,4 @@
-package committee.nova.mods.avaritia.api.client.shader;
+package committee.nova.mods.avaritia.api.client.shader.types;
 
 import org.lwjgl.opengl.GL46;
 

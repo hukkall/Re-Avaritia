@@ -1,4 +1,6 @@
-package committee.nova.mods.avaritia.api.client.shader;
+package committee.nova.mods.avaritia.api.client.shader.objects;
+
+import committee.nova.mods.avaritia.api.client.shader.base.UniformPair;
 
 import java.util.Collection;
 
@@ -9,7 +11,7 @@ public class SimpleShaderObject extends AbstractShaderObject {
 
     private final String source;
 
-    protected SimpleShaderObject(String name, ShaderType type, Collection<UniformPair> uniforms, String source) {
+    public SimpleShaderObject(String name, ShaderObject.ShaderType type, Collection<UniformPair> uniforms, String source) {
         super(name, type, uniforms);
         this.source = source;
     }

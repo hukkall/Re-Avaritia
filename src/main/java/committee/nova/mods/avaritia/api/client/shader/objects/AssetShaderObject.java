@@ -1,5 +1,7 @@
-package committee.nova.mods.avaritia.api.client.shader;
+package committee.nova.mods.avaritia.api.client.shader.objects;
 
+import committee.nova.mods.avaritia.api.client.shader.GlslProcessor;
+import committee.nova.mods.avaritia.api.client.shader.base.UniformPair;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
@@ -21,7 +23,7 @@ public class AssetShaderObject extends AbstractShaderObject implements ResourceM
     @Nullable
     private String source;
 
-    public AssetShaderObject(String name, ShaderType type, Collection<UniformPair> uniforms, ResourceLocation asset) {
+    public AssetShaderObject(String name, ShaderObject.ShaderType type, Collection<UniformPair> uniforms, ResourceLocation asset) {
         super(name, type, uniforms);
         this.asset = Objects.requireNonNull(asset);
     }

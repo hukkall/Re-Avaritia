@@ -1,5 +1,6 @@
-package committee.nova.mods.avaritia.api.client.shader;
+package committee.nova.mods.avaritia.api.client.shader.objects;
 
+import committee.nova.mods.avaritia.api.client.shader.base.UniformPair;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 
@@ -13,7 +14,7 @@ public abstract class AbstractShaderObject extends NamedShaderObject {
     protected int shaderId = -1;
     protected boolean dirty;
 
-    protected AbstractShaderObject(String name, ShaderType type, Collection<UniformPair> uniforms) {
+    protected AbstractShaderObject(String name, ShaderObject.ShaderType type, Collection<UniformPair> uniforms) {
         super(name, type, uniforms);
     }
 

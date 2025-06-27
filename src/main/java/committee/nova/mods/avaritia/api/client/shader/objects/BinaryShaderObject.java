@@ -1,5 +1,9 @@
-package committee.nova.mods.avaritia.api.client.shader;
+package committee.nova.mods.avaritia.api.client.shader.objects;
 
+import committee.nova.mods.avaritia.api.client.shader.*;
+import committee.nova.mods.avaritia.api.client.shader.base.ConstantCache;
+import committee.nova.mods.avaritia.api.client.shader.base.UniformPair;
+import committee.nova.mods.avaritia.api.client.shader.types.BinaryType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
@@ -19,11 +23,6 @@ import java.nio.ByteOrder;
 import java.util.Collection;
 import java.util.function.Consumer;
 
-/**
- * Allows using pre-compiled shader binaries with {@link ShaderProgram}.
- * <p>
- * Created by KitsuneAlex on 18/11/21.
- */
 public class BinaryShaderObject extends NamedShaderObject implements ResourceManagerReloadListener {
 
     private static final Logger LOGGER = LogManager.getLogger();
@@ -36,7 +35,7 @@ public class BinaryShaderObject extends NamedShaderObject implements ResourceMan
     private boolean dirty = false;
     private int shaderId = -1;
 
-    public BinaryShaderObject(String name, ResourceLocation asset, ShaderType type, BinaryType binaryType, String entryPoint, Collection<UniformPair> uniforms, Consumer<ConstantCache> specializationCallback) {
+    public BinaryShaderObject(String name, ResourceLocation asset, ShaderObject.ShaderType type, BinaryType binaryType, String entryPoint, Collection<UniformPair> uniforms, Consumer<ConstantCache> specializationCallback) {
         super(name, type, uniforms);
         this.asset = asset;
         this.binaryType = binaryType;

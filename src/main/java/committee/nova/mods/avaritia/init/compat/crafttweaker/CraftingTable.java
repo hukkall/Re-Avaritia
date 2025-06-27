@@ -96,6 +96,16 @@ public class CraftingTable implements IRecipeManager<ITierCraftingRecipe> {
     }
 
     @ZenCodeType.Method
+    public static void addCatalyst(String name, String group, IIngredient[] inputs, int count) {
+        var id = CraftTweakerConstants.rl(INSTANCE.fixRecipeName(name));
+        var recipe = new InfinityCatalystCraftRecipe(id, group, toIngredientsList(inputs), count);
+
+        recipe.setTransformers((slot, stack) -> inputs[slot].getRemainingItem(new MCItemStack(stack)).getInternal());
+
+        CraftTweakerAPI.apply(new ActionAddRecipe<>(INSTANCE, recipe));
+    }
+
+    @ZenCodeType.Method
     public static void remove(IItemStack stack) {
         CraftTweakerAPI.apply(new ActionRemoveRecipe<>(INSTANCE, recipe -> recipe.getResultItem(RegistryAccess.EMPTY).is(stack.getInternal().getItem())));
     }

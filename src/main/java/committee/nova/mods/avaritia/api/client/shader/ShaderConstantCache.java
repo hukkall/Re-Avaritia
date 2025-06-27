@@ -1,5 +1,6 @@
 package committee.nova.mods.avaritia.api.client.shader;
 
+import committee.nova.mods.avaritia.api.client.shader.base.ConstantCache;
 import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
 
 /**

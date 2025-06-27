@@ -4,7 +4,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.blaze3d.shaders.Program;
+import com.mojang.blaze3d.shaders.Uniform;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import committee.nova.mods.avaritia.api.client.shader.base.CCUniform;
+import committee.nova.mods.avaritia.api.client.shader.types.UniformType;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.ChainedJsonException;
@@ -105,13 +108,6 @@ public class CCShaderInstance extends ShaderInstance {
         return Arrays.copyOfRange(values, 0, count);
     }
 
-    /**
-     * Add a callback for when this {@link CCShaderInstance} is applied.
-     * <p>
-     * Use this for global uniforms, or whatever else.
-     *
-     * @param callback The callback.
-     */
     public void onApply(Runnable callback) {
         applyCallbacks.add(callback);
     }
@@ -126,8 +122,8 @@ public class CCShaderInstance extends ShaderInstance {
 
     @Nullable
     @Override
-    public CCUniform getUniform(@NotNull String name) {
-        return (CCUniform) super.getUniform(name);
+    public Uniform getUniform(@NotNull String name) {
+        return super.getUniform(name);
     }
 
     @Override

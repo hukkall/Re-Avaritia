@@ -9,6 +9,7 @@ import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -17,7 +18,7 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Name: Avaritia-forge / InfinityCatalystRecipe
+ * Name: Avaritia-forge / EternalSingularityCraftRecipe
  * Author: cnlimiter
  * CreateTime: 2023/9/16 17:19
  * Description:
@@ -25,10 +26,13 @@ import org.jetbrains.annotations.NotNull;
 
 public class EternalSingularityCraftRecipe extends ShapelessTableCraftingRecipe {
     private static final Object2BooleanOpenHashMap<EternalSingularityCraftRecipe> INGREDIENTS_LOADED = new Object2BooleanOpenHashMap<>();
-    public NonNullList<Ingredient> inputs = NonNullList.create();
+    public final NonNullList<Ingredient> inputs;
+    public final boolean custom;
 
-    public EternalSingularityCraftRecipe(ResourceLocation recipeId) {
+    public EternalSingularityCraftRecipe(ResourceLocation recipeId, NonNullList<Ingredient> inputs, boolean custom) {
         super(recipeId, NonNullList.create(), new ItemStack(ModItems.eternal_singularity.get()), 4);
+        this.inputs = inputs;
+        this.custom = custom;
     }
 
     public static void invalidate() {
@@ -44,15 +48,17 @@ public class EternalSingularityCraftRecipe extends ShapelessTableCraftingRecipe 
     public @NotNull NonNullList<Ingredient> getIngredients() {
         if (!INGREDIENTS_LOADED.getOrDefault(this, false)) {
             super.getIngredients().clear();
-
-            SingularityRegistryHandler.getInstance().getSingularities()
-                    .stream()
-                    .filter(singularity -> singularity.getIngredient() != Ingredient.EMPTY)
-                    .limit(81)
-                    .map(SingularityUtils::getItemForSingularity)
-                    .map(Ingredient::of)
-                    .forEach(super.getIngredients()::add);
-
+            if (this.custom) {
+                super.getIngredients().addAll(inputs);
+            } else {
+                SingularityRegistryHandler.getInstance().getSingularities()
+                        .stream()
+                        .filter(singularity -> singularity.getIngredient() != Ingredient.EMPTY)
+                        .limit(81 - inputs.size())
+                        .map(SingularityUtils::getItemForSingularity)
+                        .map(Ingredient::of)
+                        .forEach(super.getIngredients()::add);
+            }
             INGREDIENTS_LOADED.put(this, true);
         }
         return super.getIngredients();
@@ -65,16 +71,35 @@ public class EternalSingularityCraftRecipe extends ShapelessTableCraftingRecipe 
     public static class Serializer implements RecipeSerializer<EternalSingularityCraftRecipe> {
         @Override
         public @NotNull EternalSingularityCraftRecipe fromJson(@NotNull ResourceLocation recipeId, @NotNull JsonObject json) {
-            return new EternalSingularityCraftRecipe(recipeId);
+            NonNullList<Ingredient> inputs = NonNullList.create();
+            var ingredients = GsonHelper.getAsJsonArray(json, "ingredients");
+
+            for (int i = 0; i < ingredients.size(); i++) {
+                inputs.add(Ingredient.fromJson(ingredients.get(i)));
+            }
+            boolean custom = GsonHelper.getAsBoolean(json, "custom", false);
+            return new EternalSingularityCraftRecipe(recipeId, inputs, custom);
         }
 
         @Override
         public EternalSingularityCraftRecipe fromNetwork(@NotNull ResourceLocation recipeId, @NotNull FriendlyByteBuf buffer) {
-            return new EternalSingularityCraftRecipe(recipeId);
+            int size = buffer.readVarInt();
+            var inputs = NonNullList.withSize(size, Ingredient.EMPTY);
+
+            for (int i = 0; i < size; ++i) {
+                inputs.set(i, Ingredient.fromNetwork(buffer));
+            }
+            boolean custom = buffer.readBoolean();
+            return new EternalSingularityCraftRecipe(recipeId, inputs, custom);
         }
 
         @Override
         public void toNetwork(@NotNull FriendlyByteBuf buffer, @NotNull EternalSingularityCraftRecipe recipe) {
+            buffer.writeVarInt(recipe.inputs.size());
+            for (var ingredient : recipe.inputs) {
+                ingredient.toNetwork(buffer);
+            }
+            buffer.writeBoolean(recipe.custom);
         }
     }
 }
