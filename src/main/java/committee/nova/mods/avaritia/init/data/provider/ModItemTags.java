@@ -1,12 +1,14 @@
 package committee.nova.mods.avaritia.init.data.provider;
 
 import committee.nova.mods.avaritia.Const;
+import committee.nova.mods.avaritia.init.registry.ModBlocks;
 import committee.nova.mods.avaritia.init.registry.ModItems;
 import committee.nova.mods.avaritia.init.registry.ModTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
@@ -35,6 +37,11 @@ public class ModItemTags extends IntrinsicHolderTagsProvider<Item> {
 
     @Override
     protected void addTags(HolderLookup.@NotNull Provider p_256380_) {
+        tag(ItemTags.HOES).add(ModItems.infinity_hoe.get(), ModItems.crystal_hoe.get(), ModItems.blaze_hoe.get());
+        tag(ItemTags.SHOVELS).add(ModItems.infinity_shovel.get(), ModItems.crystal_shovel.get(), ModItems.blaze_shovel.get());
+        tag(ItemTags.SWORDS).add(ModItems.infinity_sword.get(), ModItems.crystal_sword.get(), ModItems.blaze_sword.get());
+        tag(ItemTags.AXES).add(ModItems.infinity_axe.get(), ModItems.crystal_axe.get(), ModItems.blaze_axe.get());
+        tag(ItemTags.PICKAXES).add(ModItems.infinity_pickaxe.get(), ModItems.crystal_pickaxe.get(), ModItems.blaze_pickaxe.get());
         tag(ModTags.SINGULARITY).add(ModItems.singularity.get());
         tag(ModTags.NEUTRON_DUST).add(ModItems.neutron_pile.get());
         tag(ModTags.NEUTRON_NUGGET).add(ModItems.neutron_nugget.get());
