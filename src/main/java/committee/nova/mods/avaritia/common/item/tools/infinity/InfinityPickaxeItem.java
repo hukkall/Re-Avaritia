@@ -111,16 +111,12 @@ public class InfinityPickaxeItem extends PickaxeItem implements InitEnchantItem,
     }
 
     @Override
-    public boolean onBlockStartBreak(ItemStack stack, BlockPos pos, Player player) {
-        var world = player.level();
-        var state = world.getBlockState(pos);
-        if (isActive(stack, "infinity_pickaxe_hammer")) {
+    public boolean mineBlock(@NotNull ItemStack stack, @NotNull Level level, @NotNull BlockState state, @NotNull BlockPos pos, @NotNull LivingEntity miningEntity) {
+        if (miningEntity instanceof Player player && isActive(stack, "infinity_pickaxe_hammer")) {
             ToolUtils.breakRangeBlocks(player, stack, pos, ModConfig.pickAxeBreakRange.get(), ToolUtils.materialsPick, true);
         }
         return false;
     }
-
-
 
     @Override
     public int getInitEnchantLevel(ItemStack stack, Enchantment enchantment) {

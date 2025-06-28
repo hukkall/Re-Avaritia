@@ -97,12 +97,12 @@ public class ModRecipes extends RecipeProvider implements IConditionBuilder {
                 .pattern("cac")
                 .pattern("aba")
                 .pattern("cac")
-                .define('a', Blocks.SOUL_SOIL)
+                .define('a', ModBlocks.soul_farmland.get())
                 .define('b', Blocks.AMETHYST_BLOCK)
                 .define('c', Items.AMETHYST_CLUSTER)
                 .unlockedBy("", lul).save(consumer);
 
-        ModShapedRecipeBuilder.shaped(RecipeCategory.MISC, Blocks.DEEPSLATE_GOLD_ORE, 1)
+        ModShapedRecipeBuilder.shaped(RecipeCategory.MISC, Blocks.GILDED_BLACKSTONE, 1)
                 .pattern(" a ")
                 .pattern("aba")
                 .pattern(" a ")
@@ -261,7 +261,7 @@ public class ModRecipes extends RecipeProvider implements IConditionBuilder {
                 .pattern("  aaa  ")
                 .define('a', ModItems.neutron_ingot.get())
                 .define('b', ModItems.crystal_matrix_ingot.get())
-                .define('c', ModBlocks.crystal_matrix.get())
+                .define('c', ModBlocks.diamond_lattice_block.get())
                 .define('d', ModItems.endest_pearl.get())
                 .define('e', ModItems.infinity_catalyst.get())
                 .unlockedBy("has_block", has(ModBlocks.end_crafting_table.get())).save(consumer);
@@ -320,6 +320,27 @@ public class ModRecipes extends RecipeProvider implements IConditionBuilder {
                 .define('a', Items.COAL)
                 .define('b', ModItems.neutron_nugget.get())
                 .unlockedBy("has_block", has(ModItems.neutron_pile.get())).save(consumer);
+
+        ModShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.infinity_upgrade.get(), 4)
+                .pattern(" aaadaaa ")
+                .pattern("baeegeea ")
+                .pattern("baegggea ")
+                .pattern("bdiegeid ")
+                .pattern("bdfehefdc")
+                .pattern(" diegeidc")
+                .pattern(" aedgdeac")
+                .pattern(" aeegeeac")
+                .pattern(" aaadaaa ")
+                .define('a', ModBlocks.neutron.get())
+                .define('b', ModBlocks.blaze_cube_block.get())
+                .define('c', ModItems.crystal_matrix_ingot.get())
+                .define('d', ModItems.neutron_ingot.get())
+                .define('e', ModItems.neutron_gear.get())
+                .define('i', ModItems.neutron_nugget.get())
+                .define('f', ModItems.infinity_catalyst.get())
+                .define('g', ModItems.star_fuel.get())
+                .define('h', ModItems.eternal_singularity.get())
+                .unlockedBy("has_item", has(ModItems.eternal_singularity.get())).save(consumer);
 
         ModShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.star_fuel.get(), 4)
                 .pattern("         ")

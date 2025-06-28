@@ -5,16 +5,23 @@ import com.google.common.collect.Multimap;
 import committee.nova.mods.avaritia.api.iface.ISwitchable;
 import committee.nova.mods.avaritia.api.iface.ITooltip;
 import committee.nova.mods.avaritia.api.iface.InitEnchantItem;
+import committee.nova.mods.avaritia.init.registry.ModItems;
 import committee.nova.mods.avaritia.init.registry.ModRarities;
 import committee.nova.mods.avaritia.init.registry.ModToolTiers;
 import committee.nova.mods.avaritia.init.registry.ModTooltips;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.ItemStack;
@@ -22,6 +29,8 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -61,6 +70,22 @@ public class BlazeAxeItem extends AxeItem implements ITooltip, ISwitchable, Init
                                 @NotNull TooltipFlag isAdvanced) {
         tooltipComponents.add(ModTooltips.INIT_ENCHANT.args(Enchantments.FIRE_ASPECT.getFullname(10)).build());
         this.appendTooltip(stack, level, tooltipComponents, isAdvanced, name);
+    }
+
+    @Override
+    public boolean onBlockStartBreak(ItemStack itemstack, BlockPos pos, Player player) {
+        return super.onBlockStartBreak(itemstack, pos, player);
+    }
+
+    @Override
+    public boolean mineBlock(@NotNull ItemStack pStack, @NotNull Level pLevel, @NotNull BlockState pState, @NotNull BlockPos pPos, @NotNull LivingEntity pEntityLiving) {
+        if (!pLevel.isClientSide) {
+            if (pState.is(BlockTags.LOGS)) {
+                pLevel.setBlockAndUpdate(pPos, Blocks.AIR.defaultBlockState()); //设置此坐标为空气
+            }
+            pLevel.addFreshEntity(new ItemEntity(pLevel, pPos.getX(), pPos.getY(), pPos.getZ(), new ItemStack(ModItems.refined_coal.get())));
+        }
+        return super.mineBlock(pStack, pLevel, pState, pPos, pEntityLiving);
     }
 
     @Override

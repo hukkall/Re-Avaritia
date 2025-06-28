@@ -21,8 +21,10 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
 import net.minecraft.world.entity.player.Player;
@@ -40,10 +42,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.event.entity.item.ItemEvent;
 import net.minecraftforge.event.entity.item.ItemExpireEvent;
-import net.minecraftforge.event.entity.living.LivingAttackEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.living.LivingDropsEvent;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -67,11 +66,13 @@ import java.util.Set;
 public class InfinityHandler {
     @SubscribeEvent
     public static void onPlayerMine(PlayerInteractEvent.LeftClickBlock event) {
-        ItemStack item = event.getItemStack();
-        Level level = event.getLevel();
-        BlockPos pos = event.getPos();
-        BlockState state = level.getBlockState(pos);
-        if (event.getFace() == null || event.getLevel().isClientSide || event.getItemStack().isEmpty() || event.getEntity().isCreative()) {
+        var item = event.getItemStack();
+        var level = event.getLevel();
+        var pos = event.getPos();
+        var state = level.getBlockState(pos);
+        var player= event.getEntity();
+        var face = event.getFace();
+        if (face == null || level.isClientSide || item.isEmpty() || player.isCreative()) {
             return;
         }
 
@@ -94,15 +95,6 @@ public class InfinityHandler {
                 level.setBlock(pos, Blocks.END_PORTAL.defaultBlockState(), 2);
             }
         }
-
-        if (event.getItemStack().getItem() == ModItems.infinity_pickaxe.get()) {
-            if (state.getDestroySpeed(level, event.getPos()) <= -1 || state.getMapColor(level, pos) == MapColor.STONE || state.getMapColor(level, pos) == MapColor.METAL) {
-                if (event.getItemStack().getOrCreateTag().getBoolean("hammer")) {
-                    ModItems.infinity_pickaxe.get().onBlockStartBreak(item, event.getPos(), event.getEntity());
-                }
-            }
-        }
-
     }
     @SubscribeEvent
     public static void onPlayerMine(BlockEvent.BreakEvent event) {
@@ -134,7 +126,8 @@ public class InfinityHandler {
                 if (!event.getEntity().isInWater() && !EnchantmentHelper.hasAquaAffinity(event.getEntity())) {
                     event.setNewSpeed(event.getNewSpeed() * 5);
                 }
-                if (held.getOrCreateTag().getBoolean("hammer") || held.getOrCreateTag().getBoolean("destroyer")) {
+                if (ISwitchable.isMode(held, "infinity_pickaxe_hammer")
+                        ||  ISwitchable.isMode(held,"infinity_shovel_destroyer")) {
                     event.setNewSpeed(event.getNewSpeed() * 0.5F);
                 }
             }
@@ -144,10 +137,10 @@ public class InfinityHandler {
     //合并物质团
     @SubscribeEvent
     public static void clusterCluster(EntityItemPickupEvent event) {
-        if (event.getEntity() != null && ModConfig.isMergeMatterCluster.get() && event.getItem().getItem().is(ModItems.matter_cluster.get())) {
-            ItemStack stack = event.getItem().getItem();
+        Player player = event.getEntity();
+        ItemStack stack = event.getItem().getItem();
+        if (player != null && ModConfig.isMergeMatterCluster.get() && event.getItem().getItem().is(ModItems.matter_cluster.get())) {
             boolean mergedAny = false;
-            Player player = event.getEntity();
 
             for (ItemStack slot : player.getInventory().items) {
                 if (stack.isEmpty()) {
@@ -232,25 +225,31 @@ public class InfinityHandler {
     //取消身穿无尽套时受到的所有伤害
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onGetHurt(LivingHurtEvent event) {
-        if (!(event.getEntity() instanceof Player player)) {
-            return;
-        }
-        if (!player.getMainHandItem().isEmpty() && player.getMainHandItem().is(ModItems.infinity_sword.get()) && player.getMainHandItem().useOnRelease()) {
-            event.setCanceled(true);
-        }
-        if (ToolUtils.isInfinite(player)) {
-            event.setCanceled(true);
+        DamageSource damageSource = event.getSource();
+        if (event.getEntity() instanceof Player player) {
+            if (ToolUtils.isInfinite(player) && !damageSource.is(ModDamageTypes.INFINITY)) {
+                event.setCanceled(true);
+            }
         }
     }
 
     //取消对无尽套的伤害
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onAttacked(LivingAttackEvent event) {
-        if (!(event.getEntity() instanceof Player player)) {
-            return;
-        }
-        if (ToolUtils.isInfinite(player)) {
+        if (ToolUtils.isInfinite(event.getEntity())) {
             event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onLivingDamage(LivingDamageEvent event) {
+        DamageSource damageSource = event.getSource();
+        if (event.getEntity() instanceof Player player) {
+            if (ToolUtils.isInfinite(player) && !damageSource.is(ModDamageTypes.INFINITY)) {
+                event.setAmount(0.0F);
+                player.hurtTime = 0;
+                player.deathTime = 0;
+            }
         }
     }
 

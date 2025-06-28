@@ -75,8 +75,8 @@ public class AvaritiaRenderTypes {
         return RenderType.create(Const.rl("glow").toString(),
                 DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 2097152, true, false,
                 RenderType.CompositeState.builder()
-                        .setShaderState(new RenderStateShard.ShaderStateShard(() -> AvaritiaShaders.COSMIC_ARMOR_SHADER))
-                        //.setShaderState(RenderStateShard.POSITION_COLOR_TEX_LIGHTMAP_SHADER)
+                        //.setShaderState(new RenderStateShard.ShaderStateShard(() -> AvaritiaShaders.COSMIC_ARMOR_SHADER))
+                        .setShaderState(RenderStateShard.POSITION_COLOR_TEX_LIGHTMAP_SHADER)
                         .setDepthTestState(RenderStateShard.LEQUAL_DEPTH_TEST)
                         .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
                         .setCullState(RenderStateShard.NO_CULL)
@@ -89,8 +89,8 @@ public class AvaritiaRenderTypes {
         return RenderType.create(Const.rl( "wing").toString(),
                 DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 2097152, true, false,
                 RenderType.CompositeState.builder()
-                        .setShaderState(new RenderStateShard.ShaderStateShard(() -> AvaritiaShaders.COSMIC_ARMOR_SHADER))
-                        //.setShaderState(RenderStateShard.POSITION_COLOR_TEX_LIGHTMAP_SHADER)
+                        //.setShaderState(new RenderStateShard.ShaderStateShard(() -> AvaritiaShaders.COSMIC_ARMOR_SHADER))
+                        .setShaderState(RenderStateShard.POSITION_COLOR_TEX_LIGHTMAP_SHADER)
                         .setDepthTestState(RenderStateShard.LEQUAL_DEPTH_TEST)
                         .setTransparencyState(RenderStateShard.LIGHTNING_TRANSPARENCY)
                         .setCullState(RenderStateShard.NO_CULL)

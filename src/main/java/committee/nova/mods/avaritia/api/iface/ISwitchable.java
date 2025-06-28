@@ -17,9 +17,13 @@ import org.jetbrains.annotations.NotNull;
  * @Description: 切换状态
  */
 public interface ISwitchable {
-    default boolean isActive(ItemStack stack, String funcName) {
+
+    static boolean isMode(ItemStack stack, String funcName) {
         if (!stack.getOrCreateTagElement("mode").contains(funcName)) return false;
         return stack.getOrCreateTagElement("mode").getBoolean(funcName);
+    }
+    default boolean isActive(ItemStack stack, String funcName) {
+       return isMode(stack, funcName);
     }
 
     default void switchMode(@NotNull Level world, Player player, @NotNull InteractionHand hand, String funcName) {
