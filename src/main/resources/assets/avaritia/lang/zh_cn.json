@@ -171,6 +171,8 @@
   "crafting.extreme.shapeless": "无序终焉合成",
   "death.attack.infinity": "%1$s 被 %2$s 彻底粉碎",
   "death.attack.infinity.item": "%1$s 被 %2$s 彻底粉碎",
+  "death.attack.infinity.0": "%1$s 被蒸发",
+  "death.attack.infinity.player.0": "%1$s 被 %2$s 所蒸发",
   "death.attack.infinity.1": "%1$s 被切成了条",
   "death.attack.infinity.player.1": "%1$s 被 %2$s 切成了条",
   "death.attack.infinity.2": "%1$s 被抹杀了存在",
