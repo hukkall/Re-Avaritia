@@ -23,6 +23,7 @@ public class ModConfig {
     public static final ForgeConfigSpec.BooleanValue isSwordAttackEndless;
     public static final ForgeConfigSpec.IntValue subArrowDamage;
     public static final ForgeConfigSpec.IntValue axeChainCount;
+    public static final ForgeConfigSpec.BooleanValue helmetKeepHungerFull;
     public static final ForgeConfigSpec.IntValue pickAxeBreakRange;
     public static final ForgeConfigSpec.IntValue shovelBreakRange;
     public static final ForgeConfigSpec.IntValue neutronCollectorProductTick;
@@ -64,6 +65,7 @@ public class ModConfig {
         isSwordAttackEndless = buildBoolean(common, "Is Sword Cause Endless damage", true, "Does the right key cause infinity damage");
         subArrowDamage = buildInt(common, "Sub Arrow Damage", 10000, 100, 100000, "Infinity bow scattering light arrow damage");
         axeChainCount = buildInt(common, "Axe Chain Count", 64, 16, 128, "Chain number of endless axe cutting trees");
+        helmetKeepHungerFull = buildBoolean(common, "Helmet Keep Hunger Full", true, "Infinity helmet keeps food full, otherwise hunger decreases but never reaches zero");
         foodTime = buildDouble(common, "Food Time", 1d, 0.1d, 5d, "Food effect time scaling factor");
         pickAxeBreakRange = buildInt(common, "PickAxe Break Range", 8, 2, 32, "The range of Infinity PickAxe can break");
         shovelBreakRange = buildInt(common, "Shovel Break Range", 8, 2, 32, "The range of Infinity Shovel can break");

@@ -340,5 +340,8 @@
   "gui.avaritia.rule.mod_fluid": "模组(流体): %d",
   "gui.avaritia.rule.any_item": "任意物品",
   "gui.avaritia.rule.any_fluid": "任意流体",
-  "gui.avaritia.rule.tip": "用鼠标滚轮选择"
+  "gui.avaritia.rule.tip": "用鼠标滚轮选择",
+  "command.avaritia.helmet_hunger.enabled": "头盔饱食锁定已启用",
+  "command.avaritia.helmet_hunger.disabled": "头盔饱食锁定已停用"
 }
+

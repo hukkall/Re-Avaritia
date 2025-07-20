@@ -350,5 +350,7 @@
   "gui.avaritia.rule.mod_fluid": "Mod(fluid): %d",
   "gui.avaritia.rule.any_item": "Any item",
   "gui.avaritia.rule.any_fluid": "Any fluid",
-  "gui.avaritia.rule.tip": "Select with the mouse wheel"
+  "gui.avaritia.rule.tip": "Select with the mouse wheel",
+  "command.avaritia.helmet_hunger.enabled": "Helmet hunger lock enabled",
+  "command.avaritia.helmet_hunger.disabled": "Helmet hunger lock disabled"
 }

@@ -4,6 +4,7 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import committee.nova.mods.avaritia.api.utils.PlayerUtils;
 import committee.nova.mods.avaritia.common.item.tools.InfinityArmorItem;
+import committee.nova.mods.avaritia.init.config.ModConfig;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -100,8 +101,12 @@ public class AbilityHandler {
         if (hasHelmet) {
             if (entitiesWithHelmets.contains(key)) {
                 player.setAirSupply(300);
-                player.getFoodData().setFoodLevel(20);
-                player.getFoodData().setSaturation(20f);
+                if (ModConfig.helmetKeepHungerFull.get()) {
+                    player.getFoodData().setFoodLevel(20);
+                    player.getFoodData().setSaturation(20f);
+                } else if (player.getFoodData().getFoodLevel() <= 0) {
+                    player.getFoodData().setFoodLevel(1);
+                }
                 MobEffectInstance nv = player.getEffect(MobEffects.NIGHT_VISION);
                 if (nv == null) {
                     nv = new MobEffectInstance(MobEffects.NIGHT_VISION, 300, 0, false, false);
