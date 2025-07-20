@@ -32,6 +32,8 @@ public class ModConfig {
     public static final ForgeConfigSpec.IntValue bladeSlashRadius;
     public static final ForgeConfigSpec.BooleanValue internalInfinityCatalystCraft;
 
+    public static final ForgeConfigSpec.BooleanValue keepHungerFull;
+
     public static final ForgeConfigSpec.IntValue neutronPileEmc;
     public static final ForgeConfigSpec.IntValue vanillaTotemEmc;
 
@@ -94,6 +96,7 @@ public class ModConfig {
         CHANNEL_FULL_UPDATE_RATE = buildInt(common, "FullUpdate Rate", 40, 20, 1200, "");
         common.pop();
         common.push("misc");
+        keepHungerFull = buildBoolean(common, "Keep Hunger Full", false, "Keep hunger constantly full when enabled");
         useAdvanceTooltips = buildBoolean(common, "Use Advance Tooltips", false, "For develop");
         common.pop();
         COMMON = common.build();
