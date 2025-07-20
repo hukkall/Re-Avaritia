@@ -11,6 +11,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
+import committee.nova.mods.avaritia.init.handler.HungerCommandHandler;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -100,8 +101,12 @@ public class AbilityHandler {
         if (hasHelmet) {
             if (entitiesWithHelmets.contains(key)) {
                 player.setAirSupply(300);
-                player.getFoodData().setFoodLevel(20);
-                player.getFoodData().setSaturation(20f);
+                if (HungerCommandHandler.keepFull()) {
+                    player.getFoodData().setFoodLevel(20);
+                    player.getFoodData().setSaturation(20f);
+                } else if (player.getFoodData().getFoodLevel() <= 1) {
+                    player.getFoodData().setFoodLevel(1);
+                }
                 MobEffectInstance nv = player.getEffect(MobEffects.NIGHT_VISION);
                 if (nv == null) {
                     nv = new MobEffectInstance(MobEffects.NIGHT_VISION, 300, 0, false, false);

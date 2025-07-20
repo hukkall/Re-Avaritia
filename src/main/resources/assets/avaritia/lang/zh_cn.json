@@ -340,5 +340,8 @@
   "gui.avaritia.rule.mod_fluid": "模组(流体): %d",
   "gui.avaritia.rule.any_item": "任意物品",
   "gui.avaritia.rule.any_fluid": "任意流体",
-  "gui.avaritia.rule.tip": "用鼠标滚轮选择"
+  "gui.avaritia.rule.tip": "用鼠标滚轮选择",
+  "command.avaritia.hunger.enabled": "无尽饱食已开启",
+  "command.avaritia.hunger.disabled": "无尽饱食已关闭"
 }
+
