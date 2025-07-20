@@ -223,5 +223,8 @@
   "config.jade.plugin_avaritia.nether": "煉獄合成",
   "config.jade.plugin_avaritia.extreme": "終焉合成",
   "rarity.legend.name": "傳說",
-  "rarity.cosmic.name": "無盡"
+  "rarity.cosmic.name": "無盡",
+  "command.avaritia.hunger.enabled": "無盡飽食已啟用",
+  "command.avaritia.hunger.disabled": "無盡飽食已停用"
 }
+

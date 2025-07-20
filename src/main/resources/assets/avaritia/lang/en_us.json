@@ -350,5 +350,8 @@
   "gui.avaritia.rule.mod_fluid": "Mod(fluid): %d",
   "gui.avaritia.rule.any_item": "Any item",
   "gui.avaritia.rule.any_fluid": "Any fluid",
-  "gui.avaritia.rule.tip": "Select with the mouse wheel"
+  "gui.avaritia.rule.tip": "Select with the mouse wheel",
+  "command.avaritia.hunger.enabled": "Infinite hunger enabled",
+  "command.avaritia.hunger.disabled": "Infinite hunger disabled"
 }
+
