@@ -2,6 +2,7 @@ package committee.nova.mods.avaritia.init.handler;
 
 import com.mojang.brigadier.CommandDispatcher;
 import committee.nova.mods.avaritia.Const;
+import committee.nova.mods.avaritia.init.config.ModConfig;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
@@ -13,7 +14,7 @@ import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = Const.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class HungerCommandHandler {
-    private static boolean keepFull = true;
+    private static boolean keepFull = ModConfig.keepHungerFull.get();
 
     public static boolean keepFull() {
         return keepFull;
@@ -29,6 +30,8 @@ public class HungerCommandHandler {
 
     private static int toggle(CommandSourceStack source) {
         keepFull = !keepFull;
+        ModConfig.keepHungerFull.set(keepFull);
+        ModConfig.keepHungerFull.save();
         source.sendSystemMessage(Component.translatable(keepFull ?
                 "command.avaritia.hunger.enabled" :
                 "command.avaritia.hunger.disabled"));
