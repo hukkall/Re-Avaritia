@@ -4,6 +4,7 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import committee.nova.mods.avaritia.api.utils.PlayerUtils;
 import committee.nova.mods.avaritia.common.item.tools.InfinityArmorItem;
+import committee.nova.mods.avaritia.util.ToolUtils;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -57,6 +58,10 @@ public class AbilityHandler {
             handleChestStateChange(player, key, hasChest);
             handleLeggingsStateChange(player, key, hasLeggings);
             handleBootsStateChange(player, key, hasBoots);
+
+            if (ToolUtils.isInfinite(player) && player.getTicksFrozen() > 0) {
+                player.setTicksFrozen(0);
+            }
 
         }
     }
